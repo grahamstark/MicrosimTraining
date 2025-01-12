@@ -26,7 +26,7 @@ begin
     #Pkg.instantiate()
 	using MicrosimTraining
     PlutoUI.TableOfContents(aside=true)
-end
+end;
 
 # ╔═╡ c29cc9b7-7523-4912-b8f1-d40552116c6a
 begin
@@ -53,15 +53,17 @@ begin
 	BASE = get_default_system_for_fin_year( 2024; scotland=true, autoweekly = true )
 	AN_BASE = get_default_system_for_fin_year( 2024; scotland=true, autoweekly = false )
 	wage = 10.0
-end
+end;
 
 # ╔═╡ dfd0e263-1188-412b-9259-eaec7f0eb8c7
 begin
-	function draw( base_bc, sys_bc )
-		f = Figure()
-		ax = Axis(f[1,1])
-		sc = lines!(ax, base_bc.gross, base_bc.net;)
-		sys_ln = lines!(ax, sys_bc.gross, sys_bc.net;)
+	function drawbc( base_bc, sys_bc )
+		f = Figure(;)
+		ax = Axis(f[1,1]; xlabel="Gross Income £s pw", ylabel="Net Income £s pw",title="Budget Constraint")
+		
+		sc = lines!(ax, base_bc.gross, base_bc.net;label = "Before")
+		sys_ln = lines!(ax, sys_bc.gross, sys_bc.net;label = "After",)
+		axislegend(ax; position = :rb)
 		f
 	end
 end;
@@ -88,30 +90,10 @@ begin
 	        sys, 
 	        settings, 
 	        wage )
-		f = draw( BASE_BC, sys_bc )
+		f = drawbc( BASE_BC, sys_bc )
 		f
 	end
-end
-
-# ╔═╡ 4aa314f2-3415-4482-a042-d4c7ebd1cb21
-begin
-md"""
-tax allowance: $(@bind tax_allowance NumberField(0:200:25000,default=12570.0)) (p.a.) 
-
-income tax rate: $(@bind income_tax_rate NumberField(0:1:100,default=21) )) (%)
-
-"""
-end
-
-# ╔═╡ 627959cf-6a7c-4f87-82f7-406f5c7eb76a
-makebcs( tax_allowance, income_tax_rate )
-
-# ╔═╡ 1a080008-b257-4d1c-9e4f-2edc7e1b8679
-BASE_BC
-
-# ╔═╡ cc76a20d-b5c0-429c-afe0-284fc9f1b6fc
-
-AN_BASE.it
+end;
 
 # ╔═╡ 3a2a55d5-8cf8-4d5c-80a7-84a03923bba8
 begin
@@ -155,6 +137,19 @@ begin
     """
 end 
 
+# ╔═╡ 4aa314f2-3415-4482-a042-d4c7ebd1cb21
+begin
+md"""
+tax allowance: $(@bind tax_allowance NumberField(0:200:25000,default=12570.0)) (p.a.) 
+
+income tax rate: $(@bind income_tax_rate NumberField(0:1:100,default=21) )) (%)
+
+"""
+end
+
+# ╔═╡ 627959cf-6a7c-4f87-82f7-406f5c7eb76a
+makebcs( tax_allowance, income_tax_rate )
+
 # ╔═╡ 8c34657d-e843-4ff2-9c01-bdadc98c0a0e
 begin
     md"""
@@ -162,17 +157,13 @@ begin
     """
 end 
 
-# ╔═╡ cd20fb57-58b4-4f2a-bf5d-c96ea2ae06b2
-begin
-    md"""
-    #### Integrating Taxes abd Benefits
-    """
-end 
-
 # ╔═╡ 154ed134-8431-4792-a915-9ffcadf0016e
 begin
     md"""
-    The sometimes chaotic nature of the interaction of taxes and benefits have led to advocacy of the complete integration of taxes and benefits. Completely integrated systems are sometimes known as *Negative Income Taxes*; one such system was proposed for the UK in the early 1970s[^FN_SLOMAN]. Universal Credit, briefly discussed above, is an attempt to integrate several means-tested benefits, though not taxes. However, though it produces messy and inconsistent interactions, there are often good reasons for keeping parts of the tax and benefit system separate. With Minimum Income benefits, for example, it's often important to get help to people very quickly if they are destitute, whereas with an in-work benefit, it's often helpful to take a longer view, so support can be given consistently over say a, year.
+
+#### Integrating Taxes and Benefits
+	
+The sometimes chaotic nature of the interaction of taxes and benefits have led to advocacy of the complete integration of taxes and benefits. Completely integrated systems are sometimes known as *Negative Income Taxes*; one such system was proposed for the UK in the early 1970s[^FN_SLOMAN]. Universal Credit, briefly discussed above, is an attempt to integrate several means-tested benefits, though not taxes. However, though it produces messy and inconsistent interactions, there are often good reasons for keeping parts of the tax and benefit system separate. With Minimum Income benefits, for example, it's often important to get help to people very quickly if they are destitute, whereas with an in-work benefit, it's often helpful to take a longer view, so support can be given consistently over say a, year.
     """
 end 
 
@@ -205,24 +196,21 @@ begin
 end 
 
 # ╔═╡ Cell order:
-# ╠═72c7843c-3698-4045-9c83-2ad391097ad8
+# ╟─72c7843c-3698-4045-9c83-2ad391097ad8
 # ╟─c29cc9b7-7523-4912-b8f1-d40552116c6a
-# ╠═29b9f909-5765-4317-b79a-be2863cc340b
-# ╠═dfd0e263-1188-412b-9259-eaec7f0eb8c7
-# ╠═60e7cfb8-68f0-4b08-ad47-6489a8e72f5c
+# ╟─29b9f909-5765-4317-b79a-be2863cc340b
+# ╟─dfd0e263-1188-412b-9259-eaec7f0eb8c7
+# ╟─60e7cfb8-68f0-4b08-ad47-6489a8e72f5c
 # ╟─2a544736-8d15-4349-8a19-ec99bf41560f
-# ╠═627959cf-6a7c-4f87-82f7-406f5c7eb76a
-# ╠═4aa314f2-3415-4482-a042-d4c7ebd1cb21
-# ╠═1a080008-b257-4d1c-9e4f-2edc7e1b8679
-# ╠═cc76a20d-b5c0-429c-afe0-284fc9f1b6fc
 # ╟─3a2a55d5-8cf8-4d5c-80a7-84a03923bba8
 # ╟─15c504c8-4a72-4aa5-b83f-4d03c3659df9
 # ╟─5c5b2176-148b-4f5c-a02c-5e9e82df11c3
 # ╟─b267f167-6f9b-49e3-9d6e-ac9c449ae180
 # ╟─c5f6f64e-7a1c-4fc3-836d-aafde14b44d8
+# ╠═627959cf-6a7c-4f87-82f7-406f5c7eb76a
 # ╟─d447f5dd-253c-4c8a-a2d4-873d50c9a9ec
+# ╟─4aa314f2-3415-4482-a042-d4c7ebd1cb21
 # ╟─8c34657d-e843-4ff2-9c01-bdadc98c0a0e
-# ╟─cd20fb57-58b4-4f2a-bf5d-c96ea2ae06b2
 # ╟─154ed134-8431-4792-a915-9ffcadf0016e
 # ╟─a367666b-f8eb-425e-9ccd-ff54f8e5626f
 # ╟─b1033397-d349-4aba-855f-e500102c3e6b
