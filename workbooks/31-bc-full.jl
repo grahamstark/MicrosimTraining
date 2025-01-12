@@ -66,7 +66,7 @@ begin
 		axislegend(ax; position = :rb)
 		f
 	end
-end;
+end
 
 
 # ╔═╡ 60e7cfb8-68f0-4b08-ad47-6489a8e72f5c
@@ -90,10 +90,9 @@ begin
 	        sys, 
 	        settings, 
 	        wage )
-		f = drawbc( BASE_BC, sys_bc )
-		f
-	end
-end;
+		return drawbc( BASE_BC, sys_bc )
+	end 
+end
 
 # ╔═╡ 3a2a55d5-8cf8-4d5c-80a7-84a03923bba8
 begin
@@ -150,6 +149,7 @@ end
 # ╔═╡ 627959cf-6a7c-4f87-82f7-406f5c7eb76a
 makebcs( tax_allowance, income_tax_rate )
 
+
 # ╔═╡ 8c34657d-e843-4ff2-9c01-bdadc98c0a0e
 begin
     md"""
@@ -196,19 +196,19 @@ begin
 end 
 
 # ╔═╡ Cell order:
-# ╟─72c7843c-3698-4045-9c83-2ad391097ad8
+# ╠═72c7843c-3698-4045-9c83-2ad391097ad8
 # ╟─c29cc9b7-7523-4912-b8f1-d40552116c6a
-# ╟─29b9f909-5765-4317-b79a-be2863cc340b
-# ╟─dfd0e263-1188-412b-9259-eaec7f0eb8c7
-# ╟─60e7cfb8-68f0-4b08-ad47-6489a8e72f5c
-# ╟─2a544736-8d15-4349-8a19-ec99bf41560f
+# ╠═29b9f909-5765-4317-b79a-be2863cc340b
+# ╠═dfd0e263-1188-412b-9259-eaec7f0eb8c7
+# ╠═60e7cfb8-68f0-4b08-ad47-6489a8e72f5c
+# ╠═2a544736-8d15-4349-8a19-ec99bf41560f
 # ╟─3a2a55d5-8cf8-4d5c-80a7-84a03923bba8
 # ╟─15c504c8-4a72-4aa5-b83f-4d03c3659df9
 # ╟─5c5b2176-148b-4f5c-a02c-5e9e82df11c3
 # ╟─b267f167-6f9b-49e3-9d6e-ac9c449ae180
 # ╟─c5f6f64e-7a1c-4fc3-836d-aafde14b44d8
 # ╠═627959cf-6a7c-4f87-82f7-406f5c7eb76a
-# ╟─d447f5dd-253c-4c8a-a2d4-873d50c9a9ec
+# ╠═d447f5dd-253c-4c8a-a2d4-873d50c9a9ec
 # ╟─4aa314f2-3415-4482-a042-d4c7ebd1cb21
 # ╟─8c34657d-e843-4ff2-9c01-bdadc98c0a0e
 # ╟─154ed134-8431-4792-a915-9ffcadf0016e
