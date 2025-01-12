@@ -1,6 +1,6 @@
 # Microsimulation Training
 
-Material for the upcoming Microsimulation Training course, using Julia/Pluto.
+Material for the upcoming Microsimulation Training course, using Julia/Pluto. This is ..
 
 It would be nice if you could have a go at installing Julia ahead of the workshop as it'll save us a wee while. Installing the packages would also be good
 as an admitted problem with Julia is that [first time loading packages is sometimes slow](https://discourse.julialang.org/t/taking-ttfx-seriously-can-we-make-common-packages-faster-to-load-and-use/74949?page=2).
