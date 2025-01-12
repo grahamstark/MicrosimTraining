@@ -1,0 +1,10 @@
+library(tidyverse)
+library(synthpop)
+lcfd = read_csv("~/tmp/uk-lcf-subset-2005-6.csv" ) |> tibble()
+lcfd$region<-as.factor(lcfd$region)
+lcfd$tenure<-as.factor(lcfd$tenure)
+codebook.syn(lcfd)
+synlcf <- syn(lcfd)
+compare(synlcf,lcfd)
+write_csv(synlcf, "~/tmp/syn-uk-lcf-subset-2005-6.csv")
+

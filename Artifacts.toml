@@ -1,0 +1,7 @@
+[main_data]
+git-tree-sha1 = "7e38c43bd238a1944bd547bfeae4eac9769bfd53"
+lazy = true
+
+    [[main_data.download]]
+    sha256 = "69f7542b21c48caa1aca021a7c291423a2b9b1624643315c77abd08831093c63"
+    url = "https://triplepc.northumbria.ac.uk/microsim_training/artifacts//microsim-training.tar.gz"
