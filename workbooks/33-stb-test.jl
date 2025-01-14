@@ -4,18 +4,6 @@
 using Markdown
 using InteractiveUtils
 
-# This Pluto notebook uses @bind for interactivity. When running this notebook outside of Pluto, the following 'mock version' of @bind gives bound variables a default value (instead of an error).
-macro bind(def, element)
-    #! format: off
-    quote
-        local iv = try Base.loaded_modules[Base.PkgId(Base.UUID("6e696c72-6542-2067-7265-42206c756150"), "AbstractPlutoDingetjes")].Bonds.initial_value catch; b -> missing; end
-        local el = $(esc(element))
-        global $(esc(def)) = Core.applicable(Base.get, el) ? Base.get(el) : iv(el)
-        el
-    end
-    #! format: on
-end
-
 # ╔═╡ eeae2700-a78e-11ef-34c9-b3f7c1a464cb
 begin
 	import Pkg
@@ -55,74 +43,49 @@ begin
 	AN_BASE = get_default_system_for_fin_year( 2024; scotland=true, autoweekly = false )
 end;
 
-# ╔═╡ 135d4bcd-9000-48aa-b433-70864ba1be2e
-begin
-	r = BigInt(0)
-	N = 1000000
-	@progress for i in 1:N # 1:100_000_000
-		global r
-		r += rand(Int)
-	end
-	r
-end
-
-# ╔═╡ 8e0683f5-9ca1-4020-9613-c42525673283
-@htl("""
-<script>
-
-console.info("Can you find this message in the console?")
-
-</script>
-""")
-
-# ╔═╡ 5a166877-7f66-474c-bdfe-f7176dd7a703
-begin
-ProgressTable(pct) = PlutoUI.wrapped() do Child
-md"""
-
-### How many dogs do you have? $pct
-
-"""
-
-end
-
-end
-
-# ╔═╡ dd3a47e6-890a-4c3a-976f-e7851c8dae24
-@bind nds ProgressTable( 10 )
-
 # ╔═╡ 92dd4f04-932e-47cc-a916-9c8c10f44cbd
 begin
-
-	tot = 0
-	obs = Observable( Progress(settings.uuid,"",0,0,0,0))
-	tab = @htl("""
-		<table>
-			<tr width="100%"><td with="80%" style="bgcolor:red">GESS</td><td with="20%"></td></tr>
-		</table>
-	"""
-	)
-
-@bind progtable @htl("""
-<script id='progress'>
-console.log( "tot = " + tot );
-</script>
-""")
+	run_progress = Observable( Progress(settings.uuid,"",0,0,0,0))
 	
-	of = on(obs) do p
-	    global tot
-	    
+	running_total = 0
+	phase = "Not Running"
+	size = 1
 	
-	    tot += p.step
-	    
-		println( tot )
-		details("XX", tab )
-	end
+	function obs_processor( progress::Progress )
+		global running_total, phase, size
+		size = progress.size
+	    running_total += progress.step
+		phase = progress.phase
+		# showp( pct )
+	end 
+	
+	observer_function = on( obs_processor, run_progress )
 	
 	sys2 = deepcopy(AN_BASE)
 	weeklyise!( sys2 )
 	sys = [BASE, sys2]
-	results = do_one_run( settings, sys, obs )
+	# tot = 0
+	@use_task([settings, sys, run_progress]) do
+		results = do_one_run( settings, sys, run_progress )
+	end
+end;
+
+# ╔═╡ 97a7dda6-d9e9-411b-a968-e27556068b66
+begin
+		pct = Int(trunc(100*running_total/size))
+		println( run_progress )
+		t = 
+		if (pct >= 100)||(pct<=0)
+			"<p><b>0!!!$pct</b></p>"
+		else
+ """
+<table width='100%' style='border:0'>
+<tr><td width="100%" style='background:#66aaff; color:white' colspan='2'>$(phase)</td></tr>
+<tr><td style='background:#3366aa; color:white'>$pct%&nbsp;Done</td><td style='background:#ffcc33'></td></tr>
+</table>
+ """
+		end
+		Show(MIME"text/html"(), t )
 end
 
 # ╔═╡ 324a71e5-4416-4de6-a469-cab328aadebe
@@ -131,10 +94,13 @@ almost(
 )
 
 # ╔═╡ 3e1f5775-ecd4-4e45-89a4-4027b132d1ce
+begin
+N=90
 if N == 100_000
 	correct()
 else
 	keep_working()
+end
 end
 
 # ╔═╡ 2fbac8f8-3ced-40e6-81b2-6a0b581bcd75
@@ -169,13 +135,10 @@ answer_box(
 # ╠═eeae2700-a78e-11ef-34c9-b3f7c1a464cb
 # ╠═9a7d1afd-52a9-48f0-8a95-af9145dea90b
 # ╠═981ac366-edc0-416b-b8ff-3588f1fca3a3
-# ╠═135d4bcd-9000-48aa-b433-70864ba1be2e
-# ╠═8e0683f5-9ca1-4020-9613-c42525673283
-# ╠═5a166877-7f66-474c-bdfe-f7176dd7a703
-# ╠═dd3a47e6-890a-4c3a-976f-e7851c8dae24
-# ╠═92dd4f04-932e-47cc-a916-9c8c10f44cbd
+# ╟─92dd4f04-932e-47cc-a916-9c8c10f44cbd
+# ╠═97a7dda6-d9e9-411b-a968-e27556068b66
 # ╟─324a71e5-4416-4de6-a469-cab328aadebe
-# ╟─3e1f5775-ecd4-4e45-89a4-4027b132d1ce
+# ╠═3e1f5775-ecd4-4e45-89a4-4027b132d1ce
 # ╟─2fbac8f8-3ced-40e6-81b2-6a0b581bcd75
 # ╟─74645ef7-8ce3-41fc-95e5-cfdb48f9903f
 # ╟─4e1616f9-90f1-4079-bdcf-54cab3aa928e
