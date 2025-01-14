@@ -25,7 +25,6 @@ begin
 	#Pkg.resolve()
     #Pkg.instantiate()
 	using MicrosimTraining
-    PlutoUI.TableOfContents(aside=true)
 end;
 
 # ╔═╡ c29cc9b7-7523-4912-b8f1-d40552116c6a
@@ -42,6 +41,11 @@ begin
 	using ScottishTaxBenefitModel.Utils
 	using ScottishTaxBenefitModel.BCCalcs
 	using ScottishTaxBenefitModel.ExampleHelpers
+end
+
+# ╔═╡ 58ebefb7-8a37-4d04-9fa2-979a6b1fc855
+begin
+	PlutoUI.TableOfContents(aside=true)
 end
 
 # ╔═╡ 29b9f909-5765-4317-b79a-be2863cc340b
@@ -100,6 +104,11 @@ begin
     #### Budget Constraints: Putting things Together
     """
 end 
+
+# ╔═╡ 27d27302-96ac-4d6c-a829-ab4a54d4b71b
+md"""
+# 99
+"""
 
 # ╔═╡ 15c504c8-4a72-4aa5-b83f-4d03c3659df9
 begin
@@ -195,14 +204,26 @@ begin
     """
 end 
 
+# ╔═╡ 921757a2-48f0-4095-9ffd-fd3e308809b4
+begin
+	n = 5`10
+Show(MIME"text/html"(), """
+<table width='100%' style='border:0'>
+<tr><td width="$n%" style='background:#3366aa; color:white'>$n%&nbsp;Done</td><td style='background:#ffcc33'></td></tr>
+</table>
+""")
+end
+
 # ╔═╡ Cell order:
 # ╠═72c7843c-3698-4045-9c83-2ad391097ad8
+# ╠═58ebefb7-8a37-4d04-9fa2-979a6b1fc855
 # ╟─c29cc9b7-7523-4912-b8f1-d40552116c6a
 # ╠═29b9f909-5765-4317-b79a-be2863cc340b
 # ╠═dfd0e263-1188-412b-9259-eaec7f0eb8c7
 # ╠═60e7cfb8-68f0-4b08-ad47-6489a8e72f5c
 # ╠═2a544736-8d15-4349-8a19-ec99bf41560f
 # ╟─3a2a55d5-8cf8-4d5c-80a7-84a03923bba8
+# ╠═27d27302-96ac-4d6c-a829-ab4a54d4b71b
 # ╟─15c504c8-4a72-4aa5-b83f-4d03c3659df9
 # ╟─5c5b2176-148b-4f5c-a02c-5e9e82df11c3
 # ╟─b267f167-6f9b-49e3-9d6e-ac9c449ae180
@@ -216,3 +237,4 @@ end
 # ╟─b1033397-d349-4aba-855f-e500102c3e6b
 # ╟─04eb3fe6-7279-46d5-b9b2-2770858c9f0b
 # ╟─de3ef31d-f22a-414b-bf0a-c4d516d82cc2
+# ╠═921757a2-48f0-4095-9ffd-fd3e308809b4
