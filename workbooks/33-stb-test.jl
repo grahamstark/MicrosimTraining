@@ -88,6 +88,13 @@ begin
 		Show(MIME"text/html"(), t )
 end
 
+# ╔═╡ 550ad60a-09a2-423e-b289-1f5b6c6958d4
+ md"""
+ 
+ see: [Long Running Pluto Tasks](https://juliapluto.github.io/PlutoLinks.jl/docs/use_task.html).
+
+ """
+
 # ╔═╡ 324a71e5-4416-4de6-a469-cab328aadebe
 almost(
     md"You're right that the answer is a positive number, but the value isn't quite right."
@@ -137,6 +144,7 @@ answer_box(
 # ╠═981ac366-edc0-416b-b8ff-3588f1fca3a3
 # ╟─92dd4f04-932e-47cc-a916-9c8c10f44cbd
 # ╠═97a7dda6-d9e9-411b-a968-e27556068b66
+# ╟─550ad60a-09a2-423e-b289-1f5b6c6958d4
 # ╟─324a71e5-4416-4de6-a469-cab328aadebe
 # ╠═3e1f5775-ecd4-4e45-89a4-4027b132d1ce
 # ╟─2fbac8f8-3ced-40e6-81b2-6a0b581bcd75
