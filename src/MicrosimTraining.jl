@@ -27,12 +27,15 @@ using Reexport
 @reexport using GLM
 #@reexport using Makie
 @reexport using Bonito
+@reexport using HypertextLiteral
 @reexport using WGLMakie
 @reexport using Images: load
 @reexport using StatsBase
 
 @reexport using Pluto
 @reexport using PlutoLinks
+@reexport using PlutoHooks
+
 @reexport using PlutoTeachingTools
 @reexport using PlutoUI
 @reexport using ProgressLogging
@@ -49,6 +52,7 @@ using Preferences
 
 export MAINDIR 
 const MAINDIR=artifact"main_data"
+
 
 """
 Given a directory in `tmp/` with some data, make a gzipped tar file, upload this to a server 
@@ -83,5 +87,14 @@ function make_artifact()::Int
     return 0
 end
 
+settings = Settings()
+export get_settings()
+get_settings() = settings
+
+begin
+
+FRSHouseoldGetter.initialise( settings )
+settings.num_households = 5_000
+ExampleHouseholdGetter.initialise( settings )
 
 end
