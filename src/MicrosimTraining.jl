@@ -47,6 +47,19 @@ using Reexport
 @reexport using PovertyAndInequalityMeasures
 @reexport using ScottishTaxBenefitModel
 
+@reexport using ScottishTaxBenefitModel.ModelHousehold
+@reexport using ScottishTaxBenefitModel.ExampleHouseholdGetter
+@reexport using ScottishTaxBenefitModel.RunSettings
+@reexport using ScottishTaxBenefitModel.Definitions
+@reexport using ScottishTaxBenefitModel.STBParameters
+@reexport using ScottishTaxBenefitModel.STBIncomes
+@reexport using ScottishTaxBenefitModel.Definitions
+@reexport using ScottishTaxBenefitModel.GeneralTaxComponents
+@reexport using ScottishTaxBenefitModel.SingleHouseholdCalculations
+@reexport using ScottishTaxBenefitModel.Utils
+@reexport using ScottishTaxBenefitModel.BCCalcs
+@reexport using ScottishTaxBenefitModel.ExampleHelpers
+
 using ArtifactUtils
 using Preferences
 
@@ -58,9 +71,6 @@ const MAINDIR=artifact"main_data"
 Given a directory in `tmp/` with some data, make a gzipped tar file, upload this to a server 
 defined in Project.toml and add an entry to `Artifacts.toml`. Artifact
 is set to lazy load. Uses `ArtifactUtils`.
-
-main data files should contain: `people.tab` `households.tab` `README.md`, all top-level
-other files can contain anything.
 
 """
 function make_artifact()::Int 
@@ -87,14 +97,25 @@ function make_artifact()::Int
     return 0
 end
 
-settings = Settings()
-export get_settings()
-get_settings() = settings
+"""
+FIXME use localpreferences thing
+"""
+#=
+function make_settings()::Settings
+    settings = Settings()
+    settings.included_data_years = [2019,2020,2021]
+    settings.weighting_strategy = use_runtime_computed_weights
+    settings
+end 
 
-begin
+export get_settings
 
-FRSHouseoldGetter.initialise( settings )
-settings.num_households = 5_000
-ExampleHouseholdGetter.initialise( settings )
+function get_settings() 
+    return make_settings()
+end
+
+FRSHouseholdGetter.initialise( get_settings() )
+ExampleHouseholdGetter.initialise( get_settings() )
+=#
 
 end
