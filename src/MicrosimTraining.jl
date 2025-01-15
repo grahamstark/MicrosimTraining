@@ -97,25 +97,12 @@ function make_artifact()::Int
     return 0
 end
 
-"""
-FIXME use localpreferences thing
-"""
-#=
-function make_settings()::Settings
-    settings = Settings()
-    settings.included_data_years = [2019,2020,2021]
-    settings.weighting_strategy = use_runtime_computed_weights
-    settings
+function __init__()
+    # settings = Settings()
+    # settings.included_data_years = [2019,2020,2021]
+    # settings.weighting_strategy = use_runtime_computed_weights
+    # FRSHouseholdGetter.initialise( get_settings() )
+    # ExampleHouseholdGetter.initialise( get_settings() )
 end 
-
-export get_settings
-
-function get_settings() 
-    return make_settings()
-end
-
-FRSHouseholdGetter.initialise( get_settings() )
-ExampleHouseholdGetter.initialise( get_settings() )
-=#
 
 end
