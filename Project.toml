@@ -70,6 +70,8 @@ Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
 [preferences.MicrosimTraining]
 public-artifact_server_upload = "triplepc.northumbria.ac.uk:/var/www/conjoint/microsim_training/artifacts/"
 public-artifact_server_url = "https://triplepc.northumbria.ac.uk/microsim_training/artifacts/"
-
+[preferences.ScottishTaxBenefitModel]
+weighting_strategy = "use_runtime_computed_weights"
+included_data_years = [2019,2020,2021]
 [targets]
 test = ["Test"]
