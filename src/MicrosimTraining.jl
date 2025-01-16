@@ -34,9 +34,9 @@ using Reexport
 @reexport using Pluto
 @reexport using PlutoLinks
 @reexport using PlutoHooks
-
 @reexport using PlutoTeachingTools
 @reexport using PlutoUI
+
 @reexport using ProgressLogging
 
 @reexport using MarkdownLiteral
