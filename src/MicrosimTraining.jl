@@ -44,9 +44,10 @@ using Reexport
 @reexport using ShortCodes
 
 @reexport using BudgetConstraints
+@reexport using SurveyDataWeighting
 @reexport using PovertyAndInequalityMeasures
-@reexport using ScottishTaxBenefitModel
 
+@reexport using ScottishTaxBenefitModel
 @reexport using ScottishTaxBenefitModel.ModelHousehold
 @reexport using ScottishTaxBenefitModel.ExampleHouseholdGetter
 @reexport using ScottishTaxBenefitModel.RunSettings
@@ -58,6 +59,9 @@ using Reexport
 @reexport using ScottishTaxBenefitModel.SingleHouseholdCalculations
 @reexport using ScottishTaxBenefitModel.Utils
 @reexport using ScottishTaxBenefitModel.BCCalcs
+@reexport using ScottishTaxBenefitModel.Monitor
+@reexport using ScottishTaxBenefitModel.Results
+@reexport using ScottishTaxBenefitModel.Runner
 @reexport using ScottishTaxBenefitModel.ExampleHelpers
 
 using ArtifactUtils
@@ -98,10 +102,10 @@ function make_artifact()::Int
 end
 
 function __init__()
-    # settings = Settings()
+    settings = Settings()
     # settings.included_data_years = [2019,2020,2021]
     # settings.weighting_strategy = use_runtime_computed_weights
-    # FRSHouseholdGetter.initialise( get_settings() )
+    FRSHouseholdGetter.initialise( settings )
     # ExampleHouseholdGetter.initialise( get_settings() )
 end 
 
