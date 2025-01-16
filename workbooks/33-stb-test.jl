@@ -137,6 +137,29 @@ answer_box(
     """
 )
 
+# ╔═╡ 97a7dda6-d9e9-411b-a968-e27556068b66
+begin
+	phase, set_phase = @use_state("")
+	pct_done, set_pct_done = @use_state(0)
+	@use_task([]) do
+		new_phase = phase
+		new_pct_done = pct_done
+		running_total = 0
+		while new_phase != "do-one-run-end"		
+			size = max(1, progress.size )
+		    running_total += progress.step
+			new_phase = progress.phase
+			if size > 0
+				pct_done = Int(trunc(100*running_total/size))
+			end 
+			println( run_progress )
+			t = draw_table( new_phase, new_pct_done )
+			
+		end # while
+		Show(MIME"text/html"(), new_phase )
+	end # block
+end
+
 # ╔═╡ 92dd4f04-932e-47cc-a916-9c8c10f44cbd
 begin
 	run_progress = Observable( Progress(settings.uuid,"",0,0,0,0))
@@ -164,29 +187,6 @@ begin
 		results = do_one_run( settings, sys, run_progress )
 	end
 end;
-
-# ╔═╡ 97a7dda6-d9e9-411b-a968-e27556068b66
-begin
-	phase, set_phase = @use_state("")
-	pct_done, set_pct_done = @use_state(0)
-	@use_task([]) do
-		new_phase = phase
-		new_pct_done = pct_done
-		running_total = 0
-		while new_phase != "do-one-run-end"		
-			size = max(1, progress.size )
-		    running_total += progress.step
-			new_phase = progress.phase
-			if size > 0
-				pct_done = Int(trunc(100*running_total/size))
-			end 
-			println( run_progress )
-			t = draw_table( new_phase, new_pct_done )
-			
-		end # while
-		Show(MIME"text/html"(), new_phase )
-	end # block
-end
 
 # ╔═╡ Cell order:
 # ╠═eeae2700-a78e-11ef-34c9-b3f7c1a464cb
