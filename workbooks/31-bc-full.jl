@@ -28,7 +28,7 @@ begin
 	using MicrosimTraining
 	# initialise parameters - 2024 system, annual and pre-weeklyised system
 	const settings = Settings()
-	const EXAMPLE_HH = ExampleHouseholdGetter.get_household("mel_c2_scot")
+	const EXAMPLE_HH = ExampleHouseholdGetter.get_household("example_hh3")
 	const BASE_SYS = 
 		get_default_system_for_fin_year( 2024; scotland=true, autoweekly = true )
 	const ANNUAL_BASE_SYS = 
@@ -169,20 +169,12 @@ begin
     """
 end 
 
-# ╔═╡ 627b99d9-c70c-4282-8508-799cad2a93a4
-# ╠═╡ show_logs = false
-
-
-
-# ╔═╡ d1c8f246-010d-439a-bab5-e00554aa9686
-summary
-
 # ╔═╡ Cell order:
 # ╟─3a2a55d5-8cf8-4d5c-80a7-84a03923bba8
-# ╠═72c7843c-3698-4045-9c83-2ad391097ad8
+# ╟─72c7843c-3698-4045-9c83-2ad391097ad8
 # ╟─15c504c8-4a72-4aa5-b83f-4d03c3659df9
 # ╟─5c5b2176-148b-4f5c-a02c-5e9e82df11c3
-# ╠═b267f167-6f9b-49e3-9d6e-ac9c449ae180
+# ╟─b267f167-6f9b-49e3-9d6e-ac9c449ae180
 # ╟─c5f6f64e-7a1c-4fc3-836d-aafde14b44d8
 # ╟─99152830-e5b1-4541-8b0a-ad51e1168f95
 # ╠═627959cf-6a7c-4f87-82f7-406f5c7eb76a
@@ -194,5 +186,3 @@ summary
 # ╟─b1033397-d349-4aba-855f-e500102c3e6b
 # ╟─04eb3fe6-7279-46d5-b9b2-2770858c9f0b
 # ╟─de3ef31d-f22a-414b-bf0a-c4d516d82cc2
-# ╠═627b99d9-c70c-4282-8508-799cad2a93a4
-# ╠═d1c8f246-010d-439a-bab5-e00554aa9686
