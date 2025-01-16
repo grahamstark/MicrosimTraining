@@ -50,37 +50,6 @@ begin
 	wage = 10.0
 end;
 
-# ╔═╡ 627b99d9-c70c-4282-8508-799cad2a93a4
-# ╠═╡ show_logs = false
-begin
-	using ScottishTaxBenefitModel.STBOutput
-	run_progress = Observable( Progress(settings.uuid,"",0,0,0,0))
-	
-	running_total = 0
-	phase = "Not Running"
-	size = 1
-	
-	function obs_processor( progress::Progress )
-		global running_total, phase, size
-		size = progress.size
-	    running_total += progress.step
-		phase = progress.phase
-		# showp( pct )
-	end 
-	
-	observer_function = on( obs_processor, run_progress )
-	
-	sys2 = deepcopy(AN_BASE)
-	sys2.it.personal_allowance *= 1.2
-	weeklyise!( sys2 )
-	sys = [BASE, sys2]
-	# tot = 0
-	
-	results = do_one_run( settings, sys, run_progress )
-	summary = summarise_frames!( results, settings )
-end;
-
-
 # ╔═╡ dfd0e263-1188-412b-9259-eaec7f0eb8c7
 begin
 	function drawbc( base_bc, sys_bc )
@@ -242,8 +211,38 @@ Show(MIME"text/html"(), """
 """)
 end
 
+# ╔═╡ 627b99d9-c70c-4282-8508-799cad2a93a4
+# ╠═╡ show_logs = false
+begin
+	run_progress = Observable( Progress(settings.uuid,"",0,0,0,0))
+	
+	running_total = 0
+	phase = "Not Running"
+	size = 1
+	
+	function obs_processor( progress::Progress )
+		global running_total, phase, size
+		size = progress.size
+	    running_total += progress.step
+		phase = progress.phase
+		# showp( pct )
+	end 
+	
+	observer_function = on( obs_processor, run_progress )
+	
+	sys2 = deepcopy(AN_BASE)
+	sys2.it.personal_allowance *= 1.2
+	weeklyise!( sys2 )
+	sys = [BASE, sys2]
+	# tot = 0
+	
+	results = do_one_run( settings, sys, run_progress )
+	summary = summarise_frames!( results, settings )
+end;
+
+
 # ╔═╡ d1c8f246-010d-439a-bab5-e00554aa9686
-results
+summary
 
 # ╔═╡ Cell order:
 # ╠═72c7843c-3698-4045-9c83-2ad391097ad8
