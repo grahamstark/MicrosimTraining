@@ -5,8 +5,7 @@ module MicrosimTraining
 use like:
 see: https://plutojl.org/en/docs/packages-advanced/
 
-using Pluto
-Pluto.run()
+Pluto.run(capture_stdout=false)
 
 1st cell:
 
@@ -48,21 +47,23 @@ using Reexport
 @reexport using PovertyAndInequalityMeasures
 
 @reexport using ScottishTaxBenefitModel
-@reexport using ScottishTaxBenefitModel.ModelHousehold
-@reexport using ScottishTaxBenefitModel.ExampleHouseholdGetter
-@reexport using ScottishTaxBenefitModel.RunSettings
-@reexport using ScottishTaxBenefitModel.Definitions
-@reexport using ScottishTaxBenefitModel.STBParameters
-@reexport using ScottishTaxBenefitModel.STBIncomes
-@reexport using ScottishTaxBenefitModel.Definitions
-@reexport using ScottishTaxBenefitModel.GeneralTaxComponents
-@reexport using ScottishTaxBenefitModel.SingleHouseholdCalculations
-@reexport using ScottishTaxBenefitModel.Utils
+
 @reexport using ScottishTaxBenefitModel.BCCalcs
+@reexport using ScottishTaxBenefitModel.Definitions
+@reexport using ScottishTaxBenefitModel.Definitions
+@reexport using ScottishTaxBenefitModel.ExampleHelpers
+@reexport using ScottishTaxBenefitModel.ExampleHouseholdGetter
+@reexport using ScottishTaxBenefitModel.GeneralTaxComponents
+@reexport using ScottishTaxBenefitModel.ModelHousehold
 @reexport using ScottishTaxBenefitModel.Monitor
 @reexport using ScottishTaxBenefitModel.Results
 @reexport using ScottishTaxBenefitModel.Runner
-@reexport using ScottishTaxBenefitModel.ExampleHelpers
+@reexport using ScottishTaxBenefitModel.RunSettings
+@reexport using ScottishTaxBenefitModel.SingleHouseholdCalculations
+@reexport using ScottishTaxBenefitModel.STBIncomes
+@reexport using ScottishTaxBenefitModel.STBOutput
+@reexport using ScottishTaxBenefitModel.STBParameters
+@reexport using ScottishTaxBenefitModel.Utils
 
 using ArtifactUtils
 using Preferences
@@ -102,10 +103,11 @@ function make_artifact()::Int
 end
 
 function __init__()
-    settings = Settings()
+    # pre loading data doesn't work for Pluto, sadly
+    # settings = Settings()
     # settings.included_data_years = [2019,2020,2021]
     # settings.weighting_strategy = use_runtime_computed_weights
-    FRSHouseholdGetter.initialise( settings )
+    # FRSHouseholdGetter.initialise( settings )
     # ExampleHouseholdGetter.initialise( get_settings() )
 end 
 

@@ -17,6 +17,7 @@ macro bind(def, element)
 end
 
 # ╔═╡ 72c7843c-3698-4045-9c83-2ad391097ad8
+# ╠═╡ show_logs = false
 begin
 	import Pkg
     # activate the shared project environment
@@ -27,25 +28,58 @@ begin
 	using MicrosimTraining
 end;
 
-# ╔═╡ c29cc9b7-7523-4912-b8f1-d40552116c6a
-begin
-end
-
 # ╔═╡ 58ebefb7-8a37-4d04-9fa2-979a6b1fc855
 begin
 	PlutoUI.TableOfContents(aside=true)
 end
 
+# ╔═╡ c29cc9b7-7523-4912-b8f1-d40552116c6a
+begin
+end
+
 # ╔═╡ 29b9f909-5765-4317-b79a-be2863cc340b
+# ╠═╡ show_logs = false
 begin
 	settings = Settings()
-	ExampleHouseholdGetter.initialise( settings )
+	settings.requested_threads = 4
+	# ExampleHouseholdGetter.initialise( settings )
 	# ExampleHouseholdGetter.KEYMAP # 
 	hh = ExampleHouseholdGetter.get_household("mel_c2_scot")
 	BASE = get_default_system_for_fin_year( 2024; scotland=true, autoweekly = true )
 	AN_BASE = get_default_system_for_fin_year( 2024; scotland=true, autoweekly = false )
 	wage = 10.0
 end;
+
+# ╔═╡ 627b99d9-c70c-4282-8508-799cad2a93a4
+# ╠═╡ show_logs = false
+begin
+	using ScottishTaxBenefitModel.STBOutput
+	run_progress = Observable( Progress(settings.uuid,"",0,0,0,0))
+	
+	running_total = 0
+	phase = "Not Running"
+	size = 1
+	
+	function obs_processor( progress::Progress )
+		global running_total, phase, size
+		size = progress.size
+	    running_total += progress.step
+		phase = progress.phase
+		# showp( pct )
+	end 
+	
+	observer_function = on( obs_processor, run_progress )
+	
+	sys2 = deepcopy(AN_BASE)
+	sys2.it.personal_allowance *= 1.2
+	weeklyise!( sys2 )
+	sys = [BASE, sys2]
+	# tot = 0
+	
+	results = do_one_run( settings, sys, run_progress )
+	summary = summarise_frames!( results, settings )
+end;
+
 
 # ╔═╡ dfd0e263-1188-412b-9259-eaec7f0eb8c7
 begin
@@ -164,6 +198,12 @@ The sometimes chaotic nature of the interaction of taxes and benefits have led t
     """
 end 
 
+# ╔═╡ 186139c0-56f9-4a95-bc76-eb756e7cde3a
+
+
+# ╔═╡ f16093f3-37b6-454f-89cd-5baf7edc861a
+
+
 # ╔═╡ a367666b-f8eb-425e-9ccd-ff54f8e5626f
 begin
     md"""
@@ -194,13 +234,16 @@ end
 
 # ╔═╡ 921757a2-48f0-4095-9ffd-fd3e308809b4
 begin
-	n = 5`10
+	n = 5
 Show(MIME"text/html"(), """
 <table width='100%' style='border:0'>
 <tr><td width="$n%" style='background:#3366aa; color:white'>$n%&nbsp;Done</td><td style='background:#ffcc33'></td></tr>
 </table>
 """)
 end
+
+# ╔═╡ d1c8f246-010d-439a-bab5-e00554aa9686
+results
 
 # ╔═╡ Cell order:
 # ╠═72c7843c-3698-4045-9c83-2ad391097ad8
@@ -217,12 +260,16 @@ end
 # ╟─b267f167-6f9b-49e3-9d6e-ac9c449ae180
 # ╟─c5f6f64e-7a1c-4fc3-836d-aafde14b44d8
 # ╠═627959cf-6a7c-4f87-82f7-406f5c7eb76a
-# ╠═d447f5dd-253c-4c8a-a2d4-873d50c9a9ec
+# ╟─d447f5dd-253c-4c8a-a2d4-873d50c9a9ec
 # ╟─4aa314f2-3415-4482-a042-d4c7ebd1cb21
 # ╟─8c34657d-e843-4ff2-9c01-bdadc98c0a0e
 # ╟─154ed134-8431-4792-a915-9ffcadf0016e
+# ╠═186139c0-56f9-4a95-bc76-eb756e7cde3a
+# ╠═f16093f3-37b6-454f-89cd-5baf7edc861a
 # ╟─a367666b-f8eb-425e-9ccd-ff54f8e5626f
 # ╟─b1033397-d349-4aba-855f-e500102c3e6b
 # ╟─04eb3fe6-7279-46d5-b9b2-2770858c9f0b
 # ╟─de3ef31d-f22a-414b-bf0a-c4d516d82cc2
 # ╠═921757a2-48f0-4095-9ffd-fd3e308809b4
+# ╠═627b99d9-c70c-4282-8508-799cad2a93a4
+# ╠═d1c8f246-010d-439a-bab5-e00554aa9686

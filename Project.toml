@@ -76,6 +76,7 @@ public-artifact_server_url = "https://triplepc.northumbria.ac.uk/microsim_traini
 [preferences.ScottishTaxBenefitModel]
 included_data_years = [2019, 2020, 2021]
 weighting_strategy = "use_runtime_computed_weights"
+requested_threads = 4
 
 [targets]
 test = ["Test"]
