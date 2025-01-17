@@ -27,7 +27,7 @@ using Reexport
 #@reexport using Makie
 @reexport using Bonito
 @reexport using HypertextLiteral
-@reexport using WGLMakie
+@reexport using CairoMakie
 @reexport using Images: load
 @reexport using StatsBase
 
@@ -103,6 +103,7 @@ function make_artifact()::Int
 end
 
 function __init__()
+    CairoMakie.activate!()
     # pre loading data doesn't work for Pluto, sadly
     # settings = Settings()
     # settings.included_data_years = [2019,2020,2021]

@@ -9,6 +9,7 @@ ArtifactUtils = "8b73e784-e7d8-4ea5-973d-377fed4e3bce"
 Bonito = "824d6782-a2ef-11e9-3a09-e5662e0c26f8"
 BudgetConstraints = "51aacf4b-43e8-45f9-b960-ce5126c2a956"
 CSV = "336ed68f-0bac-5ca0-87d4-7b16caf5d00b"
+CairoMakie = "13f3f980-e62b-5c42-98c6-ff1f3baf88f0"
 DataFrames = "a93c6f00-e57d-5684-b7b6-d8193f3e46c0"
 Format = "1fa38f19-a742-5d3f-a2b9-30dd87b9d5f8"
 GLM = "38e38edf-8417-5370-95a0-9cbb8c7f171a"
@@ -40,6 +41,7 @@ ArtifactUtils = "0,1"
 Bonito = "4,5"
 BudgetConstraints = "1"
 CSV = "0,1"
+CairoMakie = "0.12.18"
 DataFrames = "1,2"
 Format = "1,2"
 GLM = "1, 2"
@@ -75,9 +77,9 @@ public-artifact_server_url = "https://triplepc.northumbria.ac.uk/microsim_traini
 
 [preferences.ScottishTaxBenefitModel]
 included_data_years = [2019, 2020, 2021]
-weighting_strategy = "use_runtime_computed_weights"
-requested_threads = 4
 means_tested_routing = "uc_full"
+requested_threads = 4
+weighting_strategy = "use_runtime_computed_weights"
 
 [targets]
 test = ["Test"]

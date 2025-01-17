@@ -57,9 +57,12 @@ begin
 end
 
 # ╔═╡ 29b7f120-94ff-4f56-a0c7-0373831bff2b
+# ╠═╡ disabled = true
+#=╠═╡
 md"""
 ![Pluto (dwarf planet)](https://upload.wikimedia.org/wikipedia/commons/thumb/a/a7/Pluto-01_Stern_03_Pluto_Color_TXT.jpg/1024px-Pluto-01_Stern_03_Pluto_Color_TXT.jpg)
 """
+  ╠═╡ =#
 
 # ╔═╡ 2701200a-86ca-4052-bbae-8d9722c0ce28
 fr("100000")
@@ -159,7 +162,7 @@ this is interesting !!! !!!
 # ╟─3e1f5775-ecd4-4e45-89a4-4027b132d1ce
 # ╟─2fbac8f8-3ced-40e6-81b2-6a0b581bcd75
 # ╟─74645ef7-8ce3-41fc-95e5-cfdb48f9903f
-# ╟─4e1616f9-90f1-4079-bdcf-54cab3aa928e
+# ╠═4e1616f9-90f1-4079-bdcf-54cab3aa928e
 # ╠═e435bad3-3208-4cef-9ab3-feb50461a10c
 # ╠═f530f068-acc2-4a21-a309-427f00009cf0
 # ╠═6e13d906-c175-4624-b74c-0186d8028276
