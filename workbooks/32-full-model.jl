@@ -133,7 +133,7 @@ end
 
 # ╔═╡ 627959cf-6a7c-4f87-82f7-406f5c7eb76a
 # ╠═╡ show_logs = false
-summary= run_model( tax_allowance, income_tax_rate, uc_taper, settings )
+summary= run_model( tax_allowance, income_tax_rate, uc_taper, settings );
 
 
 # ╔═╡ d2188dd8-1240-4fdd-870b-dcd15e91f4f2
@@ -282,11 +282,11 @@ end
 # ╟─b267f167-6f9b-49e3-9d6e-ac9c449ae180
 # ╟─c5f6f64e-7a1c-4fc3-836d-aafde14b44d8
 # ╟─99152830-e5b1-4541-8b0a-ad51e1168f95
-# ╠═d2188dd8-1240-4fdd-870b-dcd15e91f4f2
-# ╠═d069cd4d-7afc-429f-a8fd-3f1c0a640117
-# ╟─627959cf-6a7c-4f87-82f7-406f5c7eb76a
+# ╟─d2188dd8-1240-4fdd-870b-dcd15e91f4f2
+# ╟─d069cd4d-7afc-429f-a8fd-3f1c0a640117
+# ╠═627959cf-6a7c-4f87-82f7-406f5c7eb76a
 # ╟─d447f5dd-253c-4c8a-a2d4-873d50c9a9ec
-# ╠═4aa314f2-3415-4482-a042-d4c7ebd1cb21
+# ╟─4aa314f2-3415-4482-a042-d4c7ebd1cb21
 # ╟─8c34657d-e843-4ff2-9c01-bdadc98c0a0e
 # ╟─154ed134-8431-4792-a915-9ffcadf0016e
 # ╟─a367666b-f8eb-425e-9ccd-ff54f8e5626f
