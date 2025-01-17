@@ -112,7 +112,7 @@ end
 # ╔═╡ 4aa314f2-3415-4482-a042-d4c7ebd1cb21
 begin
 md"""
-tax allowance: $(@bind tax_allowance NumberField(0:200:25000,default=12570.0)) (p.a.) 
+tax allowance: $(@bind tax_allowance NumberField(0:10:25000,default=12570.0)) (p.a.) 
 
 income tax rate: $(@bind income_tax_rate NumberField(0:1:100,default=21) )) (%)
 
