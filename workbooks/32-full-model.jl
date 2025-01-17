@@ -64,7 +64,8 @@ begin
 		@show uc_taper
 		sys2 = deepcopy(ANNUAL_BASE_SYS)
 		sys2.it.personal_allowance = allowance
-		sys2.it.non_savings_rates[3] = income_tax_rate
+		itdiff = sys2.it.non_savings_rates[2] - income_tax_rate
+		sys2.it.non_savings_rates .-= itdiff
 		sys2.uc.taper = uc_taper
 
 		weeklyise!( sys2 )
@@ -113,6 +114,9 @@ md"""
 # ╔═╡ 99152830-e5b1-4541-8b0a-ad51e1168f95
 aside( md"See, for example: [Stark and Dilnot](^FN_STARK_DILNOT-2)"; v_offset=-80 )
 
+# ╔═╡ 3ed3fa2f-2c1b-4915-9f39-b5603e62e2c3
+
+
 # ╔═╡ d447f5dd-253c-4c8a-a2d4-873d50c9a9ec
 begin
     md"""
@@ -123,12 +127,23 @@ end
 # ╔═╡ 4aa314f2-3415-4482-a042-d4c7ebd1cb21
 begin
 md"""
-tax allowance: $(@bind tax_allowance NumberField(0:200:25000,default=12570.0)) (p.a.) 
+tax allowance: $(@bind tax_allowance NumberField(0:10:25000,default=12570.0)) (p.a.) 
 
-income tax rate: $(@bind income_tax_rate NumberField(0:1:100,default=21) )) (%)
+income tax rate: $(@bind income_tax_rate NumberField(0:1:100,default=20) )) (%)
 
 benefit withdrawal rate: $(@bind uc_taper NumberField(0:1:100,default=55) )) (%)
 """
+end
+
+# ╔═╡ 0a2e393c-9fbb-4bbb-a6af-96aeac5cb458
+# ╠═╡ show_logs = false
+begin
+sys2 = deepcopy(ANNUAL_BASE_SYS)
+		itdiff = sys2.it.non_savings_rates[2] - income_tax_rate
+		println( "itdiff=$itdiff")
+		sys2.it.non_savings_rates .-= itdiff
+		
+println( "after: sys2.it.non_savings_rates $(sys2.it.non_savings_rates)")
 end
 
 # ╔═╡ 627959cf-6a7c-4f87-82f7-406f5c7eb76a
@@ -172,7 +187,7 @@ begin
 
 	function make_short_summary( summary :: NamedTuple )::NamedTuple
 		r1 = summary.income_summary[1][1,:]
-		r2 = summary.income_summary[1][1,:]
+		r2 = summary.income_summary[2][1,:]
 		ben1 = r1.total_benefits
 		ben2 = r2.total_benefits
 		tax1 = r1.income_tax+r1.national_insurance+r1.employers_ni	
@@ -198,9 +213,9 @@ begin
 		tax1=fm( tax1 ),
 		tax2=fm( tax2 ),
 		dtax=fm( dtax ),
-		gainers=fc( summary.gain_lose[1].gainers ),
-		losers=fc( summary.gain_lose[1].losers ),
-		nc = fc( summary.gain_lose[1].nc) )
+		gainers=fc( summary.gain_lose[2].gainers ),
+		losers=fc( summary.gain_lose[2].losers ),
+		nc = fc( summary.gain_lose[2].nc) )
 	end
 
 		
@@ -220,9 +235,9 @@ before: **$(res.tax1)** after: **$(res.tax2)** change: **$(res.dtax)** £mn pa
 before: **$(res.ben1)** after: **$(res.ben2)** change: **$(res.dben)** £m pa
 
 ### Inequality
-Gini before: **$(res.gini1)** after: **$(res.gini2)** change: **$(res.dgini)**
 
-Palma before: **$(res.palma1)** after: **$(res.palma2)** change: **$(res.dpalma)**
+* **Gini:** before: **$(res.gini1)** after: **$(res.gini2)** change: **$(res.dgini)**
+* **Palma:** before: **$(res.palma1)** after: **$(res.palma2)** change: **$(res.dpalma)**
 
 ### Gainers & Losers
 Households gaining: **$(res.gainers)** losing: **$(res.losers)** unchanged: **$(res.nc)**
@@ -276,15 +291,17 @@ end
 
 # ╔═╡ Cell order:
 # ╠═3a2a55d5-8cf8-4d5c-80a7-84a03923bba8
-# ╟─72c7843c-3698-4045-9c83-2ad391097ad8
+# ╠═72c7843c-3698-4045-9c83-2ad391097ad8
+# ╟─0a2e393c-9fbb-4bbb-a6af-96aeac5cb458
 # ╟─15c504c8-4a72-4aa5-b83f-4d03c3659df9
 # ╟─5c5b2176-148b-4f5c-a02c-5e9e82df11c3
 # ╟─b267f167-6f9b-49e3-9d6e-ac9c449ae180
 # ╟─c5f6f64e-7a1c-4fc3-836d-aafde14b44d8
-# ╟─99152830-e5b1-4541-8b0a-ad51e1168f95
+# ╠═99152830-e5b1-4541-8b0a-ad51e1168f95
 # ╟─d2188dd8-1240-4fdd-870b-dcd15e91f4f2
-# ╟─d069cd4d-7afc-429f-a8fd-3f1c0a640117
+# ╠═d069cd4d-7afc-429f-a8fd-3f1c0a640117
 # ╠═627959cf-6a7c-4f87-82f7-406f5c7eb76a
+# ╠═3ed3fa2f-2c1b-4915-9f39-b5603e62e2c3
 # ╟─d447f5dd-253c-4c8a-a2d4-873d50c9a9ec
 # ╟─4aa314f2-3415-4482-a042-d4c7ebd1cb21
 # ╟─8c34657d-e843-4ff2-9c01-bdadc98c0a0e
