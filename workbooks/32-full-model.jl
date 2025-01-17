@@ -139,10 +139,20 @@ summary= run_model( tax_allowance, income_tax_rate, uc_taper, settings )
 # ╔═╡ d2188dd8-1240-4fdd-870b-dcd15e91f4f2
 begin
 f = Figure()
-ax = Axis(f[1,1])
-lines!(ax,summary.quantiles[1][:,1],summary.quantiles[1][:,2]; label="Before")
-lines!(ax,summary.quantiles[1][:,1],summary.quantiles[2][:,2]; label="After")
-lines!(ax,[0,1],[0,1]; color=:grey)
+ax1 = Axis(f[1,1]; title="Lorenz Curve", xlabel="Population Share", ylabel="Income Share")
+popshare = summary.quantiles[1][:,1]
+incshare_pre = summary.quantiles[1][:,2]
+incshare_post = summary.quantiles[2][:,2];
+insert!(popshare,1,0)
+insert!(incshare_pre,1,0)
+insert!(incshare_post,1,0)
+lines!(ax1, popshare, incshare_pre; label="Before")
+lines!(ax1,popshare,incshare_post; label="After")
+lines!(ax1,[0,1],[0,1]; color=:grey)
+ax2 = Axis(f[1,2]; title="Income Changes By Decile", 
+	ylabel="Change in £s per week", xlabel="Decile" )
+dch = summary.deciles[2][:, 3] .- summary.deciles[1][:, 3]
+barplot!( ax2, dch)
 f
 end
 
@@ -199,10 +209,10 @@ end
 # ╟─b267f167-6f9b-49e3-9d6e-ac9c449ae180
 # ╟─c5f6f64e-7a1c-4fc3-836d-aafde14b44d8
 # ╟─99152830-e5b1-4541-8b0a-ad51e1168f95
-# ╠═d2188dd8-1240-4fdd-870b-dcd15e91f4f2
+# ╟─d2188dd8-1240-4fdd-870b-dcd15e91f4f2
 # ╟─627959cf-6a7c-4f87-82f7-406f5c7eb76a
 # ╟─d447f5dd-253c-4c8a-a2d4-873d50c9a9ec
-# ╟─4aa314f2-3415-4482-a042-d4c7ebd1cb21
+# ╠═4aa314f2-3415-4482-a042-d4c7ebd1cb21
 # ╟─8c34657d-e843-4ff2-9c01-bdadc98c0a0e
 # ╟─154ed134-8431-4792-a915-9ffcadf0016e
 # ╟─a367666b-f8eb-425e-9ccd-ff54f8e5626f
