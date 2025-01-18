@@ -15,6 +15,8 @@ Pkg.activate(Base.current_project())
 # instantiate, i.e. make sure that all packages are downloaded
 Pkg.instantiate()
 
+pluto.run(;notebook=abspath(notebook))
+
 =#
 using Reexport
 
@@ -70,6 +72,51 @@ using Preferences
 
 export MAINDIR 
 const MAINDIR=artifact"main_data"
+
+export draw_pov_table
+
+# ╔═╡ d2e1f7d5-f2d1-4320-ad8f-426a74c4420b
+function draw_pov_table( phase :: String, pct :: Int)
+	t = if phase == "queued" 
+        "<div class='alert alert-info' role='alert'>Run is starting up.</div>"
+    elseif phase == "do-one-run-start" 
+        "<div class='alert alert-info' role='alert'>Run starting: starting pre-run routines.</div>"
+    elseif phase == "weights" 
+        "<div class='alert alert-info' role='alert'>Generating sample weights (may take some time..).</div>"        
+    elseif phase == "disability_eligibility" 
+        "<div class='alert alert-info' role='alert'>Calibrating Disability Benefits.</div>"        
+    elseif phase == "starting" 
+        "<div class='alert alert-info' role='alert'>Pre-routines completed; run starting.</div>"
+    elseif phase == "run" || phase == "health" 
+        """
+        <table width='100%' 
+            style='border:0;background:#ddeedd; color:black; padding:1px; align=center'>
+        <tr>
+            <td width="100%" >Model Running</b>
+                <table width='80%' style='border:0'>
+                    <tr>
+                        <td style='background:#3366aa; color:white'>$pct%&nbsp;Done</td>
+                        <td style='background:#ffcc33'></td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+        </table>
+        """
+    elseif phase == "do-one-run-end" 
+        "<div class='alert alert-info' role='alert'>Main calculations complete.</div>"
+        
+    elseif phase == "dumping_frames" 
+        "<div class='alert alert-info' role='alert'>Calculations complete; now generating output.</div>"
+    elseif phase == "results-generation" 
+        "<div class='alert alert-info' role='alert'>Calculations complete; Creating Results.</div>"
+    elseif phase == "end" 
+        "<div></div>" 
+    else
+        "<div class='alert alert-danger' role='alert'>Problem</div>"
+    end                                      
+	Show(MIME"text/html"(), t )
+end
 
 
 """
