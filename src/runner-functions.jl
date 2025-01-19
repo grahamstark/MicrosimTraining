@@ -1,7 +1,14 @@
 export fb, fp, fc, fm, fmz
 export make_short_summary
-export pov_summary, draw_summary_graphs, make_povtrans_mat
+export make_pov_transitions, draw_summary_graphs
 export make_artifact
+export run_model
+export BASE_SYS, ANNUAL_BASE_SYS
+const BASE_SYS = 
+    get_default_system_for_fin_year( 2024; scotland=true, autoweekly = true )
+const ANNUAL_BASE_SYS = 
+    get_default_system_for_fin_year( 2024; scotland=true, autoweekly = false )
+
 
 # some formatting
 function fmz(v)
@@ -121,14 +128,16 @@ function pstate(m, povs )::Int
     return i+1
 end
 
-function make_povtrans_mat( data :: NamedTuple )::Matrix
+function make_povtrans_mat( results :: NamedTuple )::Matrix
     trans = zeros(6,6)
-    med1 = median(data.indiv[1].eq_bhc_net_income, Weights(data.indiv[1].weight ))
-    povs = med1.*[ 0.3, 0.4, 0.6, 0.8 ]
-    nrows, ncols = size( data.indiv[1])
+    med1 = median(results.indiv[1].eq_bhc_net_income, Weights(results.indiv[1].weight ))
+    @show med1
+    povs = med1 .* [ 0.3, 0.4, 0.6, 0.8 ]
+    @show povs
+    nrows, ncols = size( results.indiv[1] )
     for r in 1:nrows
-        i1 = data.indiv[1][r,:]
-        i2 = data.indiv[2][r,:]
+        i1 = results.indiv[1][r,:]
+        i2 = results.indiv[2][r,:]
         p1 = pstate(i1.eq_bhc_net_income, povs)
         p2 = pstate(i2.eq_bhc_net_income, povs)
         trans[p1,p2] += i1.weight
@@ -193,13 +202,14 @@ function one_row( label::String, v :: Vector, r::Int )::String
     s
 end
 
-function pov_summary( trans::Matrix )::String
+function make_pov_transitions( results::NamedTuple )::String
     labels = ["V.Deep (<=30%)",
               "Deep (<=40%)",
               "In Poverty (<=60%)",
               "Near Poverty (<=80%)",
               "Not in Poverty",
              "Total"]
+    trans = make_povtrans_mat( results )
     vs = fb.(trans)
     cells = ""
     for r in 1:6
@@ -254,5 +264,52 @@ function make_artifact()::Int
     end
     return 0
 end
+
+# just silly ...
+const uuid :: UUID = UUID("c2ae9c83-d24a-431c-b04f-74662d2ba07e")
+run_progress = Observable( Progress(uuid,"",0,0,0,0))
+
+running_total = 0
+phase = "Not Running"
+
+function obs_processor( progress::Progress )
+	global running_total, phase
+	# sizep = progress.size
+	running_total += progress.step
+	phase = progress.phase
+end 
+
+observer_function = on( obs_processor, run_progress )
+
+function run_model( 
+    allowance::Number, 
+    income_tax_rate::Number, 
+    uc_taper::Number,
+    child_benefit :: Number,
+    pension :: Number,
+    settings::Settings )::Tuple
+    global running_total
+    running_total = 0
+    @show allowance 
+    @show income_tax_rate
+    @show uc_taper
+    sys2 = deepcopy(ANNUAL_BASE_SYS)
+    sys2.it.personal_allowance = allowance
+    itdiff = sys2.it.non_savings_rates[2] - income_tax_rate
+    sys2.it.non_savings_rates .-= itdiff
+    sys2.uc.taper = uc_taper
+    sys2.nmt_bens.child_benefit.first_child = child_benefit
+    sys2.nmt_bens.pensions.new_state_pension = pension
+    sys2.nmt_bens.pensions.cat_a *= 
+        (pension/sys2.nmt_bens.pensions.new_state_pension)
+    weeklyise!( sys2 )
+    sys = [BASE_SYS, sys2]
+    running_total = 0
+    results = Runner.do_one_run( settings, sys, run_progress )
+    summary = summarise_frames!( results, settings )
+    short_summary = make_short_summary( summary )
+    summary, results, short_summary
+end
+
 	
 	
