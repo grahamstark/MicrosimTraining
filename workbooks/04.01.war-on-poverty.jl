@@ -52,17 +52,6 @@ end
 # ╠═╡ show_logs = false
 summary, data, short_summary = run_model( pps );
 
-# ╔═╡ 4f94f598-8ffc-40c1-9911-bc0afad14e84
-begin
-	s = if pps != DEFAULT_PLUTO_INPUTS
-		# ! all_defaults(pps.tax_allowance, pps.income_tax_rate, pps.uc_taper, pps.child_benefit, pps.pension)
-		short_summary.response
-	else
-		nothing
-	end
-	s
-end
-
 # ╔═╡ d069cd4d-7afc-429f-a8fd-3f1c0a640117
 begin
 	
@@ -86,6 +75,17 @@ before: **$(short_summary.ben1)** after: **$(short_summary.ben2)** change: **$(s
 #### Gainers & Losers
 People gaining: **$(short_summary.gainers)** losing: **$(short_summary.losers)** unchanged: **$(short_summary.nc)**
 """
+end
+
+# ╔═╡ 4f94f598-8ffc-40c1-9911-bc0afad14e84
+begin
+	s = if pps != DEFAULT_PLUTO_INPUTS
+		# ! all_defaults(pps.tax_allowance, pps.income_tax_rate, pps.uc_taper, pps.child_benefit, pps.pension)
+		short_summary.response
+	else
+		nothing
+	end
+	s
 end
 
 # ╔═╡ d2188dd8-1240-4fdd-870b-dcd15e91f4f2
@@ -131,6 +131,11 @@ begin
 	Show(MIME"text/html"(), t )
 end
 
+# ╔═╡ d088bbfb-6c72-465e-a8da-91a91d92e3f2
+md"""
+## I can't do this task!
+"""
+
 # ╔═╡ 8cff2a32-35b5-4330-8bfe-0dc604438dba
 hint(md"Try changing the withdrawal rate. A rate of 100% gives you a MIG, 0 a basic Income.")
 
@@ -144,14 +149,15 @@ danger(md"Don't forget to commit your saved notebook to your repository.")
 # ╟─3a2a55d5-8cf8-4d5c-80a7-84a03923bba8
 # ╟─72c7843c-3698-4045-9c83-2ad391097ad8
 # ╟─5c5b2176-148b-4f5c-a02c-5e9e82df11c3
-# ╟─58d7230e-36da-48e5-a445-777cddbd640b
-# ╟─4f94f598-8ffc-40c1-9911-bc0afad14e84
 # ╟─d069cd4d-7afc-429f-a8fd-3f1c0a640117
+# ╟─4f94f598-8ffc-40c1-9911-bc0afad14e84
+# ╟─58d7230e-36da-48e5-a445-777cddbd640b
 # ╟─d2188dd8-1240-4fdd-870b-dcd15e91f4f2
 # ╟─2fe134f3-6d6d-4109-a2f9-faa583be1189
 # ╟─627959cf-6a7c-4f87-82f7-406f5c7eb76a
 # ╟─a1318fc7-9d20-4c00-8a89-b5ae90b5cc0c
 # ╟─aa9d43a0-a45c-48bd-ae28-7b525be605ce
+# ╠═d088bbfb-6c72-465e-a8da-91a91d92e3f2
 # ╟─8cff2a32-35b5-4330-8bfe-0dc604438dba
 # ╟─67813f80-f4bd-41b3-8963-937e015614c5
 # ╟─bada072d-d79b-4bfe-a546-d5df15bf2ea1

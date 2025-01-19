@@ -36,6 +36,7 @@ function map_pluto_inputs( pps :: NamedTuple)::TaxBenefitSystem
     return sys2
 end
 
+const DEFAULT_PLUTO_INPUTS = make_pluto_inputs(ANNUAL_BASE_SYS)
 
 # some formatting
 function fmz(v::Number)
@@ -105,8 +106,6 @@ function all_defaults(pps::NamedTuple)::Bool
 		(default_child_benefit == child_benefit) &&
 		(default_pension == pension)
 end
-
-const DEFAULT_PLUTO_INPUTS = make_pluto_inputs(ANNUAL_BASE_SYS)
 
 function make_short_summary( summary :: NamedTuple )::NamedTuple
     r1 = summary.income_summary[1][1,:]

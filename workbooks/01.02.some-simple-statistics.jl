@@ -71,7 +71,22 @@ begin
 end 
 
 # ╔═╡ 1dcb942c-3187-4aa9-9493-93a1cf92ae53
+udata = CSV.File( joinpath(artifact"main_data", "data", "unicoria-incomes.tab")) |> DataFrame
 
+# ╔═╡ 4fb5cf04-2a9a-4a39-82dc-42f300f1285b
+median(udata.eq_bhc_net_income, Weights(udata.weight))
+
+# ╔═╡ 8c840fc5-beb3-4396-8767-5136ee2bb73c
+mean(udata.eq_bhc_net_income, Weights(udata.weight))
+
+# ╔═╡ f26395e4-02dd-4e62-8b65-9b3cb594dca2
+maximum( udata.eq_bhc_net_income)
+
+# ╔═╡ 611a9bb6-d977-42fe-b7d0-765b2275b440
+censdata = udata[ (udata.eq_bhc_net_income .< 1000) .& (udata.eq_bhc_net_income .> 0), :]
+
+# ╔═╡ 53cb5179-5d5b-4ec7-af1d-7bee173a8064
+density( censdata.eq_bhc_net_income; weights=udata.weight)
 
 # ╔═╡ b8fd6f10-24ce-4720-8667-9095c1216d2d
 begin
@@ -224,6 +239,11 @@ end
 # ╟─7fc9ebc8-3d7b-4d8c-884b-23493f6313ec
 # ╟─e9796a54-7b8e-4fe5-8947-0dc1efb89185
 # ╠═1dcb942c-3187-4aa9-9493-93a1cf92ae53
+# ╠═4fb5cf04-2a9a-4a39-82dc-42f300f1285b
+# ╠═8c840fc5-beb3-4396-8767-5136ee2bb73c
+# ╠═f26395e4-02dd-4e62-8b65-9b3cb594dca2
+# ╠═611a9bb6-d977-42fe-b7d0-765b2275b440
+# ╠═53cb5179-5d5b-4ec7-af1d-7bee173a8064
 # ╟─b8fd6f10-24ce-4720-8667-9095c1216d2d
 # ╟─7d596303-be1b-4218-9ed5-458c3c2e271b
 # ╟─2b628154-5a7d-42f0-b968-18a5e3e4c3f1
