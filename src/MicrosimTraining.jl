@@ -80,6 +80,12 @@ include("runner-functions.jl")
 
 function __init__()
     CairoMakie.activate!()
+    settings = Settings()
+
+    settings = Settings()
+    settings.num_households, settings.num_people = 
+	    FRSHouseholdGetter.initialise( settings; reset=false )
+
     # pre loading data doesn't work for Pluto, sadly
     # settings = Settings()
     # settings.included_data_years = [2019,2020,2021]

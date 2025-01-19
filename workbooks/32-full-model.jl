@@ -26,24 +26,6 @@ import Pkg
 Pkg.activate(Base.current_project())
 using MicrosimTraining
 # initialise parameters - 2024 system, annual and pre-weeklyised system
-
-settings = Settings()
-settings.num_households, settings.num_people = 
-	FRSHouseholdGetter.initialise( settings; reset=false )
-
-const default_tax_allowance = 12_570.0
-const default_income_tax_rate = 20.0
-const default_uc_taper = 55.0
-const default_child_benefit = 25.60
-const default_pension = 221.20
-
-function all_defaults(tax_allowance, income_tax_rate, uc_taper, child_benefit, pension)::Bool
-	return (default_tax_allowance == tax_allowance) &&
-		(default_income_tax_rate == income_tax_rate) &&
-		(default_uc_taper == uc_taper) &&
-		(default_child_benefit == child_benefit) &&
-		(default_pension == pension)
-end
 	
 PlutoUI.TableOfContents(aside=true)
 
@@ -64,52 +46,20 @@ The Government of Unicoria has pledged to reduce the headcount measure of povert
     """
 end 
 
-# ╔═╡ 4aa314f2-3415-4482-a042-d4c7ebd1cb21
-begin
-function make_inps()
-	return PlutoUI.combine() do Child
-		inputs = [
-md"""
-Tax Allowance: $(
-Child( "tax_allowance", NumberField(0:10:25000,default=12_570)))(£p.a.; *default £12,570*)
-""",
-md"""
-Income Tax Rate: $(Child("income_tax_rate", NumberField(0:1:100,default=20))) (%; *default 20*)
-""",
-md"""
-Benefit Withdrawal Rate: $(Child("uc_taper", NumberField(0:1:100,default=55))) (%; *default 55*)
-""",
-md"""
-Child Benefit: $(Child("child_benefit", NumberField(0:0.01:100,default=25.60))) (£s pw; *default £25.60p*)
-""",
-md"""
-Pension: $(Child("pension", NumberField(0:0.01:500,default=221.20))) (£s pw; *default £221.20p*)
-"""]
-
-md"""
-## Taxes and Benefits
-$(inputs)
-"""
-end
-	
-end # func
-		
-end
-
-
 # ╔═╡ 58d7230e-36da-48e5-a445-777cddbd640b
-@bind pps make_inps()
+@bind pps make_pluto_combined_input_fields() #make_inps()
 
 # ╔═╡ 627959cf-6a7c-4f87-82f7-406f5c7eb76a
 # ╠═╡ show_logs = false
-summary, data, short_summary = run_model( pps, settings );
+summary, data, short_summary = run_model( pps );
 
 # ╔═╡ 4f94f598-8ffc-40c1-9911-bc0afad14e84
 begin
-	s = if ! all_defaults(pps.tax_allowance, pps.income_tax_rate, pps.uc_taper, pps.child_benefit, pps.pension)
+	s = if pps != DEFAULT_PLUTO_INPUTS
+		# ! all_defaults(pps.tax_allowance, pps.income_tax_rate, pps.uc_taper, pps.child_benefit, pps.pension)
 		short_summary.response
 	else
-		""
+		nothing
 	end
 	s
 end
@@ -172,9 +122,6 @@ begin
 	""" 
 end
 
-# ╔═╡ 54f33d47-2105-4e8c-a79a-77753fa7bcdd
-pps
-
 # ╔═╡ a1318fc7-9d20-4c00-8a89-b5ae90b5cc0c
 md"## Poverty Transitions"
 
@@ -199,13 +146,11 @@ danger(md"Don't forget to commit your saved notebook to your repository.")
 # ╟─72c7843c-3698-4045-9c83-2ad391097ad8
 # ╟─5c5b2176-148b-4f5c-a02c-5e9e82df11c3
 # ╟─58d7230e-36da-48e5-a445-777cddbd640b
-# ╟─4aa314f2-3415-4482-a042-d4c7ebd1cb21
-# ╠═4f94f598-8ffc-40c1-9911-bc0afad14e84
+# ╟─4f94f598-8ffc-40c1-9911-bc0afad14e84
 # ╟─d069cd4d-7afc-429f-a8fd-3f1c0a640117
 # ╟─d2188dd8-1240-4fdd-870b-dcd15e91f4f2
 # ╟─2fe134f3-6d6d-4109-a2f9-faa583be1189
 # ╠═627959cf-6a7c-4f87-82f7-406f5c7eb76a
-# ╠═54f33d47-2105-4e8c-a79a-77753fa7bcdd
 # ╟─a1318fc7-9d20-4c00-8a89-b5ae90b5cc0c
 # ╟─aa9d43a0-a45c-48bd-ae28-7b525be605ce
 # ╟─8cff2a32-35b5-4330-8bfe-0dc604438dba

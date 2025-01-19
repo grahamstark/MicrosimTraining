@@ -3,15 +3,42 @@ export make_short_summary
 export make_pov_transitions, draw_summary_graphs
 export make_artifact
 export run_model
-export BASE_SYS, ANNUAL_BASE_SYS
+export BASE_SYS, ANNUAL_BASE_SYS, DEFAULT_PLUTO_INPUTS
+export make_pluto_inputs, map_pluto_inputs
+export make_pluto_combined_input_fields
+
 const BASE_SYS = 
     get_default_system_for_fin_year( 2024; scotland=true, autoweekly = true )
 const ANNUAL_BASE_SYS = 
     get_default_system_for_fin_year( 2024; scotland=true, autoweekly = false )
+    
+function make_pluto_inputs(sys2::TaxBenefitSystem)::NamedTuple
+    sys2 = deepcopy(ANNUAL_BASE_SYS)
+    (; 
+    tax_allowance = sys2.it.personal_allowance,
+    income_tax_rate = sys2.it.non_savings_rates[2],
+    uc_taper = sys2.uc.taper,
+    child_benefit = sys2.nmt_bens.child_benefit.first_child,
+    pension = sys2.nmt_bens.pensions.new_state_pension )
+ end 
+
+function map_pluto_inputs( pps :: NamedTuple)::TaxBenefitSystem
+    sys2 = deepcopy(ANNUAL_BASE_SYS)
+    sys2.it.personal_allowance = pps.tax_allowance
+    itdiff = sys2.it.non_savings_rates[2] - pps.income_tax_rate
+    sys2.it.non_savings_rates .-= itdiff
+    sys2.uc.taper = pps.uc_taper
+    sys2.nmt_bens.child_benefit.first_child = pps.child_benefit
+    sys2.nmt_bens.pensions.new_state_pension = pps.pension
+    sys2.nmt_bens.pensions.cat_a *= 
+        (pps.pension/sys2.nmt_bens.pensions.new_state_pension)
+    weeklyise!( sys2 )
+    return sys2
+end
 
 
 # some formatting
-function fmz(v)
+function fmz(v::Number)
     vm = v/1_000_000
     return if vm ≈ 0.0
         "No Change"
@@ -20,16 +47,66 @@ function fmz(v)
     end
 end
 
-fm(v) = "£"*format( v/1_000_000, commas=true, precision=0 )*"mn"
-fp(v) = format( v*100, precision=1 )*"%"
-fc(v) = format( v, precision=0, commas=true )
+fm(v::Number) = "£"*format( v/1_000_000, commas=true, precision=0 )*"mn"
+fp(v::Number) = format( v*100, precision=1 )*"%"
+fc(v::Number) = format( v, precision=0, commas=true )
+fpw(v::Number) = "£"*format( v, precision=2, commas=true )
+fpa(v::Number) = "£"*format( v, precision=0, commas=true )
 
-function fb(v)
+function fb(v::Number)
     if v ≈ 0
         return "-"
     end
     format( v, precision=0, commas=true )
 end  
+
+"""
+Make input fields in a form suitable for:
+     @bind pps make_pluto_combined_input_fields(DEFAULT_PLUTO_INPUTS)
+see: https://featured.plutojl.org/basic/plutoui.jl#8c51343f-cb35-4ff9-9fd8-642ffab57e22
+FIXME I don't really understand this code.
+"""
+function make_pluto_combined_input_fields( pps :: NamedTuple )
+	return PlutoUI.combine() do Child
+		inputs = [
+            md"""
+            Tax Allowance: $(
+            Child( "tax_allowance", NumberField(0:10:25000,default=pps.tax_allowance)))(£p.a.; *default $(fpa(pps.tax_allowance))*)
+            """,
+            md"""
+            Income Tax Rate: $(Child("income_tax_rate", NumberField(0:1:100,default=pps.income_tax_rate))) (%; *default $(fc(pps.income_tax_rate))*)
+            """,
+            md"""
+            Benefit Withdrawal Rate: $(Child("uc_taper", NumberField(0:1:100,default=pps.uc_taper))) (%; *default $(fc(pps.uc_taper))*)
+            """,
+            md"""
+            Child Benefit: $(Child("child_benefit", NumberField(0:0.01:100,default=pps.child_benefit))) (£s pw; *default $(fpw(pps.child_benefit))*)
+            """,
+            md"""
+            Pension: $(Child("pension", NumberField(0:0.01:500,default=pps.pension))) (£s pw; *default $(fpw(pps.pension))*)
+            """]
+
+        md"""
+            ## Taxes and Benefits
+            $(inputs)
+            """
+    end # do
+end
+
+function make_pluto_combined_input_fields()
+    make_pluto_combined_input_fields(DEFAULT_PLUTO_INPUTS)
+end
+
+function all_defaults(pps::NamedTuple)::Bool
+    # tax_allowance, income_tax_rate, uc_taper, child_benefit, pension)::Bool
+	return (tax_allowance == tax_allowance) &&
+		(default_income_tax_rate == income_tax_rate) &&
+		(default_uc_taper == uc_taper) &&
+		(default_child_benefit == child_benefit) &&
+		(default_pension == pension)
+end
+
+const DEFAULT_PLUTO_INPUTS = make_pluto_inputs(ANNUAL_BASE_SYS)
 
 function make_short_summary( summary :: NamedTuple )::NamedTuple
     r1 = summary.income_summary[1][1,:]
@@ -290,23 +367,17 @@ child_benefit
 pension
 """
 function run_model( 
-    pps :: NamedTuple,
-    settings::Settings )::Tuple
+    pps :: NamedTuple )::Tuple
     global running_total
     running_total = 0
     @show pps
-    sys2 = deepcopy(ANNUAL_BASE_SYS)
-    sys2.it.personal_allowance = pps.tax_allowance
-    itdiff = sys2.it.non_savings_rates[2] - pps.income_tax_rate
-    sys2.it.non_savings_rates .-= itdiff
-    sys2.uc.taper = pps.uc_taper
-    sys2.nmt_bens.child_benefit.first_child = pps.child_benefit
-    sys2.nmt_bens.pensions.new_state_pension = pps.pension
-    sys2.nmt_bens.pensions.cat_a *= 
-        (pps.pension/sys2.nmt_bens.pensions.new_state_pension)
-    weeklyise!( sys2 )
+    sys2 = map_pluto_inputs( pps )
     sys = [BASE_SYS, sys2]
     running_total = 0
+    settings = Settings()
+    settings.num_households, settings.num_people = 
+	    FRSHouseholdGetter.initialise( settings; reset=false )
+
     results = Runner.do_one_run( settings, sys, run_progress )
     summary = summarise_frames!( results, settings )
     short_summary = make_short_summary( summary )
