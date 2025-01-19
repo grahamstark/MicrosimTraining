@@ -281,27 +281,29 @@ end
 
 observer_function = on( obs_processor, run_progress )
 
+"""
+pps - params from plutoui @bind
+tax_allowance
+income_tax_rate
+uc_taper
+child_benefit
+pension
+"""
 function run_model( 
-    allowance::Number, 
-    income_tax_rate::Number, 
-    uc_taper::Number,
-    child_benefit :: Number,
-    pension :: Number,
+    pps :: NamedTuple,
     settings::Settings )::Tuple
     global running_total
     running_total = 0
-    @show allowance 
-    @show income_tax_rate
-    @show uc_taper
+    @show pps
     sys2 = deepcopy(ANNUAL_BASE_SYS)
-    sys2.it.personal_allowance = allowance
-    itdiff = sys2.it.non_savings_rates[2] - income_tax_rate
+    sys2.it.personal_allowance = pps.tax_allowance
+    itdiff = sys2.it.non_savings_rates[2] - pps.income_tax_rate
     sys2.it.non_savings_rates .-= itdiff
-    sys2.uc.taper = uc_taper
-    sys2.nmt_bens.child_benefit.first_child = child_benefit
-    sys2.nmt_bens.pensions.new_state_pension = pension
+    sys2.uc.taper = pps.uc_taper
+    sys2.nmt_bens.child_benefit.first_child = pps.child_benefit
+    sys2.nmt_bens.pensions.new_state_pension = pps.pension
     sys2.nmt_bens.pensions.cat_a *= 
-        (pension/sys2.nmt_bens.pensions.new_state_pension)
+        (pps.pension/sys2.nmt_bens.pensions.new_state_pension)
     weeklyise!( sys2 )
     sys = [BASE_SYS, sys2]
     running_total = 0
