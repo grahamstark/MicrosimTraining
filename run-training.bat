@@ -1,1 +1,1 @@
-julia --project=. -p 4  .\scripts\init-script.jl
+julia --project=. -t auto .\scripts\init-script.jl
