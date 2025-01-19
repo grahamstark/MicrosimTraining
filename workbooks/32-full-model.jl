@@ -150,7 +150,7 @@ danger(md"Don't forget to commit your saved notebook to your repository.")
 # ╟─d069cd4d-7afc-429f-a8fd-3f1c0a640117
 # ╟─d2188dd8-1240-4fdd-870b-dcd15e91f4f2
 # ╟─2fe134f3-6d6d-4109-a2f9-faa583be1189
-# ╠═627959cf-6a7c-4f87-82f7-406f5c7eb76a
+# ╟─627959cf-6a7c-4f87-82f7-406f5c7eb76a
 # ╟─a1318fc7-9d20-4c00-8a89-b5ae90b5cc0c
 # ╟─aa9d43a0-a45c-48bd-ae28-7b525be605ce
 # ╟─8cff2a32-35b5-4330-8bfe-0dc604438dba
