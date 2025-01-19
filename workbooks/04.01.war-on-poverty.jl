@@ -26,7 +26,6 @@ import Pkg
 Pkg.activate(Base.current_project())
 using MicrosimTraining
 # initialise parameters - 2024 system, annual and pre-weeklyised system
-	
 PlutoUI.TableOfContents(aside=true)
 
 end
