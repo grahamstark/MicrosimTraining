@@ -131,11 +131,6 @@ begin
 	Show(MIME"text/html"(), t )
 end
 
-# ╔═╡ d088bbfb-6c72-465e-a8da-91a91d92e3f2
-md"""
-## I can't do this task!
-"""
-
 # ╔═╡ 8cff2a32-35b5-4330-8bfe-0dc604438dba
 hint(md"Try changing the withdrawal rate. A rate of 100% gives you a MIG, 0 a basic Income.")
 
@@ -157,7 +152,6 @@ danger(md"Don't forget to commit your saved notebook to your repository.")
 # ╟─627959cf-6a7c-4f87-82f7-406f5c7eb76a
 # ╟─a1318fc7-9d20-4c00-8a89-b5ae90b5cc0c
 # ╟─aa9d43a0-a45c-48bd-ae28-7b525be605ce
-# ╠═d088bbfb-6c72-465e-a8da-91a91d92e3f2
 # ╟─8cff2a32-35b5-4330-8bfe-0dc604438dba
 # ╟─67813f80-f4bd-41b3-8963-937e015614c5
 # ╟─bada072d-d79b-4bfe-a546-d5df15bf2ea1
