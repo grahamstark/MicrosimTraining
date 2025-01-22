@@ -86,7 +86,7 @@ maximum( udata.eq_bhc_net_income)
 censdata = udata[ (udata.eq_bhc_net_income .< 1000) .& (udata.eq_bhc_net_income .> 0), :]
 
 # ╔═╡ 53cb5179-5d5b-4ec7-af1d-7bee173a8064
-density( censdata.eq_bhc_net_income; weights=udata.weight)
+hist( censdata.eq_bhc_net_income; weights=censdata.weight, color=:pink, bins=40)
 
 # ╔═╡ b8fd6f10-24ce-4720-8667-9095c1216d2d
 begin
@@ -229,7 +229,7 @@ begin
 end 
 
 # ╔═╡ Cell order:
-# ╟─72c7843c-3698-4045-9c83-2ad391097ad8
+# ╠═72c7843c-3698-4045-9c83-2ad391097ad8
 # ╟─67980aee-51d2-472d-9099-8be80ecae212
 # ╟─c80f2400-0019-48cc-aaf0-1f8a30813205
 # ╟─adec5729-3466-44ff-b5a2-3088b6ab3701
