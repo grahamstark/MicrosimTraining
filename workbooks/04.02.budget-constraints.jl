@@ -29,10 +29,6 @@ begin
 	# initialise parameters - 2024 system, annual and pre-weeklyised system
 	const settings = Settings()
 	const EXAMPLE_HH = ExampleHouseholdGetter.get_household("example_hh3")
-	const BASE_SYS = 
-		get_default_system_for_fin_year( 2024; scotland=true, autoweekly = true )
-	const ANNUAL_BASE_SYS = 
-		get_default_system_for_fin_year( 2024; scotland=true, autoweekly = false )
 	const DEFAULT_WAGE = 10.0
 	const BASE_BC = BCCalcs.makebc(
         EXAMPLE_HH, 
