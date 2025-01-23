@@ -7,14 +7,58 @@ using InteractiveUtils
 # ╔═╡ bb68dd04-a816-11ee-2c0e-c51a7812feb2
 using Downloads,DataFrames, CSV, CairoMakie, Formatting
 
+# ╔═╡ a8513e8a-90a4-49b7-b841-44f3dec7986b
+md"""
+# Modelling tax and benefit sytems
+
+Some intro here
+"""
+
+
+# ╔═╡ 50a702be-e8e9-474f-80c4-4ae2f47e78a5
+md"""
+## The Data
+
+For this exercise we will use a publicly available subset of the UK Living Costs and Food Survey (2005-6). It has been pushed through [**synthpop**](https://synthpop.org.uk/), a tool to create fake but realistic-looking data.
+
+The LCF data is loaded  into a DataFrame (a spreadsheet-like structure, like Python Pandas or R Tibble)
+"""
+
+
 # ╔═╡ 9dbbefd8-faf1-4b30-b86d-5e296d0c25a5
 begin
-# this a publicly available subset of a rather old UK Living Costs and Food Survey (2005-6), pushed through synthpop
-url="https://virtual-worlds.scot/ou/uk-lcf-subset-2005-6.csv"
-
-# load LCF into a DataFrame (a spreadsheet-like structure, like Python Pandas, R Tibble)
-lcf = CSV.File(Downloads.download(url)) |> DataFrame
+	url="https://virtual-worlds.scot/ou/uk-lcf-subset-2005-6.csv"
+	lcf = CSV.File(Downloads.download(url)) |> DataFrame
 end
+
+# ╔═╡ 0b8d11e9-f109-4473-92b5-3a63293808d8
+md"""
+## The tax and benefit system
+
+We begin by defining a very simple tax and benefit system (**tbsys**). This system:
+
+- taxes income at a single rate of 50%
+- gives everyone a tax-free allowance of £1,000 per year
+- has a single benefit of £100 per child per week
+"""
+
+# ╔═╡ 9d054541-d243-49f4-89a0-d3d246900af6
+begin
+	n = size(lcf)[1] #the number of rows, i.e. of houselholds, in the table
+	allow = 1000/52
+	rate = 50/100.0
+	ben = 100
+	weight = 26_000_000/n
+end
+
+# ╔═╡ 1fda7fd8-01a8-4651-9ae5-a56be2576eb0
+md"""
+The **tbsys** function below calculates, for a single househould (i.e. row) in the above table:
+- the _taxable_ income
+- the actual _tax_ to be paid at the given tax _rate_
+- any _benefit_ owed
+- the _net_ household income after taxes and benefits have been applied
+"""
 
 # ╔═╡ 5001d6a3-438b-4d6c-8477-4d072ce885ad
 begin
@@ -27,21 +71,21 @@ begin
 	end
 end
 
-# ╔═╡ 9d054541-d243-49f4-89a0-d3d246900af6
-begin
-	n = size(lcf)[1]
-	allow = 1000/52
-	rate = 50/100.0
-	ben = 100
-	weight = 26_000_000/n
-end
+# ╔═╡ c4aae394-9964-4d8b-b23c-c07027eae3e0
+md"""
+## The impact of our tax and benefit system on households
+
+Below, we calculate the net income for every household after taxes and benefits have been applied.
+The figures are multiplied by 52 at the end because LCF data is about weekly income/spending and we want a yearly (52 weeks) view.
+"""
 
 # ╔═╡ b8dddd76-71da-4f82-b043-d66eb8965e41
 begin
-	
+	#create "empty" (with zeros) arrays to contain the household data after tax and benefits are calculated
 	taxes = zeros(n)
 	bens = zeros(n)
 	net = zeros(n)
+	# now calculate tax, benefits and net income for every household
 	for i in 1:n
 		hh = lcf[i,:]
 		taxes[i], bens[i], net[i] = tbsys(hh,allow,rate,ben)
@@ -51,14 +95,24 @@ begin
 	net .*= 52
 end
 
+# ╔═╡ 7de2a5f5-3287-44f5-a7cc-c7501fc4e615
+md"""
+## What is the system doing?
+
+You can see from the calculations below that the system is collecting £319bn in taxes and paying out £75bn in benefits. Total net income stands at 479 billion.  
+
+(the _weight_ parameter, defined above, represents the number of households in the UK (~24 million) that each household in the data sample stands for)
+"""
+
 # ╔═╡ ba077f9e-0551-4b49-a555-24c66907afe4
 begin
 	ninc = sum(net)
 	rev = sum(taxes)*weight/1000_000_000
 	bent = sum(bens)*weight/1000_000_000
+	nincstr = format( (ninc*weight/1000_000_000), commas=true, precision=0 )
 	revstr=format( rev, commas=true, precision=0 )
 	benstr = format( bent, commas=true, precision=0 )
-	(revstr,benstr)
+	(nincstr,revstr,benstr)
 end
 
 # ╔═╡ 1493f6d7-f405-4b34-b39f-d7b370adc812
@@ -67,9 +121,24 @@ end
 	
 	taxes = **£$(revstr)**bn pa
 	
-	benefits= **£$(benstr)**bn pa 
+	benefits= **£$(benstr)**bn pa
+	
+	total net income = **£$(nincstr)**bn pa
 	
 	"""
+
+# ╔═╡ f1056a3e-5209-446b-be10-71e47a973a47
+md"""
+## But is it a fair system?
+
+That is a difficult question to answer because it depends on the definition of what is "fair". 
+
+But following our simplified view you could say that a "fair" distribution of net (i.e. disposable) income would be every household having an equal share of the total pie.
+
+In the chart below, where the X axis represents the percentage of the total population and the Y axis represents the share of the pie,  that "perfectly fair" distribution is represented by the blue line. On any point of the line, x% of the population has exactly x% of the net income.
+
+The red line represents the data from our LCF survey. This is a much more unequal distribution. For example you can see that the bottom 50% of the population has roughly 25% of the income, and around 70% of the population share half of it. Which means that the other 30% have the other half. 
+"""
 
 # ╔═╡ 884d369a-e821-4630-ab97-07fcddeaf58e
 begin
@@ -77,6 +146,16 @@ begin
 	lines!(ax,[0,1],[0,1],color=:blue)
 	f
 end
+
+# ╔═╡ 06a8caed-a7a1-4f90-8d3b-eb28ab2b118c
+
+
+# ╔═╡ d23b701d-7f17-45a8-971d-e143fd95dca3
+md"""
+## Conclusion
+
+This is a deliberately simplified model of a tax and benefit system. In reality the UK system (or any other country's) has a bewildering array of taxes, tax bands, benefits and exemptions. But, at least in theory, these can be modelled using similar techniques as the ones described above. And then we can make changes to the model and try to decide whether we think it is a "fairer" or better way of taking money away from some people (taxes) and giving it to others (benefits).
+"""
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
@@ -98,7 +177,7 @@ Formatting = "~0.4.2"
 PLUTO_MANIFEST_TOML_CONTENTS = """
 # This file is machine-generated - editing it directly is not advised
 
-julia_version = "1.11.2"
+julia_version = "1.11.1"
 manifest_format = "2.0"
 project_hash = "17c504d1142bdd66a5352493d315d35571af7311"
 
@@ -1685,12 +1764,21 @@ version = "3.6.0+0"
 
 # ╔═╡ Cell order:
 # ╠═bb68dd04-a816-11ee-2c0e-c51a7812feb2
+# ╟─a8513e8a-90a4-49b7-b841-44f3dec7986b
+# ╟─50a702be-e8e9-474f-80c4-4ae2f47e78a5
 # ╠═9dbbefd8-faf1-4b30-b86d-5e296d0c25a5
+# ╟─0b8d11e9-f109-4473-92b5-3a63293808d8
+# ╠═9d054541-d243-49f4-89a0-d3d246900af6
+# ╟─1fda7fd8-01a8-4651-9ae5-a56be2576eb0
 # ╠═5001d6a3-438b-4d6c-8477-4d072ce885ad
+# ╟─c4aae394-9964-4d8b-b23c-c07027eae3e0
 # ╠═b8dddd76-71da-4f82-b043-d66eb8965e41
+# ╟─7de2a5f5-3287-44f5-a7cc-c7501fc4e615
 # ╠═ba077f9e-0551-4b49-a555-24c66907afe4
 # ╟─1493f6d7-f405-4b34-b39f-d7b370adc812
+# ╟─f1056a3e-5209-446b-be10-71e47a973a47
 # ╠═884d369a-e821-4630-ab97-07fcddeaf58e
-# ╠═9d054541-d243-49f4-89a0-d3d246900af6
+# ╠═06a8caed-a7a1-4f90-8d3b-eb28ab2b118c
+# ╟─d23b701d-7f17-45a8-971d-e143fd95dca3
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
