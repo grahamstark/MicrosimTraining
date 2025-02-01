@@ -26,12 +26,15 @@ function map_pluto_inputs( pps :: NamedTuple)::TaxBenefitSystem
     sys2 = deepcopy(ANNUAL_BASE_SYS)
     sys2.it.personal_allowance = pps.tax_allowance
     itdiff = sys2.it.non_savings_rates[2] - pps.income_tax_rate
-    sys2.it.non_savings_rates .-= itdiff
+    n = length(sys2.it.non_savings_rates)
+    for i in 1:n 
+        sys2.it.non_savings_rates[i] = max(0.0, sys2.it.non_savings_rates[i]-itdiff)
+    end
     sys2.uc.taper = pps.uc_taper
     sys2.nmt_bens.child_benefit.first_child = pps.child_benefit
-    sys2.nmt_bens.pensions.new_state_pension = pps.pension
     sys2.nmt_bens.pensions.cat_a *= 
         (pps.pension/sys2.nmt_bens.pensions.new_state_pension)
+    sys2.nmt_bens.pensions.new_state_pension = pps.pension
     weeklyise!( sys2 )
     return sys2
 end
@@ -72,19 +75,19 @@ function make_pluto_combined_input_fields( pps :: NamedTuple )
 		inputs = [
             md"""
             Tax Allowance: $(
-            Child( "tax_allowance", NumberField(0:10:25000,default=pps.tax_allowance)))(£p.a.; *default $(fpa(pps.tax_allowance))*)
+            Child( "tax_allowance", confirm(NumberField(0:10:25000,default=pps.tax_allowance))))(£p.a.; *default $(fpa(pps.tax_allowance))*)
             """,
             md"""
-            Income Tax Rate: $(Child("income_tax_rate", NumberField(0:1:100,default=pps.income_tax_rate))) (%; *default $(fc(pps.income_tax_rate))*)
+            Income Tax Rate: $(Child("income_tax_rate", confirm(NumberField(0:1:100,default=pps.income_tax_rate)))) (%; *default $(fc(pps.income_tax_rate))*)
             """,
             md"""
-            Benefit Withdrawal Rate: $(Child("uc_taper", NumberField(0:1:100,default=pps.uc_taper))) (%; *default $(fc(pps.uc_taper))*)
+            Benefit Withdrawal Rate: $(Child("uc_taper", confirm(NumberField(0:1:100,default=pps.uc_taper)))) (%; *default $(fc(pps.uc_taper))*)
             """,
             md"""
-            Child Benefit: $(Child("child_benefit", NumberField(0:0.01:100,default=pps.child_benefit))) (£s pw; *default $(fpw(pps.child_benefit))*)
+            Child Benefit: $(Child("child_benefit", confirm(NumberField(0:0.01:100,default=pps.child_benefit)))) (£s pw; *default $(fpw(pps.child_benefit))*)
             """,
             md"""
-            Pension: $(Child("pension", NumberField(0:0.01:500,default=pps.pension))) (£s pw; *default $(fpw(pps.pension))*)
+            Pension: $(Child("pension", confirm(NumberField(0:0.01:500,default=pps.pension)))) (£s pw; *default $(fpw(pps.pension))*)
             """]
 
         md"""
@@ -138,7 +141,7 @@ function make_short_summary( summary :: NamedTuple )::NamedTuple
     else 
         0 # "fine"
     end
-    povexess = 0.03 - prch
+    povexess = 0.03 + prch
     povpts = if povexess > 0.04
         4 # "too high"
     elseif povexess > 0.01

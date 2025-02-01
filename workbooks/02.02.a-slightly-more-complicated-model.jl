@@ -22,7 +22,7 @@ begin
 		taxable = max(hh.hhincome-allow,0)
 		tax = taxable*rate
 		benefit = hh.children*ben
-		net = hh.hhincome + ben - tax
+		net = hh.hhincome + benefit - tax
 		return (;tax,benefit,net)
 	end
 end
@@ -30,9 +30,9 @@ end
 # ╔═╡ 9d054541-d243-49f4-89a0-d3d246900af6
 begin
 	n = size(lcf)[1]
-	allow = 1000/52
-	rate = 50/100.0
-	ben = 100
+	allow = 10000/52
+	rate = 0/100.0
+	ben = 1000
 	weight = 26_000_000/n
 end
 
@@ -98,7 +98,7 @@ Formatting = "~0.4.2"
 PLUTO_MANIFEST_TOML_CONTENTS = """
 # This file is machine-generated - editing it directly is not advised
 
-julia_version = "1.11.2"
+julia_version = "1.11.3"
 manifest_format = "2.0"
 project_hash = "17c504d1142bdd66a5352493d315d35571af7311"
 

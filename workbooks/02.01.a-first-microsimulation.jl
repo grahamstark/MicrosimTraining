@@ -423,7 +423,7 @@ PovertyAndInequalityMeasures = "~1.0.10"
 PLUTO_MANIFEST_TOML_CONTENTS = """
 # This file is machine-generated - editing it directly is not advised
 
-julia_version = "1.11.2"
+julia_version = "1.11.3"
 manifest_format = "2.0"
 project_hash = "66f534b15f994be60df5f6c61613cf2eed8de386"
 
@@ -2078,7 +2078,7 @@ version = "3.6.0+0"
 """
 
 # ╔═╡ Cell order:
-# ╠═b576d212-a75c-11ee-1ed4-e35ed870cd2e
+# ╟─b576d212-a75c-11ee-1ed4-e35ed870cd2e
 # ╠═b85977e3-6ca4-4a92-91b6-42ac6f7eb995
 # ╟─9e0535a9-2f03-46de-ba95-28bd2e3e46e9
 # ╠═d54b0c9e-b188-4038-988d-622f23db83c4
