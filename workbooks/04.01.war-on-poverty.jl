@@ -59,7 +59,7 @@ runs = [];
 end;
 
 # ╔═╡ a1318fc7-9d20-4c00-8a89-b5ae90b5cc0c
-md"## Poverty Transitions"
+md"### Poverty Transitions"
 
 # ╔═╡ 7462d54c-aed5-4245-a206-f9f6641148b5
 @bind reset PlutoUI.Button("Reset")
@@ -75,6 +75,12 @@ begin
 reset
 @bind pps make_pluto_combined_input_fields()
 end
+
+# ╔═╡ 8cff2a32-35b5-4330-8bfe-0dc604438dba
+hint(md"Try changing the withdrawal rate. A rate of 100% gives you a MIG, 0 a basic Income.")
+
+# ╔═╡ 67813f80-f4bd-41b3-8963-937e015614c5
+danger(md"Don't forget to commit your saved notebook to your repository.")
 
 # ╔═╡ 627959cf-6a7c-4f87-82f7-406f5c7eb76a
 # ╠═╡ show_logs = false
@@ -129,7 +135,7 @@ begin
 	    cp2 = fp(c2.prop)
 		dcp = fp(c2.prop-c1.prop)
 	md"""
-## Poverty Measures
+### Poverty Measures
 
 * **Count:** before: **$(povrate1)** after: **$(povrate2)** change: **$(dpovrate)**
 * **Gap:** before: **$(povgap1)** after: **$(povgap2)** change: **$(dpovgap)**
@@ -156,12 +162,6 @@ begin
 	s
 end
 
-# ╔═╡ 8cff2a32-35b5-4330-8bfe-0dc604438dba
-hint(md"Try changing the withdrawal rate. A rate of 100% gives you a MIG, 0 a basic Income.")
-
-# ╔═╡ 67813f80-f4bd-41b3-8963-937e015614c5
-danger(md"Don't forget to commit your saved notebook to your repository.")
-
 # ╔═╡ bada072d-d79b-4bfe-a546-d5df15bf2ea1
 # summary
 
@@ -174,7 +174,6 @@ danger(md"Don't forget to commit your saved notebook to your repository.")
 # ╟─df4ccba6-6e0e-4044-94ce-b89e3c31d7ec
 # ╠═d2188dd8-1240-4fdd-870b-dcd15e91f4f2
 # ╟─2fe134f3-6d6d-4109-a2f9-faa583be1189
-# ╟─627959cf-6a7c-4f87-82f7-406f5c7eb76a
 # ╟─a1318fc7-9d20-4c00-8a89-b5ae90b5cc0c
 # ╟─aa9d43a0-a45c-48bd-ae28-7b525be605ce
 # ╟─4f94f598-8ffc-40c1-9911-bc0afad14e84
@@ -182,4 +181,5 @@ danger(md"Don't forget to commit your saved notebook to your repository.")
 # ╟─7462d54c-aed5-4245-a206-f9f6641148b5
 # ╟─8cff2a32-35b5-4330-8bfe-0dc604438dba
 # ╟─67813f80-f4bd-41b3-8963-937e015614c5
+# ╠═627959cf-6a7c-4f87-82f7-406f5c7eb76a
 # ╟─bada072d-d79b-4bfe-a546-d5df15bf2ea1
