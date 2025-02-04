@@ -76,6 +76,9 @@ reset
 @bind pps make_pluto_combined_input_fields()
 end
 
+# ╔═╡ a087b3b5-af79-419c-927a-9cbf61a3c538
+pps
+
 # ╔═╡ 8cff2a32-35b5-4330-8bfe-0dc604438dba
 hint(md"Try changing the withdrawal rate. A rate of 100% gives you a MIG, 0 a basic Income.")
 
@@ -179,6 +182,7 @@ end
 # ╟─4f94f598-8ffc-40c1-9911-bc0afad14e84
 # ╟─58d7230e-36da-48e5-a445-777cddbd640b
 # ╟─7462d54c-aed5-4245-a206-f9f6641148b5
+# ╠═a087b3b5-af79-419c-927a-9cbf61a3c538
 # ╟─8cff2a32-35b5-4330-8bfe-0dc604438dba
 # ╟─67813f80-f4bd-41b3-8963-937e015614c5
 # ╠═627959cf-6a7c-4f87-82f7-406f5c7eb76a
