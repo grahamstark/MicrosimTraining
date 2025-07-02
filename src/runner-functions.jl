@@ -358,6 +358,17 @@ function obs_processor( progress::Progress )
 	phase = progress.phase
 end 
 
+function get_default_settings()::Settings
+    settings = Settings()
+    
+    settings.weighting_strategy = use_runtime_computed_weights
+    settings.included_data_years = [2019,2021,2022]
+    settings.lower_multiple=0.640000000000000
+    settings.upper_multiple=5.86000000000000
+    settings.requested_threads = 4
+    settings
+end
+
 observer_function = on( obs_processor, run_progress )
 
 """
@@ -376,14 +387,14 @@ function run_model(
     sys2 = map_pluto_inputs( pps )
     sys = [BASE_SYS, sys2]
     running_total = 0
-    settings = Settings()
+    settings = get_default_settings()
     settings.num_households, settings.num_people = 
 	    FRSHouseholdGetter.initialise( settings; reset=false )
 
     results = Runner.do_one_run( settings, sys, run_progress )
     summary = summarise_frames!( results, settings )
     short_summary = make_short_summary( summary )
-    summary, results, short_summary
+    summary, results, short_summary, settings
 end
 
 	

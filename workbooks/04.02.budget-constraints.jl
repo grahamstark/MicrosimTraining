@@ -61,9 +61,9 @@ begin
 			title="Budget Constraint", 
 			limits=((0,xmax),(0,ymax))
 		)
-		lines!(ax,[0,xmax],[0,ymax]; color=:lightgrey, label="Gross=Net")
 		sc = lines!(ax, base_bc.gross, base_bc.net;label = "Before")
 		sys_ln = lines!(ax, sys_bc.gross, sys_bc.net;label = "After")
+		lines!(ax,[0,xmax],[0,ymax]; color=:lightgrey, label="Gross=Net")
 		axislegend(ax; position = :rb)
 		f
 	end

@@ -98,7 +98,7 @@ Formatting = "~0.4.2"
 PLUTO_MANIFEST_TOML_CONTENTS = """
 # This file is machine-generated - editing it directly is not advised
 
-julia_version = "1.11.3"
+julia_version = "1.11.2"
 manifest_format = "2.0"
 project_hash = "17c504d1142bdd66a5352493d315d35571af7311"
 

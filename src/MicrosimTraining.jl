@@ -77,21 +77,11 @@ const MAINDIR=artifact"main_data"
 
 include("runner-functions.jl")
 
-
 function __init__()
     CairoMakie.activate!()
-    settings = Settings()
-
-    settings = Settings()
+    settings = get_default_settings() 
     settings.num_households, settings.num_people = 
 	    FRSHouseholdGetter.initialise( settings; reset=false )
-
-    # pre loading data doesn't work for Pluto, sadly
-    # settings = Settings()
-    # settings.included_data_years = [2019,2020,2021]
-    # settings.weighting_strategy = use_runtime_computed_weights
-    # FRSHouseholdGetter.initialise( settings )
-    # ExampleHouseholdGetter.initialise( get_settings() )
 end 
 
 end

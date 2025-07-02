@@ -1,5 +1,5 @@
 ### A Pluto.jl notebook ###
-# v0.20.4
+# v0.20.13
 
 using Markdown
 using InteractiveUtils
@@ -7,7 +7,7 @@ using InteractiveUtils
 # This Pluto notebook uses @bind for interactivity. When running this notebook outside of Pluto, the following 'mock version' of @bind gives bound variables a default value (instead of an error).
 macro bind(def, element)
     #! format: off
-    quote
+    return quote
         local iv = try Base.loaded_modules[Base.PkgId(Base.UUID("6e696c72-6542-2067-7265-42206c756150"), "AbstractPlutoDingetjes")].Bonds.initial_value catch; b -> missing; end
         local el = $(esc(element))
         global $(esc(def)) = Core.applicable(Base.get, el) ? Base.get(el) : iv(el)
@@ -87,7 +87,7 @@ danger(md"Don't forget to commit your saved notebook to your repository.")
 
 # ╔═╡ 627959cf-6a7c-4f87-82f7-406f5c7eb76a
 # ╠═╡ show_logs = false
-summary, data, short_summary = run_model( pps );
+summary, data, short_summary, settings = run_model( pps );
 
 # ╔═╡ d069cd4d-7afc-429f-a8fd-3f1c0a640117
 begin
@@ -165,25 +165,29 @@ begin
 	s
 end
 
+# ╔═╡ 1a367aee-ee91-4e6d-af39-769124b9d110
+settings
+
 # ╔═╡ bada072d-d79b-4bfe-a546-d5df15bf2ea1
 # summary
 
 # ╔═╡ Cell order:
-# ╟─3a2a55d5-8cf8-4d5c-80a7-84a03923bba8
-# ╟─72c7843c-3698-4045-9c83-2ad391097ad8
+# ╠═3a2a55d5-8cf8-4d5c-80a7-84a03923bba8
+# ╠═72c7843c-3698-4045-9c83-2ad391097ad8
 # ╟─5c5b2176-148b-4f5c-a02c-5e9e82df11c3
-# ╟─d069cd4d-7afc-429f-a8fd-3f1c0a640117
+# ╠═d069cd4d-7afc-429f-a8fd-3f1c0a640117
 # ╟─0d8df3e0-eeb9-4e61-9298-b735e9dcc284
 # ╟─df4ccba6-6e0e-4044-94ce-b89e3c31d7ec
 # ╠═d2188dd8-1240-4fdd-870b-dcd15e91f4f2
-# ╟─2fe134f3-6d6d-4109-a2f9-faa583be1189
+# ╠═2fe134f3-6d6d-4109-a2f9-faa583be1189
 # ╟─a1318fc7-9d20-4c00-8a89-b5ae90b5cc0c
 # ╟─aa9d43a0-a45c-48bd-ae28-7b525be605ce
-# ╟─4f94f598-8ffc-40c1-9911-bc0afad14e84
+# ╠═4f94f598-8ffc-40c1-9911-bc0afad14e84
 # ╟─58d7230e-36da-48e5-a445-777cddbd640b
 # ╟─7462d54c-aed5-4245-a206-f9f6641148b5
 # ╠═a087b3b5-af79-419c-927a-9cbf61a3c538
 # ╟─8cff2a32-35b5-4330-8bfe-0dc604438dba
 # ╟─67813f80-f4bd-41b3-8963-937e015614c5
 # ╠═627959cf-6a7c-4f87-82f7-406f5c7eb76a
+# ╠═1a367aee-ee91-4e6d-af39-769124b9d110
 # ╟─bada072d-d79b-4bfe-a546-d5df15bf2ea1
