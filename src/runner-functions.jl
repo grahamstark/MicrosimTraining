@@ -247,8 +247,8 @@ function draw_mr_hists( systems :: Vector, results :: NamedTuple )
     f
 end
 
-PRE_COLOUR = (:lightsteelblue, 0.5)
-POST_COLOUR = (:gold2, 0.5)
+const PRE_COLOUR = (:lightsteelblue, 0.5)
+const POST_COLOUR = (:gold2, 0.5)
 
 function draw_summary_graphs( settings::Settings, summary :: NamedTuple, data::NamedTuple )::Figure
     f = Figure()
@@ -268,22 +268,22 @@ function draw_summary_graphs( settings::Settings, summary :: NamedTuple, data::N
     barplot!( ax2, dch)
     ax3 = Axis(f[2,1]; title="Income Distribution", xlabel="£s pw", ylabel="")
     density!( ax3, data.indiv[1].eq_bhc_net_income; 
-        weights=data.indiv[1].weight, label="Before", PRE_COLOUR )
+        weights=data.indiv[1].weight, label="Before", color=PRE_COLOUR )
     density!( ax3, data.indiv[2].eq_bhc_net_income; 
-        weights=data.indiv[2].weight, label="After", POST_COLOUR )
+        weights=data.indiv[2].weight, label="After", color=POST_COLOUR )
     if settings.do_marginal_rates 
         ax4 = Axis(f[2,2]; title="METRs", xlabel="%", ylabel="")
         for i in 1:2
-            ind = results.indiv[i]
+            ind = data.indiv[i]
             m1=ind[.! ismissing.(ind.metr),:]
             m1.metr = Float64.( m1.metr ) # Coerce away from missing type.
             m1.metr = min.( 200.0, m1.metr )
-            color = if i == 1
+            colour = if i == 1
                 PRE_COLOUR
             else 
                 POST_COLOUR
             end
-            density!( ax4, m1.metr; label=systems[i].name, weights=m1.weight)
+            density!( ax4, m1.metr; label=systems[i].name, weights=m1.weight, color=colour)
         end
     end
     f

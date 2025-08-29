@@ -106,8 +106,11 @@ end
 
 # ╔═╡ d2188dd8-1240-4fdd-870b-dcd15e91f4f2
 begin
-	draw_summary_graphs( summary, data )
+	draw_summary_graphs( settings, summary, data )
 end
+
+# ╔═╡ a7d9d303-085f-4121-a11e-6585f589c242
+settings.do_marginal_rates = true
 
 # ╔═╡ 2fe134f3-6d6d-4109-a2f9-faa583be1189
 begin
@@ -164,12 +167,13 @@ Show( MIME"text/html"(), format_gainlose("By Numbers of Children",summary.gain_l
 
 # ╔═╡ Cell order:
 # ╟─3a2a55d5-8cf8-4d5c-80a7-84a03923bba8
-# ╟─72c7843c-3698-4045-9c83-2ad391097ad8
+# ╠═72c7843c-3698-4045-9c83-2ad391097ad8
 # ╠═5c5b2176-148b-4f5c-a02c-5e9e82df11c3
 # ╟─d069cd4d-7afc-429f-a8fd-3f1c0a640117
 # ╟─0d8df3e0-eeb9-4e61-9298-b735e9dcc284
 # ╟─df4ccba6-6e0e-4044-94ce-b89e3c31d7ec
 # ╠═d2188dd8-1240-4fdd-870b-dcd15e91f4f2
+# ╠═a7d9d303-085f-4121-a11e-6585f589c242
 # ╟─2fe134f3-6d6d-4109-a2f9-faa583be1189
 # ╟─a1318fc7-9d20-4c00-8a89-b5ae90b5cc0c
 # ╠═aa9d43a0-a45c-48bd-ae28-7b525be605ce
