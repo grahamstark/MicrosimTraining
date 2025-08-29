@@ -147,9 +147,6 @@ begin
 	Show(MIME"text/html"(), t )
 end
 
-# ╔═╡ 72f1fcfd-6c61-4d85-af52-77ad294847e0
-settings
-
 # ╔═╡ feed5169-225f-4e95-b279-403dff21539d
 summary.short_income_summary
 
@@ -167,8 +164,8 @@ Show( MIME"text/html"(), format_gainlose("By Numbers of Children",summary.gain_l
 
 # ╔═╡ Cell order:
 # ╟─3a2a55d5-8cf8-4d5c-80a7-84a03923bba8
-# ╠═72c7843c-3698-4045-9c83-2ad391097ad8
-# ╠═5c5b2176-148b-4f5c-a02c-5e9e82df11c3
+# ╟─72c7843c-3698-4045-9c83-2ad391097ad8
+# ╟─5c5b2176-148b-4f5c-a02c-5e9e82df11c3
 # ╟─d069cd4d-7afc-429f-a8fd-3f1c0a640117
 # ╟─0d8df3e0-eeb9-4e61-9298-b735e9dcc284
 # ╟─df4ccba6-6e0e-4044-94ce-b89e3c31d7ec
@@ -179,7 +176,6 @@ Show( MIME"text/html"(), format_gainlose("By Numbers of Children",summary.gain_l
 # ╠═aa9d43a0-a45c-48bd-ae28-7b525be605ce
 # ╟─58d7230e-36da-48e5-a445-777cddbd640b
 # ╟─7462d54c-aed5-4245-a206-f9f6641148b5
-# ╠═72f1fcfd-6c61-4d85-af52-77ad294847e0
 # ╠═627959cf-6a7c-4f87-82f7-406f5c7eb76a
 # ╠═feed5169-225f-4e95-b279-403dff21539d
 # ╟─6bf8bfc0-1221-4055-9c65-ea9b04802321
