@@ -34,7 +34,7 @@ using UUIDs
 @reexport using CairoMakie
 @reexport using Images: load
 @reexport using StatsBase
-
+@reexport using PrettyTables
 @reexport using Pluto
 @reexport using PlutoLinks
 @reexport using PlutoHooks
@@ -68,6 +68,7 @@ using UUIDs
 @reexport using ScottishTaxBenefitModel.STBOutput
 @reexport using ScottishTaxBenefitModel.STBParameters
 @reexport using ScottishTaxBenefitModel.Utils
+@reexport using ScottishTaxBenefitModel.Weighting
 
 using ArtifactUtils
 using Preferences
@@ -76,6 +77,7 @@ export MAINDIR
 const MAINDIR=artifact"main_data"
 
 include("runner-functions.jl")
+include( "fes-functions.jl")
 
 function __init__()
     CairoMakie.activate!()

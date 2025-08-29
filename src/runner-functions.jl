@@ -6,11 +6,12 @@ export run_model
 export BASE_SYS, ANNUAL_BASE_SYS, DEFAULT_PLUTO_INPUTS
 export make_pluto_inputs, map_pluto_inputs
 export make_pluto_combined_input_fields
+export format_gainlose
 
 const BASE_SYS = 
-    get_default_system_for_fin_year( 2024; scotland=true, autoweekly = true )
+    get_default_system_for_fin_year( 2025; scotland=true, autoweekly = true )
 const ANNUAL_BASE_SYS = 
-    get_default_system_for_fin_year( 2024; scotland=true, autoweekly = false )
+    get_default_system_for_fin_year( 2025; scotland=true, autoweekly = false )
     
 function make_pluto_inputs(sys2::TaxBenefitSystem)::NamedTuple
     sys2 = deepcopy(ANNUAL_BASE_SYS)
@@ -359,11 +360,10 @@ function obs_processor( progress::Progress )
 end 
 
 function get_default_settings()::Settings
-    settings = Settings()
-    
+    settings = Settings()    
     settings.weighting_strategy = use_runtime_computed_weights
-    settings.included_data_years = [2019,2021,2022]
-    settings.lower_multiple=0.640000000000000
+    settings.included_data_years = [2019,2021,2022,2023]
+    settings.lower_multiple=0.620000000000000
     settings.upper_multiple=5.86000000000000
     settings.requested_threads = 4
     settings
@@ -396,6 +396,3 @@ function run_model(
     short_summary = make_short_summary( summary )
     summary, results, short_summary, settings
 end
-
-	
-	
