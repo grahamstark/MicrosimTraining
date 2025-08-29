@@ -30,7 +30,6 @@ Preferences = "21216c6a-2e73-6563-6e65-726566657250"
 PrettyTables = "08abe8d2-0d0c-5749-adfa-8a2ac140af0d"
 ProgressLogging = "33c8b6b6-d38a-422a-b730-caa89a2f386c"
 Reexport = "189a3867-3050-52da-a836-e630ba90ab69"
-Revise = "295af30f-e4ad-537b-8983-00126c2a3abe"
 ScottishTaxBenefitModel = "a734f2ee-4b7f-478f-84ca-797081d39f6e"
 ShortCodes = "f62ebe17-55c5-4640-972f-b59c0dd11ccf"
 StatsBase = "2913bbd2-ae8a-5f71-8c99-4fb6c76f3a91"
@@ -64,13 +63,15 @@ Preferences = "1,2"
 PrettyTables = "2,3"
 ProgressLogging = "0.1,0.2"
 Reexport = "1,2"
-Revise = "3,4"
 ScottishTaxBenefitModel = "0,1"
 ShortCodes = "0,1"
 StatsBase = "0,1"
 SurveyDataWeighting = "1,2"
 UUIDs = "1,2"
 julia = "1"
+
+[sources]
+ScottishTaxBenefitModel = {url = "https://github.com/grahamstark/ScottishTaxBenefitModel.jl"}
 
 [extras]
 Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
@@ -80,7 +81,7 @@ public-artifact_server_upload = "triplepc.northumbria.ac.uk:/var/www/conjoint/mi
 public-artifact_server_url = "https://triplepc.northumbria.ac.uk/microsim_training/artifacts/"
 
 [preferences.ScottishTaxBenefitModel]
-included_data_years = [2019, 2020, 2021]
+included_data_years = [2019, 2020, 2021, 2022]
 means_tested_routing = "uc_full"
 requested_threads = 4
 weighting_strategy = "use_runtime_computed_weights"
