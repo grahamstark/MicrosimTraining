@@ -278,12 +278,12 @@ function draw_summary_graphs( settings::Settings, summary :: NamedTuple, data::N
             m1=ind[.! ismissing.(ind.metr),:]
             m1.metr = Float64.( m1.metr ) # Coerce away from missing type.
             m1.metr = min.( 200.0, m1.metr )
-            colour = if i == 1
-                PRE_COLOUR
+            label, colour = if i == 1
+                "Before", PRE_COLOUR
             else 
-                POST_COLOUR
+                "After", POST_COLOUR
             end
-            density!( ax4, m1.metr; label=systems[i].name, weights=m1.weight, color=colour)
+            density!( ax4, m1.metr; label, weights=m1.weight, color=colour)
         end
     end
     f
@@ -403,6 +403,7 @@ function get_default_settings()::Settings
     settings.lower_multiple=0.620000000000000
     settings.upper_multiple=5.86000000000000
     settings.requested_threads = 4
+    settings.do_marginal_rates = true
     settings
 end
 
