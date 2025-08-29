@@ -116,7 +116,7 @@ end
 
 # ╔═╡ d2188dd8-1240-4fdd-870b-dcd15e91f4f2
 begin
-	draw_summary_graphs( summary, data )
+	draw_summary_graphs( settings, summary, data )
 end
 
 # ╔═╡ 2fe134f3-6d6d-4109-a2f9-faa583be1189

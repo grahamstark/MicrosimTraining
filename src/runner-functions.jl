@@ -228,7 +228,29 @@ function make_povtrans_mat( results :: NamedTuple )::Matrix
     trans
 end
 
-function draw_summary_graphs( summary :: NamedTuple, data::NamedTuple )::Figure
+function draw_mr_hists( systems :: Vector, results :: NamedTuple )
+    f = Figure()
+    ax = Axis(f[1,1],
+        title="Marginal Effective Tax Rates", 
+        xlabel=" METRs(%)", 
+        ylabel="Freq" )
+    i = 0
+    for ind in results.indiv
+        i += 1
+        m1=ind[.! ismissing.(ind.metr),:]
+        m1.metr = Float64.( m1.metr ) # Coerce away from missing type.
+        # (correct) v. high MRs at cliff edges.
+        m1.metr = min.( 200.0, m1.metr )
+        density!( ax, m1.metr; label=systems[i].name, weights=m1.weight)
+    end
+    axislegend()
+    f
+end
+
+PRE_COLOUR = (:lightsteelblue, 0.5)
+POST_COLOUR = (:gold2, 0.5)
+
+function draw_summary_graphs( settings::Settings, summary :: NamedTuple, data::NamedTuple )::Figure
     f = Figure()
     ax1 = Axis(f[1,1]; title="Lorenz Curve", xlabel="Population Share", ylabel="Income Share")
     popshare = summary.quantiles[1][:,1]
@@ -244,11 +266,26 @@ function draw_summary_graphs( summary :: NamedTuple, data::NamedTuple )::Figure
         ylabel="Change in £s per week", xlabel="Decile" )
     dch = summary.deciles[2][:, 3] .- summary.deciles[1][:, 3]
     barplot!( ax2, dch)
-    ax3 = Axis(f[2,1:2]; title="Income Distribution", xlabel="£s pw", ylabel="")
+    ax3 = Axis(f[2,1]; title="Income Distribution", xlabel="£s pw", ylabel="")
     density!( ax3, data.indiv[1].eq_bhc_net_income; 
-        weights=data.indiv[1].weight, label="Before", color=(:lightsteelblue, 0.5))
+        weights=data.indiv[1].weight, label="Before", PRE_COLOUR )
     density!( ax3, data.indiv[2].eq_bhc_net_income; 
-        weights=data.indiv[2].weight, label="After", color=(:gold2, 0.5) )
+        weights=data.indiv[2].weight, label="After", POST_COLOUR )
+    if settings.do_marginal_rates 
+        ax4 = Axis(f[2,2]; title="METRs", xlabel="%", ylabel="")
+        for i in 1:2
+            ind = results.indiv[i]
+            m1=ind[.! ismissing.(ind.metr),:]
+            m1.metr = Float64.( m1.metr ) # Coerce away from missing type.
+            m1.metr = min.( 200.0, m1.metr )
+            color = if i == 1
+                PRE_COLOUR
+            else 
+                POST_COLOUR
+            end
+            density!( ax4, m1.metr; label=systems[i].name, weights=m1.weight)
+        end
+    end
     f
 end
 

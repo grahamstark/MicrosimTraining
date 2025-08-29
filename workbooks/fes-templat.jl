@@ -75,15 +75,6 @@ reset
 @bind pps make_pluto_combined_input_fields()
 end
 
-# ╔═╡ a087b3b5-af79-419c-927a-9cbf61a3c538
-pps
-
-# ╔═╡ 8cff2a32-35b5-4330-8bfe-0dc604438dba
-hint(md"Try changing the withdrawal rate. A rate of 100% gives you a MIG, 0 a basic Income.")
-
-# ╔═╡ 67813f80-f4bd-41b3-8963-937e015614c5
-danger(md"Don't forget to commit your saved notebook to your repository.")
-
 # ╔═╡ 627959cf-6a7c-4f87-82f7-406f5c7eb76a
 # ╠═╡ show_logs = false
 summary, data, short_summary, settings = run_model( pps );
@@ -153,16 +144,8 @@ begin
 	Show(MIME"text/html"(), t )
 end
 
-# ╔═╡ 4f94f598-8ffc-40c1-9911-bc0afad14e84
-begin
-	s = if pps != DEFAULT_PLUTO_INPUTS
-		# ! all_defaults(pps.tax_allowance, pps.income_tax_rate, pps.uc_taper, pps.child_benefit, pps.pension)
-		short_summary.response
-	else
-		nothing
-	end
-	s
-end
+# ╔═╡ 72f1fcfd-6c61-4d85-af52-77ad294847e0
+settings
 
 # ╔═╡ feed5169-225f-4e95-b279-403dff21539d
 summary.short_income_summary
@@ -190,12 +173,9 @@ Show( MIME"text/html"(), format_gainlose("By Numbers of Children",summary.gain_l
 # ╟─2fe134f3-6d6d-4109-a2f9-faa583be1189
 # ╟─a1318fc7-9d20-4c00-8a89-b5ae90b5cc0c
 # ╠═aa9d43a0-a45c-48bd-ae28-7b525be605ce
-# ╟─4f94f598-8ffc-40c1-9911-bc0afad14e84
 # ╟─58d7230e-36da-48e5-a445-777cddbd640b
 # ╟─7462d54c-aed5-4245-a206-f9f6641148b5
-# ╠═a087b3b5-af79-419c-927a-9cbf61a3c538
-# ╟─8cff2a32-35b5-4330-8bfe-0dc604438dba
-# ╟─67813f80-f4bd-41b3-8963-937e015614c5
+# ╠═72f1fcfd-6c61-4d85-af52-77ad294847e0
 # ╠═627959cf-6a7c-4f87-82f7-406f5c7eb76a
 # ╠═feed5169-225f-4e95-b279-403dff21539d
 # ╟─6bf8bfc0-1221-4055-9c65-ea9b04802321
