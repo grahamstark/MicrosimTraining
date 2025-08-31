@@ -24,6 +24,7 @@ using UUIDs
 
 @reexport using Agents
 @reexport using Pkg.Artifacts
+@reexport using Chairmarks
 @reexport using CSV
 @reexport using DataFrames
 @reexport using Format

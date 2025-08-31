@@ -57,27 +57,30 @@ runs = [];
 	
 end;
 
+# ╔═╡ 35e3f85f-581b-45f2-b078-fef31b917f8d
+begin
+	sys2 = deepcopy( DEFAULT_SYS)
+	sys2.it.non_savings_rates = sys2.it.non_savings_rates[1:3]
+	sys2.it.non_savings_thresholds = sys2.it.non_savings_thresholds[1:2]
+	sys2.name = "All rates above 21% abolished."
+	sys2
+end
+
+# ╔═╡ df4ccba6-6e0e-4044-94ce-b89e3c31d7ec
+begin
+# x=reset# react to run being pressed
+# nruns = incr(runs)
+end;
+
 # ╔═╡ a1318fc7-9d20-4c00-8a89-b5ae90b5cc0c
 md"### Poverty Transitions"
 
 # ╔═╡ 7462d54c-aed5-4245-a206-f9f6641148b5
 @bind reset PlutoUI.Button("Reset")
 
-# ╔═╡ df4ccba6-6e0e-4044-94ce-b89e3c31d7ec
-begin
-x=reset# react to run being pressed
-nruns = incr(runs)
-end;
-
-# ╔═╡ 58d7230e-36da-48e5-a445-777cddbd640b
-begin
-reset
-@bind pps make_pluto_combined_input_fields()
-end
-
 # ╔═╡ 627959cf-6a7c-4f87-82f7-406f5c7eb76a
 # ╠═╡ show_logs = false
-summary, data, short_summary, settings = run_model( pps );
+summary, data, short_summary, settings = fes_run( [DEFAULT_SYS, sys2] );
 
 # ╔═╡ d069cd4d-7afc-429f-a8fd-3f1c0a640117
 begin
@@ -108,9 +111,6 @@ end
 begin
 	draw_summary_graphs( settings, summary, data )
 end
-
-# ╔═╡ a7d9d303-085f-4121-a11e-6585f589c242
-settings.do_marginal_rates = true
 
 # ╔═╡ 2fe134f3-6d6d-4109-a2f9-faa583be1189
 begin
@@ -166,15 +166,14 @@ Show( MIME"text/html"(), format_gainlose("By Numbers of Children",summary.gain_l
 # ╟─3a2a55d5-8cf8-4d5c-80a7-84a03923bba8
 # ╟─72c7843c-3698-4045-9c83-2ad391097ad8
 # ╟─5c5b2176-148b-4f5c-a02c-5e9e82df11c3
-# ╟─d069cd4d-7afc-429f-a8fd-3f1c0a640117
+# ╠═d069cd4d-7afc-429f-a8fd-3f1c0a640117
 # ╟─0d8df3e0-eeb9-4e61-9298-b735e9dcc284
-# ╟─df4ccba6-6e0e-4044-94ce-b89e3c31d7ec
+# ╠═35e3f85f-581b-45f2-b078-fef31b917f8d
+# ╠═df4ccba6-6e0e-4044-94ce-b89e3c31d7ec
 # ╠═d2188dd8-1240-4fdd-870b-dcd15e91f4f2
-# ╠═a7d9d303-085f-4121-a11e-6585f589c242
-# ╟─2fe134f3-6d6d-4109-a2f9-faa583be1189
-# ╟─a1318fc7-9d20-4c00-8a89-b5ae90b5cc0c
+# ╠═2fe134f3-6d6d-4109-a2f9-faa583be1189
+# ╠═a1318fc7-9d20-4c00-8a89-b5ae90b5cc0c
 # ╠═aa9d43a0-a45c-48bd-ae28-7b525be605ce
-# ╟─58d7230e-36da-48e5-a445-777cddbd640b
 # ╟─7462d54c-aed5-4245-a206-f9f6641148b5
 # ╠═627959cf-6a7c-4f87-82f7-406f5c7eb76a
 # ╠═feed5169-225f-4e95-b279-403dff21539d

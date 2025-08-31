@@ -1,4 +1,8 @@
 
+export DEFAULT_SYS, format_gainlose, fes_run
+
+const DEFAULT_SYS = get_default_system_for_fin_year(2025; scotland=true)
+
 function fm(v, r,c) 
     return if c == 1
         v
@@ -48,6 +52,37 @@ function format_gainlose(title::String, gl::DataFrame)
             "Av. Change"])
     return String(take!(io))
 end
+
+
+function fes_settings()::Settings
+    settings = Settings()
+    settings.output_dir = "/home/graham_s/FES/"
+    settings.do_marginal_rates = false
+    settings.dump_frames = true
+    settings.requested_threads = 6
+    settings.do_replacement_rates = true
+    settings.do_marginal_rates = true
+    return settings
+end
+
+
+function fes_run( systems::Vector )::Tuple
+    # delete higher rates
+    global running_total
+    tot = 0
+    settings = fes_settings()
+    results = nothing
+    summaries = nothing 
+    rtime = @be begin
+        results = do_one_run( settings, systems, run_progress )
+        summaries = summarise_frames!( results, settings )
+    end
+    dump_summaries( settings, summaries )
+    Chairmarks.summarize( rtime )
+    short_summary = make_short_summary( summaries )
+    summaries, results, short_summary, settings, rtime
+end
+
 
 
 

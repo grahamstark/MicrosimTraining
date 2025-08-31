@@ -6,7 +6,7 @@ export run_model
 export BASE_SYS, ANNUAL_BASE_SYS, DEFAULT_PLUTO_INPUTS
 export make_pluto_inputs, map_pluto_inputs
 export make_pluto_combined_input_fields
-export format_gainlose
+
 
 const BASE_SYS = 
     get_default_system_for_fin_year( 2025; scotland=true, autoweekly = true )
