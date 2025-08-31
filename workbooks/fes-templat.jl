@@ -46,7 +46,11 @@ runs = [];
 end;
 
 # ╔═╡ 35e3f85f-581b-45f2-b078-fef31b917f8d
+# ╠═╡ show_logs = false
 begin
+	settings = Settings() 
+	wage = 30
+	examples = get_example_hhs(settings)
 	sys2 = deepcopy( DEFAULT_SYS)
 	sys2.it.non_savings_rates = sys2.it.non_savings_rates[1:3]
 	sys2.it.non_savings_thresholds = sys2.it.non_savings_thresholds[1:2]
@@ -58,7 +62,7 @@ md"### Poverty Transitions"
 
 # ╔═╡ 627959cf-6a7c-4f87-82f7-406f5c7eb76a
 # ╠═╡ show_logs = false
-summary, data, short_summary, timing  = fes_run( [DEFAULT_SYS, sys2] );
+summary, data, short_summary, timing  = fes_run( settings, [DEFAULT_SYS, sys2] );
 
 # ╔═╡ d069cd4d-7afc-429f-a8fd-3f1c0a640117
 begin
@@ -87,7 +91,7 @@ end
 
 # ╔═╡ d2188dd8-1240-4fdd-870b-dcd15e91f4f2
 begin
-	draw_summary_graphs( DEFAULT_FES_SETTINGS, summary, data )
+	draw_summary_graphs( settings, summary, data )
 end
 
 # ╔═╡ 2fe134f3-6d6d-4109-a2f9-faa583be1189
@@ -137,15 +141,41 @@ Show( MIME"text/html"(), format_gainlose("By Tenure",summary.gain_lose[2].ten_gl
 # ╔═╡ 4ed19478-f0bd-4579-87ff-dce95737d60d
 Show( MIME"text/html"(), format_gainlose("By Numbers of Children",summary.gain_lose[2].children_gl ))
 
-# ╔═╡ 6c308ebe-ca45-4774-81cc-bfafc46ba2a4
+# ╔═╡ 1f7d6f70-0bc3-48ee-ba87-e25f6ba4b907
 begin
-	losers = summary.gain_lose[2].ex_losers
-	hh = FRSHouseholdGetter.get_household( losers[1])
-	l_res1, l_res2 = 
+	hh = examples[5]
+	bc1, bc2 = getbc( settings, hh.hh, DEFAULT_SYS, sys2, wage )
 end
 
 # ╔═╡ c786d3df-8f0e-4eae-a6bc-e5a9d3f4edf2
-gainers = summary.gain_lose[2].ex_gainers
+begin
+	draw_bc( "Example BC : $(hh.label)", bc1, bc2 )
+end
+
+# ╔═╡ 8c2c6e7c-53fa-4604-b5dd-85782443ffca
+Show(MIME"text/html"(), format_bc_df( "Pre Budget Constraint", bc1 ))
+
+# ╔═╡ 4718dd2b-9c0f-4c15-b249-52deffee46b6
+Show(MIME"text/html"(), format_bc_df( "Post Budget Constraint", bc2 ))
+
+# ╔═╡ 11a7f7aa-86f7-4258-821b-bda7d7b3a864
+begin
+Show(MIME"text/html"(),Markdown.html(Markdown.MD.(bc1.label)))
+
+end
+
+# ╔═╡ 6691e0c2-a440-4f24-855a-6c0c3d746b2e
+md"## Examples of Gaining Households"
+
+# ╔═╡ 6c308ebe-ca45-4774-81cc-bfafc46ba2a4
+get_change_target_hhs( settings, summary.gain_lose[2].ex_gainers )
+
+# ╔═╡ 758496fe-edae-4a3a-9d04-5c09362ec037
+md"## Examples of Losing Households"
+
+# ╔═╡ 34c7ebc0-d137-4572-b68d-3c79d62592d4
+# ╠═╡ show_logs = false
+get_change_target_hhs( settings, summary.gain_lose[2].ex_losers )
 
 # ╔═╡ bada072d-d79b-4bfe-a546-d5df15bf2ea1
 # summary
@@ -166,6 +196,13 @@ gainers = summary.gain_lose[2].ex_gainers
 # ╟─6bf8bfc0-1221-4055-9c65-ea9b04802321
 # ╟─f1ed5325-1d96-4693-8a2a-64951a04c0ef
 # ╟─4ed19478-f0bd-4579-87ff-dce95737d60d
-# ╠═6c308ebe-ca45-4774-81cc-bfafc46ba2a4
+# ╠═1f7d6f70-0bc3-48ee-ba87-e25f6ba4b907
 # ╠═c786d3df-8f0e-4eae-a6bc-e5a9d3f4edf2
+# ╠═8c2c6e7c-53fa-4604-b5dd-85782443ffca
+# ╠═4718dd2b-9c0f-4c15-b249-52deffee46b6
+# ╠═11a7f7aa-86f7-4258-821b-bda7d7b3a864
+# ╟─6691e0c2-a440-4f24-855a-6c0c3d746b2e
+# ╠═6c308ebe-ca45-4774-81cc-bfafc46ba2a4
+# ╠═758496fe-edae-4a3a-9d04-5c09362ec037
+# ╟─34c7ebc0-d137-4572-b68d-3c79d62592d4
 # ╟─bada072d-d79b-4bfe-a546-d5df15bf2ea1
