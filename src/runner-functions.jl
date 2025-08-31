@@ -434,3 +434,259 @@ function run_model(
     short_summary = make_short_summary( summary )
     summary, results, short_summary, settings
 end
+
+
+"""
+Generate a pair of budget constraints (as Dataframes) for the given household.
+"""
+function getbc( 
+    hh  :: Household, 
+    sys :: TaxBenefitSystem, 
+    wage :: Real,
+    settings :: Settings )::Tuple
+    defroute = settings.means_tested_routing
+    settings.means_tested_routing = lmt_full 
+    lbc = BCCalcs.makebc( hh, sys, settings, wage; to_html=true )
+    lbc = recensor(lbc)
+    lbc.mr .*= 100.0
+    lbc.char_labels = BCCalcs.get_char_labels(size(lbc)[1])
+    settings.means_tested_routing = uc_full 
+    ubc = BCCalcs.makebc( hh, sys, settings, wage; to_html=true )
+    ubc = recensor(ubc)
+    ubc.mr .*= 100.0 # MR to percent
+    ubc.char_labels = BCCalcs.get_char_labels(size(ubc)[1])
+    settings.means_tested_routing = defroute
+    (lbc,ubc)
+end
+
+"""
+This is stolen from the bcd service.
+"""
+function get_hh( ;
+    country   :: AbstractString,
+    tenure    :: AbstractString,
+    bedrooms  :: Integer, 
+    hcost     :: Real, 
+    marrstat  :: AbstractString, 
+    chu6      :: Integer, 
+    ch6p      :: Integer ) :: Household
+    hh = get_example( single_hh )
+    head = get_head(hh)
+    hh.net_financial_wealth = 0.0
+    hh.net_housing_wealth = 0.0
+    hh.net_pension_wealth = 0.0
+    hh.net_physical_wealth = 0.0
+    head.age = 30
+    sp = get_spouse(hh)
+    enable!(head) # clear dla stuff from example
+    hh.region = if country == "scotland"
+            Scotland
+    elseif country == "wales" # not actually possible with current interface
+            Wales 
+    else # just pick a random English one.
+            North_East
+    end 
+    hh.tenure = if tenure == "private"
+            Private_Rented_Unfurnished
+    elseif tenure == "council"
+            Council_Rented
+    elseif tenure == "owner"
+            Mortgaged_Or_Shared
+    else
+            @assert false "$tenure not recognised"
+    end
+    hh.bedrooms = bedrooms
+    hh.other_housing_charges = hh.water_and_sewerage = 0
+    if hh.tenure == Mortgaged_Or_Shared
+            hh.mortgage_payment = hcost
+            hh.mortgage_interest = hcost
+            hh.gross_rent = 0
+    else
+            hh.mortgage_payment = 0
+            hh.mortgage_interest = 0
+            hh.gross_rent = hcost
+    end
+    if marrstat == "couple"
+            sex = head.sex == Male ? Female : Male # hetero ..
+            add_spouse!( hh, 30, sex )
+            sp = get_spouse(hh)
+            enable!(sp)
+            set_wage!( sp, 0, 10 )
+    end
+    age = 0
+    for ch in 1:chu6
+            sex = ch % 1 == 0 ? Male : Female
+            age += 1
+            add_child!( hh, age, sex )
+    end
+    age = 9
+    for ch in 1:ch6p
+            sex = ch % 1 == 0 ? Male : Female
+            age += 1
+            add_child!( hh, age, sex )
+    end
+    set_wage!( head, 0, 10 )
+    for (pid,pers) in hh.people
+            # println( "age=$(pers.age) empstat=$(pers.employment_status) " )
+            empty!( pers.income )
+            empty!( pers.assets )
+    end
+    return hh
+end
+
+function do_everything( sys :: TaxBenefitSystem, settings::Settings)::Tuple
+    tenures = ["private", "owner"]
+    country = "scotland"
+    hcosts = [200,400.0]
+    marrstats = ["single", "couple"]
+    out = Dict()
+    processed = 0
+    num_bedrooms = [1,4]
+    keys = []
+    for wage in [12,30] # !! above mw or mr results look weird (though they're ight)
+        for tenure in tenures
+            for marrstat in marrstats
+                for hcost in hcosts
+                    for bedrooms in num_bedrooms
+                        for chu6 in [0,3]
+                            for ch6p in [0,3]
+                                if((ch6p + chu6) > 0)&&(bedrooms <2)
+                                    ; # skip pointless examples
+                                elseif((ch6p + chu6) == 0)&&(bedrooms > 1)
+                                    ;
+                                else
+                                    processed += 1
+                                    hh =  get_hh( ;
+                                        country = country,
+                                        tenure  = tenure,
+                                        bedrooms = bedrooms,
+                                        hcost    = hcost,
+                                        marrstat = marrstat, 
+                                        chu6     = chu6, 
+                                        ch6p     = ch6p )
+                                    lbc, ubc = getbc( hh, sys, wage, settings )
+                                    key = (; wage, tenure, marrstat, hcost, bedrooms, chu6, ch6p )
+                                    println( "on $key")
+                                    println( "processed $processed")
+                                    out[key] = (; lbc, ubc )                                
+                                    push!( keys, key )
+                                end
+                            end # ch6p
+                        end # chu6
+                    end # bedrooms
+                end # hcost
+            end # marr
+        end # tenure
+    end # wage
+    return keys, out
+end
+
+function fm(v, r,c) 
+    return if c in [1,7]
+        v
+    elseif c == 4
+        if abs(v) > 4000
+            "Discontinuity"
+        else
+            Format.format(v, precision=3, commas=false)
+        end
+    else
+        Format.format(v, precision=2, commas=true)
+    end
+    s
+end
+
+function add_hidden_to_label( lab :: String )::String
+    i = rand(100000:100000000)
+    id = "id-$i"
+    return "<button class='btn btn-primary' type='button' data-bs-toggle='collapse' data-bs-target='#$(id)' aria-expanded='false' aria-controls='collapseExample'>More Detail</button><div class='collapse' id='$id'><div class='card card-body'>$(lab)</div></div>"
+end
+
+function format_bc_df( title::String, bc::DataFrame)
+    bc[!,:simplelabel_hide] = add_hidden_to_label.( bc.simplelabel )
+    pretty_table( 
+        String,
+        bc[!,[:char_labels,:gross,:net,:mr,:cap,:reduction,:simplelabel_hide]]; 
+        backend = Val(:html),
+        formatters=fm,
+        allow_html_in_cells=true,
+        table_class="table table-sm table-striped table-responsive",
+        header = ["ID", "Earnings &pound;pw","Net Income AHC &pound;pw", "METR", "Benefit Cap", "Benefits Reduced By", "Breakdown"], 	
+        alignment=[fill(:r,6)...,:l],
+        title = title )
+end
+
+# convoluted way of making pairs of (0,-10),(0,10) for label offsets
+const OFFSETS = collect( Iterators.flatten(fill([(0,-10),(0,10)],50)))
+
+function draw_bc( title :: String, df :: DataFrame )::Figure
+    f = Figure(size=(1200,1200))
+    nrows,ncols = size(df)
+    xmax = maximum(df.gross)*1.1
+    ymax = maximum(df.net)*1.1
+    ymin = minimum(df.net)
+    ax = Axis(f[1,1]; xlabel="Earnings &pound;s pw", ylabel="Net Income (AHC) &pound;s pw", title=title)
+    ylims!( ax, 0, ymax )
+    xlims!( ax, -10, xmax )
+    lines!( ax, df.gross, df.net )
+    scatter!( ax, df.gross, df.net; marker=df.char_labels, marker_offset=OFFSETS[1:nrows], markersize=15, color=:black )
+    lines!( ax, [0,xmax], [0, ymax]; color=:lightgrey)
+    scatter!( ax, df.gross, df.net, markersize=5, color=:red )
+    f
+end
+  
+function draw_one( title::String, key::NamedTuple, bc :: DataFrame )::String
+    table = format_bc_df( "", bc )
+    f = draw_bc( "After Housing Costs, $legstr", bc )
+    bc, table, f
+end
+
+function do_everything( sys :: TaxBenefitSystem, settings::Settings)::Tuple
+    tenures = ["private", "owner"]
+    country = "scotland"
+    hcosts = [200,400.0]
+    marrstats = ["single", "couple"]
+    out = Dict()
+    processed = 0
+    num_bedrooms = [1,4]
+    keys = []
+    for wage in [12,30] # !! above mw or mr results look weird (though they're ight)
+        for tenure in tenures
+            for marrstat in marrstats
+                for hcost in hcosts
+                    for bedrooms in num_bedrooms
+                        for chu6 in [0,3]
+                            for ch6p in [0,3]
+                                if((ch6p + chu6) > 0)&&(bedrooms <2)
+                                    ; # skip pointless examples
+                                elseif((ch6p + chu6) == 0)&&(bedrooms > 1)
+                                    ;
+                                else
+                                    processed += 1
+                                    hh =  get_hh( ;
+                                        country = country,
+                                        tenure  = tenure,
+                                        bedrooms = bedrooms,
+                                        hcost    = hcost,
+                                        marrstat = marrstat, 
+                                        chu6     = chu6, 
+                                        ch6p     = ch6p )
+                                    lbc, ubc = getbc( hh, sys, wage, settings )
+                                    key = (; wage, tenure, marrstat, hcost, bedrooms, chu6, ch6p )
+                                    println( "on $key")
+                                    println( "processed $processed")
+                                    out[key] = (; lbc, ubc )                                
+                                    push!( keys, key )
+                                end
+                            end # ch6p
+                        end # chu6
+                    end # bedrooms
+                end # hcost
+            end # marr
+        end # tenure
+    end # wage
+    return keys, out
+end
+
+
+  

@@ -77,7 +77,8 @@ using Preferences
 export MAINDIR 
 const MAINDIR=artifact"main_data"
 
-include("runner-functions.jl")
+include( "runner-functions.jl")
+include( "examples.jl")
 include( "fes-functions.jl")
 
 function __init__()
