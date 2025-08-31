@@ -109,15 +109,21 @@ end
 
 function format_bc_df( title::String, bc::DataFrame)
     io = IOBuffer()
-    bc.html_label = html.(MD.(bc.label))
+    nr,nc = size(bc)
+    #= valiant attempt, but doesn't render right
+    bc.html_label = fill( "", nr )
+    for r in eachrow(bc)
+        r.html_label = Markdown.html(md"$r.label")
+    end
+    =#
     pretty_table( 
         io,
-        bc[!,[:char_labels,:gross,:net,:mr,:cap,:reduction,:html_label]]; 
+        bc[!,[:char_labels,:gross,:net,:mr]], #,:cap,:reduction,:html_label]]; 
         backend = Val(:html),
         formatters=fmbc,
         allow_html_in_cells=true,
         table_class="table table-sm table-striped table-responsive",
-        header = ["ID", "Earnings &pound;pw","Net Income AHC &pound;pw", "METR", "Benefit Cap", "Benefits Reduced By","Breakdown"], 	
+        header = ["ID", "Earnings &pound;pw","Net Income BHC &pound;pw", "METR"], #"Benefit Cap", "Benefits Reduced By","Breakdown"], 	
         alignment=[fill(:r,6)...,:l],
         title = title )
     return String(take!(io))   
@@ -139,28 +145,33 @@ function draw_bc( title :: String, df1 :: DataFrame, df2 :: DataFrame )::Figure
     # diagonal gross=net
     lines!( ax, [0,xmax], [0, ymax]; color=:lightgrey)
     # bc 1 lines
-    lines!( ax, df1.gross, df1.net, color=:red  )
+    lines!( ax, df1.gross, df1.net, color=:red, label="Pre"  )
     # b1 labels
-    scatter!( ax, df1.gross, df1.net; marker=df1.char_labels, marker_offset=OFFSETS[1:nrows1], markersize=15, color=:red )
+    scatter!( ax, df1.gross, df1.net; marker=df1.char_labels, marker_offset=OFFSETS[1:nrows1], markersize=15, color=:red,  )
     # b1 points
     scatter!( ax, df1.gross, df1.net, markersize=5, color=:red )
     # bc 1 lines
-    lines!( ax, df2.gross, df2.net, color=:blue )
+    lines!( ax, df2.gross, df2.net; color=:blue, label="Post" )
     # b1 labels
     scatter!( ax, df2.gross, df2.net; marker=df2.char_labels, marker_offset=OFFSETS[1:nrows2], markersize=15, color=:blue )
     # b1 points
     scatter!( ax, df2.gross, df2.net, markersize=5, color=:blue )
+    axislegend(;position = :rc)
     f
 end
   
-function get_change_target_hhs( settings :: Settings, target_list :: Vector )::Vector
+function get_change_target_hhs( 
+    settings :: Settings, 
+    sys1 :: TaxBenefitSystem, 
+    sys2 :: TaxBenefitSystem, 
+    target_list :: Vector )::Vector
     v = []
     n = min( length( target_list), 20 )
     for ls in target_list[1:n]
         hh = FRSHouseholdGetter.get_household( ls )
-        bres = do_one_calc( hh, DEFAULT_SYS, settings )
-        pres = do_one_calc( hh, sys2, settings )
-        push!( v, ( hh = hh, bres=bres, pres=pres ))
+        res1 = do_one_calc( hh, sys1, settings )
+        res2 = do_one_calc( hh, sys2, settings )
+        push!( v, ( hh = hh, res1=bres1, res2=res2 ))
     end
     return v
 end
