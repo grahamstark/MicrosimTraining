@@ -64,6 +64,7 @@ using UUIDs
 @reexport using ScottishTaxBenefitModel.Results
 @reexport using ScottishTaxBenefitModel.Runner
 @reexport using ScottishTaxBenefitModel.RunSettings
+@reexport using ScottishTaxBenefitModel.SimplePovertyCounts
 @reexport using ScottishTaxBenefitModel.SingleHouseholdCalculations
 @reexport using ScottishTaxBenefitModel.STBIncomes
 @reexport using ScottishTaxBenefitModel.STBOutput
@@ -79,7 +80,10 @@ const MAINDIR=artifact"main_data"
 
 include( "runner-functions.jl")
 include( "examples.jl")
+include( "display_constants.jl")
 include( "fes-functions.jl")
+include( "table_libs.jl")
+include( "text_html_libs.jl")
 
 function __init__()
     CairoMakie.activate!()

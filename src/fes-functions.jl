@@ -171,8 +171,7 @@ function get_change_target_hhs(
         hh = FRSHouseholdGetter.get_household( ls )
         res1 = do_one_calc( hh, sys1, settings )
         res2 = do_one_calc( hh, sys2, settings )
-        push!( v, ( hh = hh, res1=bres1, res2=res2 ))
+        push!( v, ( hh = hh, res1=res1, res2=res2 ))
     end
     return v
 end
-
