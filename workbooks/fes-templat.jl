@@ -65,10 +65,16 @@ begin
 	settings = Settings() 
 	wage = 30
 	examples = get_example_hhs(settings)
+	sys1 = deepcopy( DEFAULT_SYS)
 	sys2 = deepcopy( DEFAULT_SYS)
 	sys2.it.non_savings_rates = sys2.it.non_savings_rates[1:3]
 	sys2.it.non_savings_thresholds = sys2.it.non_savings_thresholds[1:2]
+	sys2.scottish_child_payment.amount = 0.0
+	sys2.uc.taper = 75
+	sys2.it.personal_allowance = 7_500
 	sys2.name = "All rates above 21% abolished!"
+	weeklyise!(sys1)
+	weeklyise!(sys2)
 end;
 
 # ╔═╡ 696c6862-1c2b-4d40-a941-44bcbc94e9e2
@@ -80,7 +86,7 @@ The next line rus the model every time the block above changes.
 
 # ╔═╡ 627959cf-6a7c-4f87-82f7-406f5c7eb76a
 # ╠═╡ show_logs = false
-summary, data, short_summary, timing  = fes_run( settings, [DEFAULT_SYS, sys2] );
+summary, data, short_summary, timing  = fes_run( settings, [sys1, sys2] );
 
 # ╔═╡ da8d10ef-0ccf-40b9-901c-7214327e0203
 md"""
@@ -250,8 +256,8 @@ Show( MIME"text/html"(), format_gainlose("By Numbers of Children",summary.gain_l
 
 # ╔═╡ 1f7d6f70-0bc3-48ee-ba87-e25f6ba4b907
 begin
-	hh = examples[5]
-	bc1, bc2 = getbc( settings, hh.hh, DEFAULT_SYS, sys2, wage )
+	hh = examples[2]
+	bc1, bc2 = getbc( settings, hh.hh, sys1, sys2, wage )
 end;
 
 # ╔═╡ c123f000-bcd6-4a37-b715-759473365b60
@@ -281,26 +287,23 @@ This is for checking purposes and you may want to ignore.
 """
 
 # ╔═╡ 6c308ebe-ca45-4774-81cc-bfafc46ba2a4
-get_change_target_hhs( settings, DEFAULT_SYS, sys2, summary.gain_lose[2].ex_gainers )
+get_change_target_hhs( settings, sys1, sys2, summary.gain_lose[2].ex_gainers )
 
 # ╔═╡ 758496fe-edae-4a3a-9d04-5c09362ec037
 md"## Examples of Losing Households"
 
 # ╔═╡ 34c7ebc0-d137-4572-b68d-3c79d62592d4
 # ╠═╡ show_logs = false
-get_change_target_hhs( settings, DEFAULT_SYS, sys2, summary.gain_lose[2].ex_losers )
-
-# ╔═╡ bada072d-d79b-4bfe-a546-d5df15bf2ea1
-# summary
+get_change_target_hhs( settings, sys1, sys2, summary.gain_lose[2].ex_losers )
 
 # ╔═╡ 1e27cffe-c86c-4b3e-91f4-22e1b429a9cd
 html"""
 <style>
 	.change-good{
-		color: green;
+		color: darkgreen;
 	}
 	.change-bad{
-		color: red;
+		color: darkred;
 	}
 	.post-sys{
 		color: blue;
@@ -351,5 +354,4 @@ html"""
 # ╠═6c308ebe-ca45-4774-81cc-bfafc46ba2a4
 # ╠═758496fe-edae-4a3a-9d04-5c09362ec037
 # ╟─34c7ebc0-d137-4572-b68d-3c79d62592d4
-# ╟─bada072d-d79b-4bfe-a546-d5df15bf2ea1
-# ╟─1e27cffe-c86c-4b3e-91f4-22e1b429a9cd
+# ╠═1e27cffe-c86c-4b3e-91f4-22e1b429a9cd

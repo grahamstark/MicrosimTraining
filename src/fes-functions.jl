@@ -1,7 +1,7 @@
 
 export DEFAULT_SYS, format_gainlose, fes_run, get_change_target_hhs, getbc, format_bc_df, draw_bc
 
-const DEFAULT_SYS = get_default_system_for_fin_year(2025; scotland=true)
+const DEFAULT_SYS = get_default_system_for_fin_year(2025; scotland=true, autoweekly=false )
     
 function fm(v, r,c) 
     return if c == 1
