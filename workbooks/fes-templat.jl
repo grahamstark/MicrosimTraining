@@ -70,7 +70,7 @@ begin
 	sys2.it.non_savings_rates = sys2.it.non_savings_rates[1:3]
 	sys2.it.non_savings_thresholds = sys2.it.non_savings_thresholds[1:2]
 	sys2.scottish_child_payment.amount = 0.0
-	sys2.uc.taper = 75
+	sys2.uc.taper = 0
 	sys2.it.personal_allowance = 7_500
 	sys2.nmt_bens.child_benefit.abolished = true
 	sys2.name = "All rates above 21% abolished!"
