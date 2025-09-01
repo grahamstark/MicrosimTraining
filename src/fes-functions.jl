@@ -145,17 +145,17 @@ function draw_bc( title :: String, df1 :: DataFrame, df2 :: DataFrame )::Figure
     # diagonal gross=net
     lines!( ax, [0,xmax], [0, ymax]; color=:lightgrey)
     # bc 1 lines
-    lines!( ax, df1.gross, df1.net, color=:red, label="Pre"  )
+    lines!( ax, df1.gross, df1.net, color=:darkred, label="Pre"  )
     # b1 labels
-    scatter!( ax, df1.gross, df1.net; marker=df1.char_labels, marker_offset=OFFSETS[1:nrows1], markersize=15, color=:red,  )
+    scatter!( ax, df1.gross, df1.net; marker=df1.char_labels, marker_offset=OFFSETS[1:nrows1], markersize=15, color=:darkred,  )
     # b1 points
-    scatter!( ax, df1.gross, df1.net, markersize=5, color=:red )
+    scatter!( ax, df1.gross, df1.net, markersize=5, color=:darkred )
     # bc 1 lines
-    lines!( ax, df2.gross, df2.net; color=:blue, label="Post" )
+    lines!( ax, df2.gross, df2.net; color=:darkblue, label="Post" )
     # b1 labels
-    scatter!( ax, df2.gross, df2.net; marker=df2.char_labels, marker_offset=OFFSETS[1:nrows2], markersize=15, color=:blue )
+    scatter!( ax, df2.gross, df2.net; marker=df2.char_labels, marker_offset=OFFSETS[1:nrows2], markersize=15, color=:darkblue )
     # b1 points
-    scatter!( ax, df2.gross, df2.net, markersize=5, color=:blue )
+    scatter!( ax, df2.gross, df2.net, markersize=5, color=:darkblue )
     axislegend(;position = :rc)
     f
 end
