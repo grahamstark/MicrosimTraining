@@ -72,6 +72,7 @@ begin
 	sys2.scottish_child_payment.amount = 0.0
 	sys2.uc.taper = 75
 	sys2.it.personal_allowance = 7_500
+	sys2.nmt_bens.child_benefit.abolished = true
 	sys2.name = "All rates above 21% abolished!"
 	weeklyise!(sys1)
 	weeklyise!(sys2)
@@ -306,10 +307,10 @@ html"""
 		color: darkred;
 	}
 	.post-sys{
-		color: blue;
+		color: darkblue;
 	}
 	.pre-sys{
-		color: red;
+		color: darkred;
 	}
 </style>
 """
