@@ -21,6 +21,7 @@ pluto.run(;notebook=abspath(notebook))
 using Reexport
 using Markdown
 using UUIDs
+using ZipFile
 
 @reexport using Agents
 @reexport using Pkg.Artifacts

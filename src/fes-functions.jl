@@ -14,6 +14,18 @@ function fm(v, r,c)
     s
 end
 
+function zip_dump( settings :: Settings )
+    rname = basiccensor( settings.run_name )
+    dirname = joinpath( settings.output_dir, rname ) 
+    io = ZipFile.Writer("$(dirname).zip")
+    for f in readdir(dirname)
+        ZipFile.addfile( io, f )
+    end
+    ZipFile.close(io)
+    return dirname
+end
+
+
 h1 = HtmlHighlighter( ( data, r, c ) -> (c == 1), HtmlDecoration( font_weight="bold", color="slategrey"))
 function f_gainlose( h, data, r, c ) 
     colour = "black"
@@ -53,7 +65,6 @@ function format_gainlose(title::String, gl::DataFrame)
     return String(take!(io))
 end
 
-
 function fes_run( settings :: Settings, systems::Vector )::Tuple
     # delete higher rates
     global running_total
@@ -64,11 +75,12 @@ function fes_run( settings :: Settings, systems::Vector )::Tuple
         results = do_one_run( settings, systems, run_progress )
         summaries = summarise_frames!( results, settings )
     end
-    settings = Settings()
     dump_summaries( settings, summaries )
     Chairmarks.summarize( rtime )
     short_summary = make_short_summary( summaries )
-    summaries, results, short_summary, rtime
+    dump_summaries( settings, summaries )
+    zipname = zip_dump( settings )
+    summaries, results, short_summary, zipname, rtime
 end
 
 """
@@ -159,6 +171,9 @@ function draw_bc( settings::Settings, title :: String, df1 :: DataFrame, df2 :: 
     # b1 points
     scatter!( ax, df2.gross, df2.net, markersize=5, color=:darkblue )
     axislegend(;position = :rc)
+
+    fname = joinpath( settings.output_dir, basiccensor( settings.run_name ), "budget_constraint.svg" ) 
+    save(fname, f)
     f
 end
   

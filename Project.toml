@@ -36,6 +36,7 @@ ShortCodes = "f62ebe17-55c5-4640-972f-b59c0dd11ccf"
 StatsBase = "2913bbd2-ae8a-5f71-8c99-4fb6c76f3a91"
 SurveyDataWeighting = "0d23d9a6-c44e-4ca5-9c36-ffcb6594a9c5"
 UUIDs = "cf7118a7-6976-5b1a-9a39-7adc72f591a4"
+ZipFile = "a5390f91-8eb1-5f08-bee0-b1d1ffed6cea"
 
 [sources]
 ScottishTaxBenefitModel = {url = "https://github.com/grahamstark/ScottishTaxBenefitModel.jl"}
@@ -73,6 +74,7 @@ ShortCodes = "0,1"
 StatsBase = "0,1"
 SurveyDataWeighting = "1,2"
 UUIDs = "1,2"
+ZipFile = "0.10.1"
 julia = "1"
 
 [extras]
@@ -83,18 +85,18 @@ public-artifact_server_upload = "triplepc.northumbria.ac.uk:/var/www/conjoint/mi
 public-artifact_server_url = "https://triplepc.northumbria.ac.uk/microsim_training/artifacts/"
 
 [preferences.ScottishTaxBenefitModel]
+do_marginal_rates = true
+do_replacement_rates = true
+dump_frames = false
 included_data_years = [2019, 2021, 2022, 2023]
+local-artifact_server_url_unix = "file:///mnt/data/ScotBen/local_artifacts/"
+local-artifact_server_url_windows = "file:///c:/data/"
 means_tested_routing = "uc_full"
 requested_threads = 6
-weighting_strategy = "use_runtime_computed_weights"
-dump_frames = false
-do_replacement_rates = true
-do_marginal_rates = true
 target_bc_income = "bhc_hh"
 to_q = 3
 to_y = 2025
-local-artifact_server_url_unix = "file:///mnt/data/ScotBen/local_artifacts/"
-local-artifact_server_url_windows = "file:///c:/data/"
+weighting_strategy = "use_runtime_computed_weights"
 
 [targets]
 test = ["Test"]

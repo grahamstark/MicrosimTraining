@@ -286,6 +286,8 @@ function draw_summary_graphs( settings::Settings, summary :: NamedTuple, data::N
             density!( ax4, m1.metr; label, weights=m1.weight, color=colour)
         end
     end
+    fname = joinpath( settings.output_dir, basiccensor( settings.run_name ), "summary_graph.svg" ) 
+    save(fname, f)
     f
 end
 
