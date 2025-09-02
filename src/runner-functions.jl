@@ -12,7 +12,7 @@ const BASE_SYS =
     get_default_system_for_fin_year( 2025; scotland=true, autoweekly = true )
 const ANNUAL_BASE_SYS = 
     get_default_system_for_fin_year( 2025; scotland=true, autoweekly = false )
-    
+
 function make_pluto_inputs(sys2::TaxBenefitSystem)::NamedTuple
     sys2 = deepcopy(ANNUAL_BASE_SYS)
     (; 

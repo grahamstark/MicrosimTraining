@@ -132,14 +132,16 @@ end
 # convoluted way of making pairs of (0,-10),(0,10) for label offsets
 const OFFSETS = collect( Iterators.flatten(fill([(0,-10),(0,10)],50)))
 
-function draw_bc( title :: String, df1 :: DataFrame, df2 :: DataFrame )::Figure
+function draw_bc( settings::Settings, title :: String, df1 :: DataFrame, df2 :: DataFrame )::Figure
     f = Figure(size=(1200,1200))
     nrows1,ncols1 = size(df1)
     nrows2,ncols2 = size(df2)
     xmax = max( maximum(df1.gross), maximum(df2.gross))*1.1
     ymax = max( maximum(df1.net), maximum(df2.net))*1.1
     ymin = min( minimum(df1.net), minimum(df2.net))
-    ax = Axis(f[1,1]; xlabel="Earnings &pound;s pw", ylabel="Net Income (AHC) &pound;s pw", title=title)
+    ax = Axis(f[1,1]; xlabel="Earnings &pound;s pw", 
+        ylabel=TARGET_BC_INCOMES_STRS[settings.target_bc_income]*" &pound;s pw", 
+        title=title)
     ylims!( ax, 0, ymax )
     xlims!( ax, -10, xmax )
     # diagonal gross=net

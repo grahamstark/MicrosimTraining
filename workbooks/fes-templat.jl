@@ -78,6 +78,34 @@ begin
 	weeklyise!(sys2)
 end;
 
+# ╔═╡ 6a57627d-e592-4845-af8a-60d1db327fab
+begin
+
+pov_line_str = if settings.ineq_income_measure ==  pl_from_settings
+	" - Poverty Line Set to : ** $(fm( settings.poverty_line))**"
+else
+	""
+end 
+	
+md"""
+	
+### Run Settings Summary
+	
+* ScotBen version: **$(string(pkgversion(ScottishTaxBenefitModel)))**
+* Incomes uprated to: **$(settings.to_y)** q**$(settings.to_q)**;
+* Income Type Used for Poverty/Inequality/Decile Graphs: **$(INEQ_INCOME_MEASURE_STRS[settings.ineq_income_measure])**;
+* Income Type used for Gain-Lose tables: **$(INEQ_INCOME_MEASURE_STRS[bhc_net_income])** (n.b this can't currently be changed);
+* Populations weighed to: **$(settings.weighting_target_year)**;
+* Poverty Line :**$(POVERTY_LINE_SOURCE_STRS[settings.poverty_line_source])** $(pov_line_str);
+* Means-Tested Benefits Phase in assumption: **$(MT_ROUTING_STRS[settings.means_tested_routing])**;
+* Disability Benefits Phase in assumption: **Scottish System 100% phased in**;
+* Dodgy Means-Tested Benefits takeup corrections applied: **$(settings.do_dodgy_takeup_corrections)**.
+"""
+end
+
+# ╔═╡ d67df25c-f68c-420e-aaa4-a7a4d4f74be9
+settings.target_bc_income
+
 # ╔═╡ 696c6862-1c2b-4d40-a941-44bcbc94e9e2
 md"""
 
@@ -113,6 +141,7 @@ md"""
 
 Net Cost of your changes: **$(short_summary.netcost)**
 
+
 #### Tax revenue 
 
 before: **$(short_summary.tax1)** after: **$(short_summary.tax2)** change: **$(short_summary.dtax)** £mn pa
@@ -125,6 +154,8 @@ before: **$(short_summary.ben1)** after: **$(short_summary.ben2)** change: **$(s
 * **Gini:** before: **$(short_summary.gini1)** after: **$(short_summary.gini2)** change: **$(short_summary.dgini)**
 * **Palma:** before: **$(short_summary.palma1)** after: **$(short_summary.palma2)** change: **$(short_summary.dpalma)**
 
+*Using $(INEQ_INCOME_MEASURE_STRS[settings.ineq_income_measure]) income*.
+	
 #### Gainers & Losers
 People gaining: **$(short_summary.gainers)** losing: **$(short_summary.losers)** unchanged: **$(short_summary.nc)**
 """
@@ -161,14 +192,17 @@ begin
 		cp1 = fp(c1.prop)
 	    cp2 = fp(c2.prop)
 		dcp = fp(c2.prop-c1.prop)
-	md"""
+md"""
 ### Poverty Measures
 
 * **Count:** before: **$(povrate1)** after: **$(povrate2)** change: **$(dpovrate)**
 * **Gap:** before: **$(povgap1)** after: **$(povgap2)** change: **$(dpovgap)**
 * **Severity:** before: **$(povsev1)** after: **$(povsev2)** change: **$(dpovsev)**
-* **Child Poverty:** before: **$(cp1)** after: **$(cp2)** change: **$(dcp)**	 
-	""" 
+* **Child Poverty:** before: **$(cp1)** after: **$(cp2)** change: **$(dcp)**	
+
+*Using $(INEQ_INCOME_MEASURE_STRS[settings.ineq_income_measure]) income.*
+	
+""" 
 end
 
 # ╔═╡ f750ca33-d975-4f05-b878-ad0b23f968a9
@@ -268,8 +302,11 @@ This shows the relationship between gross earnings (x-axis) and net income (y-ax
 for a $(hh.label) (we can change the family easily). Before change in red and after in blue.
 """
 
+# ╔═╡ 36269b33-0f3a-49ad-88ef-15e646d62f33
+TARGET_BC_INCOMES_STRS[settings.target_bc_income]
+
 # ╔═╡ 477c0dc2-9141-49a2-a4c8-fdab84ea586c
-draw_bc( "Budget Constraint for $(hh.label)", bc1, bc2 )
+draw_bc( settings, "Budget Constraint for $(hh.label)", bc1, bc2 )
 
 # ╔═╡ 8c2c6e7c-53fa-4604-b5dd-85782443ffca
 Show(MIME"text/html"(), format_bc_df( "Pre Budget Constraint $(hh.label)", bc1 ))
@@ -319,6 +356,8 @@ html"""
 # ╟─3a2a55d5-8cf8-4d5c-80a7-84a03923bba8
 # ╟─72c7843c-3698-4045-9c83-2ad391097ad8
 # ╟─c093e22f-8ec2-4211-b8a0-2391101fbcd2
+# ╟─6a57627d-e592-4845-af8a-60d1db327fab
+# ╠═d67df25c-f68c-420e-aaa4-a7a4d4f74be9
 # ╟─1f2de37a-948e-4651-9276-eb39743ef812
 # ╠═35e3f85f-581b-45f2-b078-fef31b917f8d
 # ╟─696c6862-1c2b-4d40-a941-44bcbc94e9e2
@@ -342,11 +381,12 @@ html"""
 # ╟─a1bbc2ae-68a2-40de-93a4-2c9a68c9ee91
 # ╠═feed5169-225f-4e95-b279-403dff21539d
 # ╟─1bad315e-d9ff-4c7b-9282-b5627deea6df
-# ╟─6bf8bfc0-1221-4055-9c65-ea9b04802321
+# ╠═6bf8bfc0-1221-4055-9c65-ea9b04802321
 # ╟─f1ed5325-1d96-4693-8a2a-64951a04c0ef
 # ╟─4ed19478-f0bd-4579-87ff-dce95737d60d
 # ╟─c123f000-bcd6-4a37-b715-759473365b60
 # ╟─1f7d6f70-0bc3-48ee-ba87-e25f6ba4b907
+# ╠═36269b33-0f3a-49ad-88ef-15e646d62f33
 # ╠═477c0dc2-9141-49a2-a4c8-fdab84ea586c
 # ╠═8c2c6e7c-53fa-4604-b5dd-85782443ffca
 # ╠═4718dd2b-9c0f-4c15-b249-52deffee46b6
