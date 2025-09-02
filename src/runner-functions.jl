@@ -264,7 +264,7 @@ function draw_summary_graphs( settings::Settings, summary :: NamedTuple, data::N
     lines!(ax1,[0,1],[0,1]; color=:grey)
     ax2 = Axis(f[1,2]; title="Income Changes By Decile", 
         ylabel="Change in £s per week", xlabel="Decile" )
-    dch = summary.deciles[2][:, 3] .- summary.deciles[1][:, 3]
+    dch = summary.deciles[2][:, 4] .- summary.deciles[1][:, 4]
     barplot!( ax2, dch)
     ax3 = Axis(f[2,1]; title="Income Distribution", xlabel="£s pw", ylabel="")
     density!( ax3, data.indiv[1].eq_bhc_net_income; 
