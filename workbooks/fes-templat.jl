@@ -278,7 +278,11 @@ There's also a spreadsheet of this ... maybe not needed here.
 summary.short_income_summary
 
 # ╔═╡ 1bad315e-d9ff-4c7b-9282-b5627deea6df
-md""" ## Gain/Lose Tables """
+md""" 
+## Gain/Lose Tables 
+
+*Using $(INEQ_INCOME_MEASURE_STRS[bhc_net_income])*
+"""
 
 # ╔═╡ 6bf8bfc0-1221-4055-9c65-ea9b04802321
 Show( MIME"text/html"(), format_gainlose("By Decile",summary.gain_lose[2].dec_gl ))
@@ -302,8 +306,14 @@ This shows the relationship between gross earnings (x-axis) and net income (y-ax
 for a $(hh.label) (we can change the family easily). Before change in red and after in blue.
 """
 
+# ╔═╡ 22050a98-07f6-453d-bdab-3cb3664e449d
+ScottishTaxBenefitModel.RunSettings.TargetBCIncomes
+
+# ╔═╡ de599c24-593f-4b4f-9bc9-8c0abbc509c2
+typeof(TARGET_BC_INCOMES_STRS)
+
 # ╔═╡ 36269b33-0f3a-49ad-88ef-15e646d62f33
-TARGET_BC_INCOMES_STRS[settings.target_bc_income]
+TARGET_BC_INCOMES_STRS, settings.target_bc_income, typeof(settings.target_bc_income)
 
 # ╔═╡ 477c0dc2-9141-49a2-a4c8-fdab84ea586c
 draw_bc( settings, "Budget Constraint for $(hh.label)", bc1, bc2 )
@@ -386,6 +396,8 @@ html"""
 # ╟─4ed19478-f0bd-4579-87ff-dce95737d60d
 # ╟─c123f000-bcd6-4a37-b715-759473365b60
 # ╟─1f7d6f70-0bc3-48ee-ba87-e25f6ba4b907
+# ╠═22050a98-07f6-453d-bdab-3cb3664e449d
+# ╠═de599c24-593f-4b4f-9bc9-8c0abbc509c2
 # ╠═36269b33-0f3a-49ad-88ef-15e646d62f33
 # ╠═477c0dc2-9141-49a2-a4c8-fdab84ea586c
 # ╠═8c2c6e7c-53fa-4604-b5dd-85782443ffca
@@ -395,4 +407,4 @@ html"""
 # ╠═6c308ebe-ca45-4774-81cc-bfafc46ba2a4
 # ╠═758496fe-edae-4a3a-9d04-5c09362ec037
 # ╟─34c7ebc0-d137-4572-b68d-3c79d62592d4
-# ╠═1e27cffe-c86c-4b3e-91f4-22e1b429a9cd
+# ╟─1e27cffe-c86c-4b3e-91f4-22e1b429a9cd
