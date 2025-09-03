@@ -82,7 +82,7 @@ Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
 
 [preferences.MicrosimTraining]
 public-artifact_server_upload = "triplepc.northumbria.ac.uk:/var/www/conjoint/microsim_training/artifacts/"
-public-artifact_server_url = "https://triplepc.northumbria.ac.uk/microsim_training/artifacts/"
+public-artifact_server_url = "https://virtual-worlds.biz/artifacts/"
 
 [preferences.ScottishTaxBenefitModel]
 do_marginal_rates = true
