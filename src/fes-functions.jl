@@ -86,9 +86,14 @@ function fes_run( settings :: Settings, systems::Vector )::Tuple
     summaries, results, short_summary, dirname, rtime
 end
 
+"""
+Progressively delete all the Scottish 2025/6 Higher rates and return the cumulative revenue
+differences.
+"""
 function higher_rates_run()
     settings = Settings()
     settings.run_name = "Higher Rates"
+    # create 4 systems with progressively deleted higher rates
     sys = deepcopy( DEFAULT_SYS )
     systems = [sys]
     for i in 5:-1:3
@@ -99,12 +104,17 @@ function higher_rates_run()
         push!( systems, tsys ) 
     end
     weeklyise!.( systems )
+    # run the whole set
     summaries, results, short_summary, dirname, rtime = fes_run( settings, systems )
+    # extract just the little bit we want from the incomes summary
     s=summaries.short_income_summary
-    rename!(s, ["Grant Total £p.a"=>"Base", "Grant Total £p.a_1"=>"Top_Rate_Removed",  "Grant Total £p.a_2"=>"Top_2_Removed",
+    rename!(s, ["Grant Total £p.a"=>"Base", "Grant Total £p.a_1"=>"Top_Rate_Removed",  
+        "Grant Total £p.a_2"=>"Top_2_Removed",
         "Grant Total £p.a_3"=>"Top_3_Removed"])
     it = s[s.label .== "Scottish Income Tax",:]
+    # flip the ouput sideways
     hrt = permutedims(it[:,[:label, :Base, :Top_Rate_Removed, :Top_2_Removed, :Top_3_Removed ]],1)
+    # add in cumulative change columns
     nrows, ncols = size(hrt)
     hrt.diff_prev = zeros(nrows)
     hrt.diff_cum = zeros(nrows)
@@ -113,6 +123,10 @@ function higher_rates_run()
         hrt.diff_prev[i] = hrt[i,2]-hrt[di,2]
         hrt.diff_cum[i] = hrt[i,2]-hrt[1,2]
     end
+    # formatted version
+    t = hcat(pretty.(hrt.label), format.(hrt[:,2:end];precision=0,commas=true))
+    rename!( t, ["diff_prev"=>"Incremental Change", "diff_cum"=>"Total Change"] )
+    return hrt, t
 end 
 
 """
