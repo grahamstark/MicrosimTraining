@@ -28,10 +28,7 @@ end
 # ╔═╡ c093e22f-8ec2-4211-b8a0-2391101fbcd2
 md"""
 
-This a static HTML dump of a [Pluto interactive Notebook](https://plutojl.org/) I've constructed for running ScotBen for this project. 
-
-It shows the output I propose for the project. There are also dumps of data as spreadsheets. The example here shows the effects of abolishing all higher rates of Scottish income tax (i.e. above 21%), but can be anything we can model.
-	
+This a static HTML dump of a [Pluto interactive Notebook](https://plutojl.org/) I've constructed for running ScotBen for this project. here are also dumps of data as spreadsheets. 
 """
 
 # ╔═╡ 1f2de37a-948e-4651-9276-eb39743ef812
@@ -87,97 +84,55 @@ Only one of the following parameter blocks should be enabled at a time. Disable 
 """
 
 # ╔═╡ 1a1c900a-b65c-4a17-b181-da41883be44f
-# ╠═╡ disabled = true
-#=╠═╡
 begin
-	it_eq_change = 2.46
 	sys2 = deepcopy( DEFAULT_SYS)	
+	progrates = [20,21,23,44,48,53]
+    it_eq_change = 2.46
+	it_top3_change = 9.2
+	newrates = progrates .*1.024
+	
+	#=
 	settings.run_name = "Net £2bn raised with equal increases in all IT rates ($(it_eq_change)pct)."
 	sys2.it.non_savings_rates .+= it_eq_change
-	weeklyise!(sys2)
-end;
-  ╠═╡ =#
-
-# ╔═╡ 1237c3e0-949c-40df-91d1-e42092278f99
-md"""
-
-Likewise the next block adds **9.2%** to the higher rates.
-
-"""
-
-# ╔═╡ 21585926-3451-43e3-a0ad-30860ff37001
-begin
-	it_top3_change = 9.2
-	sys2 = deepcopy( DEFAULT_SYS )
-	settings.run_name = "Net £2bn raised with higher IT rates ($(it_top3_change)pct)."
+	=#
+	# Likewise the next block adds 9.2% to the higher rates.
+	 
+	
+    settings.run_name = "Net £2bn raised with higher IT rates ($(it_top3_change)pct)."
 	sys2.it.non_savings_rates[4:end] .+= it_top3_change
-	sys2.name = settings.run_name
-	weeklyise!(sys2)
-end
+	
+	
 
-# ╔═╡ 0f97cbf7-1323-4742-9f1c-f1d2dd9ac5e1
-md" Examples of messing with benefits."
-
-# ╔═╡ b40a1662-d43a-48d4-ba09-253b9c34b020
-# ╠═╡ disabled = true
-#=╠═╡
-begin
-	sys2 = deepcopy( DEFAULT_SYS )
+	# messing with benefits - not used
+	#=
+	
 	sys2.it.non_savings_rates = sys2.it.non_savings_rates[1:3]
 	sys2.it.non_savings_thresholds = sys2.it.non_savings_thresholds[1:2]
 	sys2.scottish_child_payment.amount = 0.0
 	sys2.uc.taper = 0
 	sys2.it.personal_allowance = 7_500
 	sys2.nmt_bens.child_benefit.abolished = true
-	weeklyise!(sys2)
-end
-  ╠═╡ =#
+	
+	=#
 
-# ╔═╡ 13372f55-f4c6-43af-b550-d52bf2ad050e
-md"""
-Juanpe's email of 02/Sep:
-
-* Starter: 20%
-* Basic: 21%:
-* Intermediate: 23%
-* Higher: 44%
-* Advanced: 48%
-* Top rate: 53%
-"""
-
-# ╔═╡ 16566609-7474-486a-812b-540ac84dd973
-progrates = [20,21,23,44,48,53];
-
-# ╔═╡ d289b220-1da0-4a91-9951-d855fa7aa2e0
-# ╠═╡ disabled = true
-#=╠═╡
-begin
-	sys2 = deepcopy( DEFAULT_SYS )
+	# Juanpe's email of 02/Sep:
+	#=
 	settings.run_name = "Rates: 20,21,23,44,48,53"
 	sys2.it.non_savings_rates = progrates
 	sys2.name = settings.run_name
-	weeklyise!(sys2)
-end
-  ╠═╡ =#
+	=#
 
-# ╔═╡ 633fe172-ce2c-417e-a2b7-8ea9d9da792b
-"""
-The next one scales up Juanpe's rates to reach £2bn.
-"""
-
-# ╔═╡ 25988590-c64e-4d16-aa19-820bfeb95734
-# ╠═╡ disabled = true
-#=╠═╡
-begin
-	sys2 = deepcopy( DEFAULT_SYS )
-	newrates = progrates .*1.024
+	# Juanpe's rates scaled up to raise £2bn
+	
+	#=
 	rates_str = join(format.(newrates, precision=1),", ")
 	settings.run_name = "Rates: $rates_str"
 	sys2.it.non_savings_rates = newrates
 	sys2.name = settings.run_name
+	=#
+	sys2.name = settings.run_name
 	weeklyise!(sys2)
-end
-  ╠═╡ =#
+end;
 
 # ╔═╡ 696c6862-1c2b-4d40-a941-44bcbc94e9e2
 md"""
@@ -454,27 +409,18 @@ html"""
 
 # ╔═╡ Cell order:
 # ╠═3a2a55d5-8cf8-4d5c-80a7-84a03923bba8
-# ╠═72c7843c-3698-4045-9c83-2ad391097ad8
+# ╟─72c7843c-3698-4045-9c83-2ad391097ad8
 # ╟─c093e22f-8ec2-4211-b8a0-2391101fbcd2
-# ╠═1f2de37a-948e-4651-9276-eb39743ef812
+# ╟─1f2de37a-948e-4651-9276-eb39743ef812
 # ╠═35e3f85f-581b-45f2-b078-fef31b917f8d
-# ╠═2c605323-6b28-4819-9955-1276e4dac14f
+# ╟─2c605323-6b28-4819-9955-1276e4dac14f
 # ╠═1a1c900a-b65c-4a17-b181-da41883be44f
-# ╟─1237c3e0-949c-40df-91d1-e42092278f99
-# ╠═21585926-3451-43e3-a0ad-30860ff37001
-# ╟─0f97cbf7-1323-4742-9f1c-f1d2dd9ac5e1
-# ╠═b40a1662-d43a-48d4-ba09-253b9c34b020
-# ╟─13372f55-f4c6-43af-b550-d52bf2ad050e
-# ╠═16566609-7474-486a-812b-540ac84dd973
-# ╠═d289b220-1da0-4a91-9951-d855fa7aa2e0
-# ╠═633fe172-ce2c-417e-a2b7-8ea9d9da792b
-# ╠═25988590-c64e-4d16-aa19-820bfeb95734
 # ╟─696c6862-1c2b-4d40-a941-44bcbc94e9e2
 # ╠═627959cf-6a7c-4f87-82f7-406f5c7eb76a
 # ╟─da8d10ef-0ccf-40b9-901c-7214327e0203
-# ╠═6a57627d-e592-4845-af8a-60d1db327fab
+# ╟─6a57627d-e592-4845-af8a-60d1db327fab
 # ╠═1516e738-7adb-4cb5-9fac-e983ce5d17bd
-# ╟─d2188dd8-1240-4fdd-870b-dcd15e91f4f2
+# ╠═d2188dd8-1240-4fdd-870b-dcd15e91f4f2
 # ╟─d069cd4d-7afc-429f-a8fd-3f1c0a640117
 # ╟─0d8df3e0-eeb9-4e61-9298-b735e9dcc284
 # ╟─2fe134f3-6d6d-4109-a2f9-faa583be1189

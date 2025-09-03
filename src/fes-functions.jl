@@ -79,9 +79,41 @@ function fes_run( settings :: Settings, systems::Vector )::Tuple
     Chairmarks.summarize( rtime )
     short_summary = make_short_summary( summaries )
     dump_summaries( settings, summaries )
-    zipname = zip_dump( settings )
-    summaries, results, short_summary, zipname, rtime
+    rname = basiccensor( settings.run_name )
+    dirname = joinpath( settings.output_dir, rname ) 
+    
+    # zipname = zip_dump( settings )
+    summaries, results, short_summary, dirname, rtime
 end
+
+function higher_rates_run()
+    settings = Settings()
+    settings.run_name = "Higher Rates"
+    sys = deepcopy( DEFAULT_SYS )
+    systems = [sys]
+    for i in 5:-1:3
+        tsys = deepcopy( DEFAULT_SYS )
+        tsys.it.non_savings_rates = tsys.it.non_savings_rates[1:i]
+        tsys.it.non_savings_thresholds = tsys.it.non_savings_thresholds[1:i-1]
+        @show i tsys.it.non_savings_rates tsys.it.non_savings_thresholds
+        push!( systems, tsys ) 
+    end
+    weeklyise!.( systems )
+    summaries, results, short_summary, dirname, rtime = fes_run( settings, systems )
+    s=summaries.short_income_summary
+    rename!(s, ["Grant Total £p.a"=>"Base", "Grant Total £p.a_1"=>"Top_Rate_Removed",  "Grant Total £p.a_2"=>"Top_2_Removed",
+        "Grant Total £p.a_3"=>"Top_3_Removed"])
+    it = s[s.label .== "Scottish Income Tax",:]
+    hrt = permutedims(it[:,[:label, :Base, :Top_Rate_Removed, :Top_2_Removed, :Top_3_Removed ]],1)
+    nrows, ncols = size(hrt)
+    hrt.diff_prev = zeros(nrows)
+    hrt.diff_cum = zeros(nrows)
+    for i in 1:nrows
+        di = max(1,i-1)
+        hrt.diff_prev[i] = hrt[i,2]-hrt[di,2]
+        hrt.diff_cum[i] = hrt[i,2]-hrt[1,2]
+    end
+end 
 
 """
 Generate a pair of budget constraints (as Dataframes) for the given household.
