@@ -151,8 +151,8 @@ function draw_bc( settings::Settings, title :: String, df1 :: DataFrame, df2 :: 
     xmax = max( maximum(df1.gross), maximum(df2.gross))*1.1
     ymax = max( maximum(df1.net), maximum(df2.net))*1.1
     ymin = min( minimum(df1.net), minimum(df2.net))
-    ax = Axis(f[1,1]; xlabel="Earnings &pound;s pw", 
-        ylabel=TARGET_BC_INCOMES_STRS[settings.target_bc_income]*" &pound;s pw", 
+    ax = Axis(f[1,1]; xlabel="Earnings £s pw", 
+        ylabel=TARGET_BC_INCOMES_STRS[settings.target_bc_income]*" £s pw", 
         title=title)
     ylims!( ax, 0, ymax )
     xlims!( ax, -10, xmax )

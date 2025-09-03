@@ -25,11 +25,6 @@ PlutoUI.TableOfContents(aside=true)
 
 end
 
-# ╔═╡ 3a2a55d5-8cf8-4d5c-80a7-84a03923bba8
-md"""
-# FES Project Output example.
-"""
-
 # ╔═╡ c093e22f-8ec2-4211-b8a0-2391101fbcd2
 md"""
 
@@ -64,6 +59,13 @@ begin
 	weeklyise!(sys1)
 end;
 
+# ╔═╡ 3a2a55d5-8cf8-4d5c-80a7-84a03923bba8
+md"""
+# FES Project Output
+
+## $(settings.run_name)
+"""
+
 # ╔═╡ 2c605323-6b28-4819-9955-1276e4dac14f
 md"""In the next block, the line:
 
@@ -84,12 +86,34 @@ Only one of the following parameter blocks should be enabled at a time. Disable 
 
 """
 
+# ╔═╡ 1a1c900a-b65c-4a17-b181-da41883be44f
+# ╠═╡ disabled = true
+#=╠═╡
+begin
+	it_eq_change = 2.46
+	sys2 = deepcopy( DEFAULT_SYS)	
+	settings.run_name = "Net £2bn raised with equal increases in all IT rates ($(it_eq_change)pct)."
+	sys2.it.non_savings_rates .+= it_eq_change
+	weeklyise!(sys2)
+end;
+  ╠═╡ =#
+
 # ╔═╡ 1237c3e0-949c-40df-91d1-e42092278f99
 md"""
 
 Likewise the next block adds **9.2%** to the higher rates.
 
 """
+
+# ╔═╡ 21585926-3451-43e3-a0ad-30860ff37001
+begin
+	it_top3_change = 9.2
+	sys2 = deepcopy( DEFAULT_SYS )
+	settings.run_name = "Net £2bn raised with higher IT rates ($(it_top3_change)pct)."
+	sys2.it.non_savings_rates[4:end] .+= it_top3_change
+	sys2.name = settings.run_name
+	weeklyise!(sys2)
+end
 
 # ╔═╡ 0f97cbf7-1323-4742-9f1c-f1d2dd9ac5e1
 md" Examples of messing with benefits."
@@ -109,10 +133,56 @@ begin
 end
   ╠═╡ =#
 
+# ╔═╡ 13372f55-f4c6-43af-b550-d52bf2ad050e
+md"""
+Juanpe's email of 02/Sep:
+
+* Starter: 20%
+* Basic: 21%:
+* Intermediate: 23%
+* Higher: 44%
+* Advanced: 48%
+* Top rate: 53%
+"""
+
+# ╔═╡ 16566609-7474-486a-812b-540ac84dd973
+progrates = [20,21,23,44,48,53];
+
+# ╔═╡ d289b220-1da0-4a91-9951-d855fa7aa2e0
+# ╠═╡ disabled = true
+#=╠═╡
+begin
+	sys2 = deepcopy( DEFAULT_SYS )
+	settings.run_name = "Rates: 20,21,23,44,48,53"
+	sys2.it.non_savings_rates = progrates
+	sys2.name = settings.run_name
+	weeklyise!(sys2)
+end
+  ╠═╡ =#
+
+# ╔═╡ 633fe172-ce2c-417e-a2b7-8ea9d9da792b
+"""
+The next one scales up Juanpe's rates to reach £2bn.
+"""
+
+# ╔═╡ 25988590-c64e-4d16-aa19-820bfeb95734
+# ╠═╡ disabled = true
+#=╠═╡
+begin
+	sys2 = deepcopy( DEFAULT_SYS )
+	newrates = progrates .*1.024
+	rates_str = join(format.(newrates, precision=1),", ")
+	settings.run_name = "Rates: $rates_str"
+	sys2.it.non_savings_rates = newrates
+	sys2.name = settings.run_name
+	weeklyise!(sys2)
+end
+  ╠═╡ =#
+
 # ╔═╡ 696c6862-1c2b-4d40-a941-44bcbc94e9e2
 md"""
 
-The next line runs the model every time the block above changes. 
+The next line runs the model every time one of the blocks above changes. 
 
 """
 
@@ -143,7 +213,7 @@ md"""
 * ScotBen version: **$(string(pkgversion(ScottishTaxBenefitModel)))**
 * Incomes uprated to: **$(settings.to_y)** q**$(settings.to_q)**;
 * Income Type Used for Poverty/Inequality/Decile Graphs: **$(INEQ_INCOME_MEASURE_STRS[settings.ineq_income_measure])**;
-* Income Type used for Gain-Lose tables: **$(INEQ_INCOME_MEASURE_STRS[bhc_net_income])** (n.b this can't currently be changed);
+* Income Type used for Gain-Lose tables: **$(INEQ_INCOME_MEASURE_STRS[settings.ineq_income_measure])** 
 * Populations weighed to: **$(settings.weighting_target_year)**;
 * Poverty Line :**$(POVERTY_LINE_SOURCE_STRS[settings.poverty_line_source])** $(pov_line_str);
 * Means-Tested Benefits Phase in assumption: **$(MT_ROUTING_STRS[settings.means_tested_routing])**;
@@ -155,7 +225,7 @@ end
 
 # ╔═╡ 1516e738-7adb-4cb5-9fac-e983ce5d17bd
 md"""
-## Summary Results : $(sys2.name)
+## Summary Results : $(settings.run_name)
 """
 
 # ╔═╡ d2188dd8-1240-4fdd-870b-dcd15e91f4f2
@@ -310,7 +380,7 @@ summary.short_income_summary
 md""" 
 ## Gain/Lose Tables 
 
-*Using $(INEQ_INCOME_MEASURE_STRS[bhc_net_income])*
+*Using $(INEQ_INCOME_MEASURE_STRS[settings.ineq_income_measure])*
 """
 
 # ╔═╡ 6bf8bfc0-1221-4055-9c65-ea9b04802321
@@ -379,30 +449,11 @@ html"""
 </style>
 """
 
-# ╔═╡ 21585926-3451-43e3-a0ad-30860ff37001
-begin
-	sys2 = deepcopy( DEFAULT_SYS )
-	it_top3_change = 9.2
-	settings.run_name = "Net £2bn raised with higher IT rates ($(it_top3_change)pct)."
-	sys2.it.non_savings_rates[4:end] .+= it_top3_change
-	sys2.name = settings.run_name
-	weeklyise!(sys2)
-end
+# ╔═╡ 65162b5e-23d0-4072-b159-6d0f4ce01a2a
 
-# ╔═╡ 1a1c900a-b65c-4a17-b181-da41883be44f
-# ╠═╡ disabled = true
-#=╠═╡
-begin
-	it_eq_change = 2.46
-	sys2 = deepcopy( DEFAULT_SYS)	
-	settings.run_name = "Net £2bn raised with equal increases in all IT rates ($(it_eq_change)pct)."
-	sys2.it.non_savings_rates .+= it_eq_change
-	weeklyise!(sys2)
-end
-  ╠═╡ =#
 
 # ╔═╡ Cell order:
-# ╟─3a2a55d5-8cf8-4d5c-80a7-84a03923bba8
+# ╠═3a2a55d5-8cf8-4d5c-80a7-84a03923bba8
 # ╠═72c7843c-3698-4045-9c83-2ad391097ad8
 # ╟─c093e22f-8ec2-4211-b8a0-2391101fbcd2
 # ╠═1f2de37a-948e-4651-9276-eb39743ef812
@@ -413,11 +464,16 @@ end
 # ╠═21585926-3451-43e3-a0ad-30860ff37001
 # ╟─0f97cbf7-1323-4742-9f1c-f1d2dd9ac5e1
 # ╠═b40a1662-d43a-48d4-ba09-253b9c34b020
+# ╟─13372f55-f4c6-43af-b550-d52bf2ad050e
+# ╠═16566609-7474-486a-812b-540ac84dd973
+# ╠═d289b220-1da0-4a91-9951-d855fa7aa2e0
+# ╠═633fe172-ce2c-417e-a2b7-8ea9d9da792b
+# ╠═25988590-c64e-4d16-aa19-820bfeb95734
 # ╟─696c6862-1c2b-4d40-a941-44bcbc94e9e2
 # ╠═627959cf-6a7c-4f87-82f7-406f5c7eb76a
 # ╟─da8d10ef-0ccf-40b9-901c-7214327e0203
-# ╟─6a57627d-e592-4845-af8a-60d1db327fab
-# ╟─1516e738-7adb-4cb5-9fac-e983ce5d17bd
+# ╠═6a57627d-e592-4845-af8a-60d1db327fab
+# ╠═1516e738-7adb-4cb5-9fac-e983ce5d17bd
 # ╟─d2188dd8-1240-4fdd-870b-dcd15e91f4f2
 # ╟─d069cd4d-7afc-429f-a8fd-3f1c0a640117
 # ╟─0d8df3e0-eeb9-4e61-9298-b735e9dcc284
@@ -448,3 +504,4 @@ end
 # ╠═758496fe-edae-4a3a-9d04-5c09362ec037
 # ╟─34c7ebc0-d137-4572-b68d-3c79d62592d4
 # ╠═1e27cffe-c86c-4b3e-91f4-22e1b429a9cd
+# ╠═65162b5e-23d0-4072-b159-6d0f4ce01a2a

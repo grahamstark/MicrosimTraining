@@ -96,6 +96,7 @@ requested_threads = 6
 target_bc_income = "bhc_hh"
 to_q = 3
 to_y = 2025
+output_dir = "output"
 weighting_strategy = "use_runtime_computed_weights"
 
 [targets]
