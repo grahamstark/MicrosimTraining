@@ -71,19 +71,16 @@ function fes_run( settings :: Settings, systems::Vector )::Tuple
     tot = 0
     results = nothing
     summaries = nothing 
-    rtime = @be begin
-        results = do_one_run( settings, systems, run_progress )
-        summaries = summarise_frames!( results, settings )
-    end
+    results = do_one_run( settings, systems, run_progress )
+    summaries = summarise_frames!( results, settings )
     dump_summaries( settings, summaries )
-    Chairmarks.summarize( rtime )
     short_summary = make_short_summary( summaries )
     dump_summaries( settings, summaries )
     rname = basiccensor( settings.run_name )
     dirname = joinpath( settings.output_dir, rname ) 
-    
+    save_hbai_graph( settings, results, summaries ) 
     # zipname = zip_dump( settings )
-    summaries, results, short_summary, dirname, rtime
+    summaries, results, short_summary, dirname
 end
 
 """

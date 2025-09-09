@@ -148,3 +148,22 @@ function fes_draw_summary_graphs( settings::Settings, summary :: NamedTuple, dat
     save(fname, f)
     f
 end
+
+function save_hbai_graph( settings::Settings, res, summ )
+    hbaif2 = Figure(size=(2970,2100), fontsize = 25, fonts = (; regular = "Gill Sans"))
+    draw_hbai_clone!( hbaif2, res, summ;
+        title="Incomes: Pre",
+        subtitle=INEQ_INCOME_MEASURE_STRS[settings.ineq_income_measure ],
+        sysno = 1,
+        measure=Symbol(string(settings.ineq_income_measure )),
+        colours=PRE_COLOURS)
+    draw_hbai_clone!( hbaif2, res, summ;
+        title="Incomes: Post",
+        subtitle=INEQ_INCOME_MEASURE_STRS[settings.ineq_income_measure ],
+        sysno = 2,
+        bandwidth=20,
+        measure=Symbol(string(settings.ineq_income_measure )),
+        colours=POST_COLOURS)
+    fname = joinpath( settings.output_dir, basiccensor( settings.run_name ), "hbai-clone.svg" ) 
+    save( fname, hbaif2 )
+end 
