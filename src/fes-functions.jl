@@ -40,19 +40,23 @@ function f_gainlose( h, data, r, c )
     end
     HtmlDecoration( color=colour )
 end
-h7 = HtmlHighlighter( (data, r, c)->(c == 7), f_gainlose )
+
+"""
+format cols at end green for good, red for bad.
+"""
+h7 = HtmlHighlighter( (data, r, c)->(c >= 7), f_gainlose )
 
 """
 
 """
 function format_gainlose(title::String, gl::DataFrame)
-    gl[!,1] = pretty.(gl[!,1])
+    gl[!,1] = pretty.(gl[!,1]) # labels on RHS
     io = IOBuffer()
     pretty_table( 
         io, 
         gl[!,1:end-1]; 
         backend = Val(:html),
-        formatters=fm, alignment=[:l,fill(:r,6)...],
+        formatters=fm, alignment=[:l,fill(:r,7)...],
         highlighters = (h1,h7),
         title = title,
         header=["",
@@ -61,7 +65,8 @@ function format_gainlose(title::String, gl::DataFrame)
             "No Change",
             "Gain £1.01-£10",
             "Gain £10.01+",
-            "Av. Change"])
+            "Av. Change",
+            "Pct. Change"])
     return String(take!(io))
 end
 

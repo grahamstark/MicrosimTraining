@@ -101,7 +101,14 @@ begin
     settings.run_name = "Net £2bn raised with higher IT rates ($(it_top3_change)pct)."
 	sys2.it.non_savings_rates[4:end] .+= it_top3_change
 	
+	#= !!! NOTE IMPORTANT
+
+		if you alter the number of rates and bands, consider changing the field
+		`sys.it.non_savings_basic_rate` which designates the tax rate
+		considered the basic rate for e.g. pension relief. It's an 
+		integer range 1.. numbands.
 	
+	=#
 
 	# messing with benefits - not used
 	#=
@@ -144,10 +151,119 @@ Delete the `#=` `=#` comments to activate.
 """
 
 # ╔═╡ 8618f4e9-8b12-4929-98f2-9713f3814c67
+begin
+
+#= 
+	excerpt from STBParameters.jl
+	
+@with_kw mutable struct CouncilTax{RT<:Real}
+    abolished :: Bool = false
+    revalue :: Bool = false
+    house_values :: Dict{CT_Band,RT} = default_ct_house_values(RT)
+    band_d :: Dict{Symbol,RT} = default_band_ds(RT)
+    relativities :: Dict{CT_Band,RT} = default_ct_ratios(RT)
+    single_person_discount :: RT = 25.0
+    # TODO see CT note on disabled discounts
+end
+
+@with_kw mutable struct ProportionalPropertyTax{RT<:Real}
+    abolished :: Bool = true
+    rate :: RT = 0.0
+end
+
+@with_kw mutable struct LocalTaxes{RT<:Real}
+    ct = CouncilTax{RT}()
+    ppt = ProportionalPropertyTax{RT}()
+    local_income_tax_rates :: RateBands{RT} = zeros(RT,1) # [19.0,20.0,21.0,41.0,46.0]
+    # other possible local taxes go here
+end
+
+=#
+	
+#= 
+	local authorities are indexed in the parameters by the symbols on the left 
+i.e. :S12000033 (don't use "s)
+	
+const LA_NAMES = Dict(
+    :S12000033 => "Aberdeen City",
+    :S12000034 => "Aberdeenshire",
+    :S12000041 => "Angus",
+    :S12000035 => "Argyll and Bute",
+    :S12000036 => "City of Edinburgh",
+    :S12000005 => "Clackmannanshire",
+    :S12000006 => "Dumfries and Galloway",
+    :S12000042 => "Dundee City",
+    :S12000008 => "East Ayrshire",
+    :S12000045 => "East Dunbartonshire",
+    :S12000010 => "East Lothian",
+    :S12000011 => "East Renfrewshire",
+    :S12000014 => "Falkirk",
+    :S12000047 => "Fife",
+    :S12000049 => "Glasgow City",
+    :S12000017 => "Highland",
+    :S12000018 => "Inverclyde",
+    :S12000019 => "Midlothian",
+    :S12000020 => "Moray",
+    :S12000013 => "Na h-Eileanan Siar",
+    :S12000021 => "North Ayrshire",
+    :S12000050 => "North Lanarkshire",
+    :S12000023 => "Orkney Islands",
+    :S12000048 => "Perth and Kinross",
+    :S12000038 => "Renfrewshire",
+    :S12000026 => "Scottish Borders",
+    :S12000027 => "Shetland Islands",
+    :S12000028 => "South Ayrshire",
+    :S12000029 => "South Lanarkshire",
+    :S12000030 => "Stirling",
+    :S12000039 => "West Dunbartonshire",
+    :S12000040 => "West Lothian")
+=#
+
 #=
+# example of progressive CT relativities (borrowed from Wales)
+PROGRESSIVE_RELATIVITIES = Dict{CT_Band,Float64}(
+    # halved below D, doubled above
+    Band_A=>120/360,
+    Band_B=>140/360,
+    Band_C=>160/360,
+    Band_D=>360/360,
+    Band_E=>473/180,
+    Band_F=>585/180,                                                                      
+    Band_G=>705/180,
+    Band_H=>882/180,
+    Band_I=>-1,
+    Household_not_valued_separately => 0.0 ) 
+
+	# proportional property tax of 2% of property value
+	sys2 = deepcopy(sys1)
+    sys2.loctax.ct.abolished = true        
+    sys2.loctax.ppt.abolished = false
+    sys2.loctax.ppt.rate = 2/(100.0*WEEKS_PER_YEAR)
 
 
 =#
+
+#=
+	# revalued house prices
+	
+    sys2.loctax.ct.revalue = true
+    sys2.loctax.ct.house_values = Dict{CT_Band,Float64}(
+        Band_A=>44_000.0,
+        Band_B=>65_000.0,
+        Band_C=>91_000.0,
+        Band_D=>123_000.0,
+        Band_E=>162_000.0,
+        Band_F=>223_000.0,                                                                      
+        Band_G=>324_000.0,
+        Band_H=>99999999999999999999999.999, # 424_000.00,
+        Band_I=>-1, # wales only
+        Household_not_valued_separately => 0.0 )
+	# set the revised CT of Angus to 2,000pa
+    sys2.loctax.ct.band_d[:S12000041] = 2000
+	
+=#
+
+end
 
 # ╔═╡ 696c6862-1c2b-4d40-a941-44bcbc94e9e2
 md"""
@@ -381,6 +497,9 @@ Show( MIME"text/html"(), format_gainlose("By Tenure",summary.gain_lose[2].ten_gl
 # ╔═╡ 4ed19478-f0bd-4579-87ff-dce95737d60d
 Show( MIME"text/html"(), format_gainlose("By Numbers of Children",summary.gain_lose[2].children_gl ))
 
+# ╔═╡ 1f054554-f7c4-478e-906b-ce57f451ce6d
+Show( MIME"text/html"(), format_gainlose("By Household Size",summary.gain_lose[2].hhtype_gl ))
+
 # ╔═╡ 1f7d6f70-0bc3-48ee-ba87-e25f6ba4b907
 begin
 	hh = examples[3]
@@ -477,7 +596,8 @@ html"""
 # ╟─1bad315e-d9ff-4c7b-9282-b5627deea6df
 # ╠═6bf8bfc0-1221-4055-9c65-ea9b04802321
 # ╟─f1ed5325-1d96-4693-8a2a-64951a04c0ef
-# ╟─4ed19478-f0bd-4579-87ff-dce95737d60d
+# ╠═4ed19478-f0bd-4579-87ff-dce95737d60d
+# ╠═1f054554-f7c4-478e-906b-ce57f451ce6d
 # ╟─c123f000-bcd6-4a37-b715-759473365b60
 # ╟─1f7d6f70-0bc3-48ee-ba87-e25f6ba4b907
 # ╟─477c0dc2-9141-49a2-a4c8-fdab84ea586c

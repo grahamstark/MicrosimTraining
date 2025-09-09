@@ -165,14 +165,14 @@ function save_hbai_graph( settings::Settings,
         title="Incomes: Pre",
         subtitle=INEQ_INCOME_MEASURE_STRS[settings.ineq_income_measure ],
         sysno = 1,
-        bandwidth=20,
+        bandwidth=10, # £10 steps - £20 looks prettier but the deciles don't line up so well
         measure=Symbol(string(settings.ineq_income_measure )),
         colours=PRE_COLOURS)
     ax2 = draw_hbai_clone!( hbaif2, res, summ;
         title="Incomes: Post",
         subtitle=INEQ_INCOME_MEASURE_STRS[settings.ineq_income_measure ],
         sysno = 2,
-        bandwidth=20,
+        bandwidth=10,
         measure=Symbol(string(settings.ineq_income_measure )),
         colours=POST_COLOURS)
     linkxaxes!( ax1, ax2 )
