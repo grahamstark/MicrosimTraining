@@ -58,6 +58,7 @@ sets default run settings (number of households to run over, uprating targets, e
 # ╠═╡ show_logs = false
 begin
 	settings = Settings() 
+	settings.included_data_years = [2019,2021,2022]
 	wage = 30
 	examples = get_example_hhs(settings)
 	sys1 = deepcopy( DEFAULT_SYS)
@@ -84,12 +85,34 @@ Only one of the following parameter blocks should be enabled at a time. Disable 
 
 """
 
+# ╔═╡ 1a1c900a-b65c-4a17-b181-da41883be44f
+# ╠═╡ disabled = true
+#=╠═╡
+begin
+	it_eq_change = 2.46
+	sys2 = deepcopy( DEFAULT_SYS)	
+	settings.run_name = "Net £2bn raised with equal increases in all IT rates ($(it_eq_change)pct)."
+	sys2.it.non_savings_rates .+= it_eq_change
+	weeklyise!(sys2)
+end
+  ╠═╡ =#
+
 # ╔═╡ 1237c3e0-949c-40df-91d1-e42092278f99
 md"""
 
 Likewise the next block adds **9.2%** to the higher rates.
 
 """
+
+# ╔═╡ 21585926-3451-43e3-a0ad-30860ff37001
+begin
+	sys2 = deepcopy( DEFAULT_SYS )
+	it_top3_change = 9.2
+	settings.run_name = "Net £2bn raised with higher IT rates ($(it_top3_change)pct)."
+	sys2.it.non_savings_rates[4:end] .+= it_top3_change
+	sys2.name = settings.run_name
+	weeklyise!(sys2)
+end
 
 # ╔═╡ 0f97cbf7-1323-4742-9f1c-f1d2dd9ac5e1
 md" Examples of messing with benefits."
@@ -118,7 +141,37 @@ The next line runs the model every time the block above changes.
 
 # ╔═╡ 627959cf-6a7c-4f87-82f7-406f5c7eb76a
 # ╠═╡ show_logs = false
-summary, data, short_summary, zipname, timing  = fes_run( settings, [sys1, sys2] );
+begin
+	summary, data, short_summary, zipname  = fes_run( settings, [sys1, sys2] );
+    ind = data.indiv[1]
+	hhi = data.hh[1]
+	median(ind.eq_bhc_net_income, Weights( ind.weight)),
+	mean(ind.eq_bhc_net_income, Weights( ind.weight)),
+	median(hhi.eq_bhc_net_income, Weights( hhi.weighted_people)),
+	mean(hhi.eq_bhc_net_income, Weights( hhi.weighted_people)),
+	median(ind.eq_bhc_net_income),
+	mean(ind.eq_bhc_net_income),
+	mean(hhi.bhc_net_income),
+	levels(hhi.data_year)
+end
+
+# ╔═╡ 64bda44b-1c8e-4613-bda0-d23993a846c2
+begin
+	
+	h1 = hhi[1,:]
+	h1.num_people,
+	h1.bhc_net_income,
+	h1.eq_bhc_net_income,
+	h1.bhc_net_income/h1.eq_bhc_net_income
+		
+end
+
+# ╔═╡ 2675c9ad-9f3b-43e1-866d-829067f9676d
+levels(hhi.data_year)
+
+# ╔═╡ 54d91898-7bb6-49ec-a426-6bc37e84f1a9
+settings
+
 
 # ╔═╡ da8d10ef-0ccf-40b9-901c-7214327e0203
 md"""
@@ -379,28 +432,6 @@ html"""
 </style>
 """
 
-# ╔═╡ 21585926-3451-43e3-a0ad-30860ff37001
-begin
-	sys2 = deepcopy( DEFAULT_SYS )
-	it_top3_change = 9.2
-	settings.run_name = "Net £2bn raised with higher IT rates ($(it_top3_change)pct)."
-	sys2.it.non_savings_rates[4:end] .+= it_top3_change
-	sys2.name = settings.run_name
-	weeklyise!(sys2)
-end
-
-# ╔═╡ 1a1c900a-b65c-4a17-b181-da41883be44f
-# ╠═╡ disabled = true
-#=╠═╡
-begin
-	it_eq_change = 2.46
-	sys2 = deepcopy( DEFAULT_SYS)	
-	settings.run_name = "Net £2bn raised with equal increases in all IT rates ($(it_eq_change)pct)."
-	sys2.it.non_savings_rates .+= it_eq_change
-	weeklyise!(sys2)
-end
-  ╠═╡ =#
-
 # ╔═╡ Cell order:
 # ╟─3a2a55d5-8cf8-4d5c-80a7-84a03923bba8
 # ╠═72c7843c-3698-4045-9c83-2ad391097ad8
@@ -415,6 +446,9 @@ end
 # ╠═b40a1662-d43a-48d4-ba09-253b9c34b020
 # ╟─696c6862-1c2b-4d40-a941-44bcbc94e9e2
 # ╠═627959cf-6a7c-4f87-82f7-406f5c7eb76a
+# ╠═64bda44b-1c8e-4613-bda0-d23993a846c2
+# ╠═2675c9ad-9f3b-43e1-866d-829067f9676d
+# ╠═54d91898-7bb6-49ec-a426-6bc37e84f1a9
 # ╟─da8d10ef-0ccf-40b9-901c-7214327e0203
 # ╟─6a57627d-e592-4845-af8a-60d1db327fab
 # ╟─1516e738-7adb-4cb5-9fac-e983ce5d17bd
