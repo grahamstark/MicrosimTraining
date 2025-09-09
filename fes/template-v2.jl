@@ -188,6 +188,14 @@ begin
 	MicrosimTraining.fes_draw_summary_graphs( settings, summary, data )
 end
 
+# ╔═╡ 874efc51-ca66-4dd5-b7a1-05693f51536d
+summary
+
+# ╔═╡ 988d83bc-8ea8-4247-99b3-70370418430e
+begin
+dch = 100.0 .* (summary.deciles[2][:, 4] .- summary.deciles[1][:, 4]) ./ summary.deciles[1][:, 4]
+end
+
 # ╔═╡ d069cd4d-7afc-429f-a8fd-3f1c0a640117
 begin
 	
@@ -421,6 +429,8 @@ html"""
 # ╟─6a57627d-e592-4845-af8a-60d1db327fab
 # ╠═1516e738-7adb-4cb5-9fac-e983ce5d17bd
 # ╠═d2188dd8-1240-4fdd-870b-dcd15e91f4f2
+# ╠═874efc51-ca66-4dd5-b7a1-05693f51536d
+# ╠═988d83bc-8ea8-4247-99b3-70370418430e
 # ╟─d069cd4d-7afc-429f-a8fd-3f1c0a640117
 # ╟─0d8df3e0-eeb9-4e61-9298-b735e9dcc284
 # ╟─2fe134f3-6d6d-4109-a2f9-faa583be1189

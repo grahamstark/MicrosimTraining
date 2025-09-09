@@ -17,14 +17,17 @@ export colourbins,
        gf2, 
        POST_COLOURS, 
        PRE_COLOURS
-
+"""
+List of colours for barcharts that change from col1->col2 and back
+when the bars step over a decile.
+"""
 function colourbins( input_colours, bins::Vector, deciles::Matrix )
     nbins = length(bins)-1
     colours = fill(input_colours[1],nbins)
     decile = 1
     colourno = 1
     for i in 1:nbins
-        if bins[i] > deciles[decile,3]
+        if bins[i] > deciles[decile,3] # next decile - swap colour.
             colourno = if colourno == 1
                 2
             else 
@@ -48,7 +51,7 @@ function draw_hbai_clone!(
     measure::Symbol, 
     colours )
     edges = collect(0:bandwidth:2200)
-    ih = summary.income_hists[1]
+    ih = summary.income_hists[sysno]
     ax = Axis( f[sysno,1], 
         title=title, 
         subtitle=subtitle,
@@ -62,10 +65,10 @@ function draw_hbai_clone!(
     incs = min.(2200, incs )
     h = hist!( ax, 
         incs;
-        weights=res.hh[1].weighted_people,
+        weights=res.hh[sysno].weighted_people,
         bins=edges, 
         color = deccols )
-    mheight=26_000*bandwidth # arbitrary height for mean/med lines
+    mheight=10_000*bandwidth # arbitrary height for mean/med lines
     povline = ih.median*0.6
     v1 = lines!( ax, [ih.median,ih.median], [0, mheight]; color=:grey16, label="Median £$(gf2(ih.median))", linestyle=:dash )
     v2 = lines!( ax, [ih.mean,ih.mean], [0, mheight]; color=:chocolate4, label="Mean £$(gf2(ih.mean))", linestyle=:dash )
@@ -87,7 +90,7 @@ function draw_hbai_thumbnail!(
     measure::Symbol, 
     colours )
     edges = collect(0:bandwidth:2200)
-    ih = summary.income_hists[1]
+    ih = summary.income_hists[sysno]
     ax = Axis( f[row,col], title=title, yticklabelsvisible=false)
     deciles = summary.deciles[sysno]
     deccols = colourbins( colours, edges, deciles ) #ih.hist.edges[1], summary.deciles[1])
@@ -96,10 +99,10 @@ function draw_hbai_thumbnail!(
     incs = min.(2200, incs )
     h = hist!( ax, 
         incs;
-        weights=res.hh[1].weighted_people,
+        weights=res.hh[sysno].weighted_people,
         bins=edges, 
         color = deccols )
-    mheight=16_000*bandwidth # arbitrary height for mean/med lines
+    mheight=10_000*bandwidth # arbitrary height for mean/med lines
     povline = ih.median*0.6
     v1 = lines!( ax, [ih.median,ih.median], [0, mheight]; color=:grey16, label="Median £$(gf2(ih.median))", linestyle=:dash )
     v2 = lines!( ax, [ih.mean,ih.mean], [0, mheight]; color=:chocolate4, label="Mean £$(gf2(ih.mean))", linestyle=:dash )
@@ -107,28 +110,33 @@ function draw_hbai_thumbnail!(
     return ax
 end
 
-function fes_draw_summary_graphs( settings::Settings, summary :: NamedTuple, data::NamedTuple )::Figure
+function fes_draw_summary_graphs( 
+    settings::Settings, 
+    summary :: NamedTuple, 
+    data::NamedTuple )::Figure
     f = Figure(fontsize = 10, fonts = (; regular = "Gill Sans"))
     ax1 = draw_hbai_thumbnail!( f, data, summary;
-        title="Before",
+        title="Income Distribution - Before",
         col = 1,
         row = 1,
         sysno = 1,
+        bandwidth=20,
         measure=Symbol(string(settings.ineq_income_measure )),
         colours=PRE_COLOURS)
     ax2 = draw_hbai_thumbnail!( f, data, summary;
-        title="After",
+        title="Income Distribution - After",
         col = 1,
         row = 2,
         sysno = 2,
         bandwidth=20,
         measure=Symbol(string(settings.ineq_income_measure )),
         colours=POST_COLOURS)
-    linkxaxes!( ax1,ax2 )
+    linkxaxes!( ax1, ax2 )
+    linkyaxes!( ax1, ax2 )
     ax3 = Axis(f[1,2]; title="Income Changes By Decile", 
         ylabel="% Change", xlabel="Decile" )
-    dch = (summary.deciles[2][:, 4] .- summary.deciles[1][:, 4]) ./ summary.deciles[2][:, 4]
-    barplot!( ax2, dch)
+    dch = 100.0 .* (summary.deciles[2][:, 4] .- summary.deciles[1][:, 4]) ./ summary.deciles[1][:, 4]
+    barplot!( ax3, dch)
     if settings.do_marginal_rates 
         ax4 = Axis(f[2,2]; title="METRs", xlabel="%", ylabel="")
         for i in 1:2
@@ -149,21 +157,26 @@ function fes_draw_summary_graphs( settings::Settings, summary :: NamedTuple, dat
     f
 end
 
-function save_hbai_graph( settings::Settings, res, summ )
+function save_hbai_graph( settings::Settings, 
+    res::NamedTuple, 
+    summ :: NamedTuple )
     hbaif2 = Figure(size=(2970,2100), fontsize = 25, fonts = (; regular = "Gill Sans"))
-    draw_hbai_clone!( hbaif2, res, summ;
+    ax1 = draw_hbai_clone!( hbaif2, res, summ;
         title="Incomes: Pre",
         subtitle=INEQ_INCOME_MEASURE_STRS[settings.ineq_income_measure ],
         sysno = 1,
+        bandwidth=20,
         measure=Symbol(string(settings.ineq_income_measure )),
         colours=PRE_COLOURS)
-    draw_hbai_clone!( hbaif2, res, summ;
+    ax2 = draw_hbai_clone!( hbaif2, res, summ;
         title="Incomes: Post",
         subtitle=INEQ_INCOME_MEASURE_STRS[settings.ineq_income_measure ],
         sysno = 2,
         bandwidth=20,
         measure=Symbol(string(settings.ineq_income_measure )),
         colours=POST_COLOURS)
+    linkxaxes!( ax1, ax2 )
+    linkyaxes!( ax1, ax2 )
     fname = joinpath( settings.output_dir, basiccensor( settings.run_name ), "hbai-clone.svg" ) 
     save( fname, hbaif2 )
 end 
