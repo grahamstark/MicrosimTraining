@@ -114,7 +114,7 @@ function do_higher_rates_run( settings::Settings, base_sys :: TaxBenefitSystem, 
         @show i tsys.it.non_savings_rates tsys.it.non_savings_thresholds
         push!( systems, tsys ) 
     end
-    weeklyise!.( systems )
+    # weeklyise!.( systems )
     # run the whole set
     summaries, results, short_summary, dirname = fes_run( settings, systems, supress_dumps=true )
     # extract just the little bit we want from the incomes summary
