@@ -10,6 +10,33 @@ gf2(v) = Format.format(v, precision=2, commas=true)
 
 gf0(v) = Format.format(v, precision=0, commas=true)
 
+export colourbins, 
+       draw_hbai_clone!, 
+       draw_hbai_thumbnail!, 
+       gf0, 
+       gf2, 
+       POST_COLOURS, 
+       PRE_COLOURS
+
+function colourbins( input_colours, bins::Vector, deciles::Matrix )
+    nbins = length(bins)-1
+    colours = fill(input_colours[1],nbins)
+    decile = 1
+    colourno = 1
+    for i in 1:nbins
+        if bins[i] > deciles[decile,3]
+            colourno = if colourno == 1
+                2
+            else 
+                1
+            end
+            decile += 1
+        end
+        colours[i] = input_colours[colourno]        
+    end
+    colours
+end
+
 function draw_hbai_clone!( 
     f :: Figure, 
     res :: NamedTuple, 
@@ -72,7 +99,7 @@ function draw_hbai_thumbnail!(
         weights=res.hh[1].weighted_people,
         bins=edges, 
         color = deccols )
-    mheight=36_000*bandwidth # arbitrary height for mean/med lines
+    mheight=16_000*bandwidth # arbitrary height for mean/med lines
     povline = ih.median*0.6
     v1 = lines!( ax, [ih.median,ih.median], [0, mheight]; color=:grey16, label="Median £$(gf2(ih.median))", linestyle=:dash )
     v2 = lines!( ax, [ih.mean,ih.mean], [0, mheight]; color=:chocolate4, label="Mean £$(gf2(ih.mean))", linestyle=:dash )
@@ -84,11 +111,15 @@ function fes_draw_summary_graphs( settings::Settings, summary :: NamedTuple, dat
     f = Figure(fontsize = 10, fonts = (; regular = "Gill Sans"))
     ax1 = draw_hbai_thumbnail!( f, data, summary;
         title="Before",
+        col = 1,
+        row = 1,
         sysno = 1,
         measure=Symbol(string(settings.ineq_income_measure )),
         colours=PRE_COLOURS)
     ax2 = draw_hbai_thumbnail!( f, data, summary;
         title="After",
+        col = 1,
+        row = 2,
         sysno = 2,
         bandwidth=20,
         measure=Symbol(string(settings.ineq_income_measure )),

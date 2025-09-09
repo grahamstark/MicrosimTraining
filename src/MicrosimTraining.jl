@@ -82,6 +82,7 @@ const MAINDIR=artifact"main_data"
 include( "runner-functions.jl")
 include( "examples.jl")
 include( "display_constants.jl")
+include( "fes-graphics.jl")
 include( "fes-functions.jl")
 include( "table_libs.jl")
 include( "text_html_libs.jl")
