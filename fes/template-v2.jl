@@ -327,6 +327,24 @@ begin
 	Show(MIME"text/html"(), t )
 end
 
+# ╔═╡ ff5c2f9a-9616-4791-8da6-79327e9592ce
+md"""
+## Higher Rates Effects Table
+"""
+
+# ╔═╡ fa12ec1f-4969-43d9-b5b4-b1c83f92ce9a
+# ╠═╡ show_logs = false
+begin
+	inc_compare = if(sys1.it.non_savings_rates != sys2.it.non_savings_rates) ||
+		(sys1.it.non_savings_thresholds != sys2.it.non_savings_thresholds)
+		hrt, tpretty, systems, shortsum = do_higher_rates_run(settings,sys1,sys2)
+		hrt
+	else
+		"Rates and Bands Havn't Changed: Not Bothering."
+	end
+	inc_compare
+end
+
 # ╔═╡ a1bbc2ae-68a2-40de-93a4-2c9a68c9ee91
 md"""
 
@@ -444,6 +462,8 @@ html"""
 # ╟─db1a4510-9190-4556-806b-2a6dc8fd3e1b
 # ╟─a1318fc7-9d20-4c00-8a89-b5ae90b5cc0c
 # ╟─aa9d43a0-a45c-48bd-ae28-7b525be605ce
+# ╟─ff5c2f9a-9616-4791-8da6-79327e9592ce
+# ╠═fa12ec1f-4969-43d9-b5b4-b1c83f92ce9a
 # ╟─a1bbc2ae-68a2-40de-93a4-2c9a68c9ee91
 # ╠═feed5169-225f-4e95-b279-403dff21539d
 # ╟─1bad315e-d9ff-4c7b-9282-b5627deea6df

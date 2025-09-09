@@ -116,7 +116,7 @@ function do_higher_rates_run( settings::Settings, base_sys :: TaxBenefitSystem, 
     rename!(s, ["Grant Total £p.a"=>"Base", "Grant Total £p.a_1"=>"Full_Reformed_Sys"])
     grant_labels = ["Base", "Full_Reformed_Sys"]
     for i in nrates:-1:2
-        label = "Reform_Rate[$nrates->$(i)]_Deleted"
+        label = "Reform_Rates[$nrates->$(i)]_Deleted"
         rename!(s, ["Grant Total £p.a_$(nrates-i+2)"=>label])
         push!( grant_labels, label )
     end
