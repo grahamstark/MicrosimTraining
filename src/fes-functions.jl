@@ -83,34 +83,47 @@ function fes_run( settings :: Settings, systems::Vector )::Tuple
     summaries, results, short_summary, dirname
 end
 
+export do_higher_rates_run
+
 """
 Progressively delete all the Scottish 2025/6 Higher rates and return the cumulative revenue
 differences.
 """
-function higher_rates_run()
-    settings = Settings()
-    settings.run_name = "Higher Rates"
+function do_higher_rates_run( settings::Settings, base_sys :: TaxBenefitSystem, changed_sys :: TaxBenefitSystem )::Tuple
+    # settings.run_name = "Higher Rates"
     # create 4 systems with progressively deleted higher rates
-    sys = deepcopy( DEFAULT_SYS )
-    systems = [sys]
-    for i in 5:-1:3
-        tsys = deepcopy( DEFAULT_SYS )
+    base = deepcopy( base_sys )
+    systems = [base]
+    nrates = length( changed_sys.it.non_savings_rates)
+    # basic_rate = max(1,nrates - 3 )
+    for i in nrates:-1:1 # basic_rate
+        tsys = deepcopy( changed_sys )
         tsys.it.non_savings_rates = tsys.it.non_savings_rates[1:i]
+        # possibly reset the 'basic rate'
+        if length( tsys.it.non_savings_rates ) < (base.it.non_savings_basic_rate)
+            tsys.it.non_savings_basic_rate = max(1,i-1)
+        end
         tsys.it.non_savings_thresholds = tsys.it.non_savings_thresholds[1:i-1]
         @show i tsys.it.non_savings_rates tsys.it.non_savings_thresholds
         push!( systems, tsys ) 
     end
     weeklyise!.( systems )
     # run the whole set
-    summaries, results, short_summary, dirname, rtime = fes_run( settings, systems )
+    summaries, results, short_summary, dirname = fes_run( settings, systems )
     # extract just the little bit we want from the incomes summary
     s=summaries.short_income_summary
-    rename!(s, ["Grant Total £p.a"=>"Base", "Grant Total £p.a_1"=>"Top_Rate_Removed",  
-        "Grant Total £p.a_2"=>"Top_2_Removed",
-        "Grant Total £p.a_3"=>"Top_3_Removed"])
+    @show names(s)
+    rename!(s, ["Grant Total £p.a"=>"Base", "Grant Total £p.a_1"=>"Full_Reformed_Sys"])
+    grant_labels = ["Base", "Full_Reformed_Sys"]
+    for i in nrates:-1:2
+        label = "Reform_Rate[$nrates->$(i)]_Deleted"
+        rename!(s, ["Grant Total £p.a_$(nrates-i+2)"=>label])
+        push!( grant_labels, label )
+    end
+    grant_labels = Symbol.( grant_labels )
     it = s[s.label .== "Scottish Income Tax",:]
     # flip the ouput sideways
-    hrt = permutedims(it[:,[:label, :Base, :Top_Rate_Removed, :Top_2_Removed, :Top_3_Removed ]],1)
+    hrt = permutedims(it[:,[:label, grant_labels...]],1)
     # add in cumulative change columns
     nrows, ncols = size(hrt)
     hrt.diff_prev = zeros(nrows)
@@ -123,8 +136,8 @@ function higher_rates_run()
     # formatted version
     t = hcat(pretty.(hrt.label), format.(hrt[:,2:end];precision=0,commas=true))
     rename!( t, ["diff_prev"=>"Incremental Change", "diff_cum"=>"Total Change"] )
-    return hrt, t
-end 
+    return hrt, t, systems, summaries.short_income_summary
+end
 
 """
 Generate a pair of budget constraints (as Dataframes) for the given household.

@@ -70,8 +70,8 @@ function draw_hbai_clone!(
         color = deccols )
     mheight=10_000*bandwidth # arbitrary height for mean/med lines
     povline = ih.median*0.6
-    v1 = lines!( ax, [ih.median,ih.median], [0, mheight]; color=:grey16, label="Median £$(gf2(ih.median))", linestyle=:dash )
-    v2 = lines!( ax, [ih.mean,ih.mean], [0, mheight]; color=:chocolate4, label="Mean £$(gf2(ih.mean))", linestyle=:dash )
+    v1 = lines!( ax, [ih.mean,ih.mean], [0, mheight]; color=:chocolate4, label="Mean £$(gf2(ih.mean))", linestyle=:dash )
+    v2 = lines!( ax, [ih.median,ih.median], [0, mheight]; color=:grey16, label="Median £$(gf2(ih.median))", linestyle=:dash )
     v3 = lines!( ax, [povline,povline], [0, mheight]; color=:olivedrab4, label="60% of median £$(gf2(povline))", linestyle=:dash )
     axislegend(ax)
     return ax
@@ -104,8 +104,8 @@ function draw_hbai_thumbnail!(
         color = deccols )
     mheight=10_000*bandwidth # arbitrary height for mean/med lines
     povline = ih.median*0.6
-    v1 = lines!( ax, [ih.median,ih.median], [0, mheight]; color=:grey16, label="Median £$(gf2(ih.median))", linestyle=:dash )
-    v2 = lines!( ax, [ih.mean,ih.mean], [0, mheight]; color=:chocolate4, label="Mean £$(gf2(ih.mean))", linestyle=:dash )
+    v1 = lines!( ax, [ih.mean,ih.mean], [0, mheight]; color=:chocolate4, label="Mean £$(gf2(ih.mean))", linestyle=:dash )
+    v2 = lines!( ax, [ih.median,ih.median], [0, mheight]; color=:grey16, label="Median £$(gf2(ih.median))", linestyle=:dash )
     v3 = lines!( ax, [povline,povline], [0, mheight]; color=:olivedrab4, label="60% of median £$(gf2(povline))", linestyle=:dash )
     return ax
 end
@@ -160,7 +160,7 @@ end
 function save_hbai_graph( settings::Settings, 
     res::NamedTuple, 
     summ :: NamedTuple )
-    hbaif2 = Figure(size=(2970,2100), fontsize = 25, fonts = (; regular = "Gill Sans"))
+    hbaif2 = Figure(size=(2100,2970), fontsize = 25, fonts = (; regular = "Gill Sans"))
     ax1 = draw_hbai_clone!( hbaif2, res, summ;
         title="Incomes: Pre",
         subtitle=INEQ_INCOME_MEASURE_STRS[settings.ineq_income_measure ],
