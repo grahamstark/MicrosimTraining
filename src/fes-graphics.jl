@@ -65,7 +65,7 @@ function draw_hbai_clone!(
         weights=res.hh[1].weighted_people,
         bins=edges, 
         color = deccols )
-    mheight=36_000*bandwidth # arbitrary height for mean/med lines
+    mheight=26_000*bandwidth # arbitrary height for mean/med lines
     povline = ih.median*0.6
     v1 = lines!( ax, [ih.median,ih.median], [0, mheight]; color=:grey16, label="Median £$(gf2(ih.median))", linestyle=:dash )
     v2 = lines!( ax, [ih.mean,ih.mean], [0, mheight]; color=:chocolate4, label="Mean £$(gf2(ih.mean))", linestyle=:dash )
