@@ -134,6 +134,21 @@ begin
 	weeklyise!(sys2)
 end;
 
+# ╔═╡ dc102136-d6ee-4407-8d41-203a81603db1
+md"""
+
+### (Commented Out) Examples of Local Tax Changes.
+
+Delete the `#=` `=#` comments to activate.
+
+"""
+
+# ╔═╡ 8618f4e9-8b12-4929-98f2-9713f3814c67
+#=
+
+
+=#
+
 # ╔═╡ 696c6862-1c2b-4d40-a941-44bcbc94e9e2
 md"""
 
@@ -186,14 +201,6 @@ md"""
 # ╔═╡ d2188dd8-1240-4fdd-870b-dcd15e91f4f2
 begin
 	MicrosimTraining.fes_draw_summary_graphs( settings, summary, data )
-end
-
-# ╔═╡ 874efc51-ca66-4dd5-b7a1-05693f51536d
-summary
-
-# ╔═╡ 988d83bc-8ea8-4247-99b3-70370418430e
-begin
-dch = 100.0 .* (summary.deciles[2][:, 4] .- summary.deciles[1][:, 4]) ./ summary.deciles[1][:, 4]
 end
 
 # ╔═╡ d069cd4d-7afc-429f-a8fd-3f1c0a640117
@@ -338,6 +345,7 @@ begin
 	inc_compare = if(sys1.it.non_savings_rates != sys2.it.non_savings_rates) ||
 		(sys1.it.non_savings_thresholds != sys2.it.non_savings_thresholds)
 		hrt, tpretty, systems, shortsum = do_higher_rates_run(settings,sys1,sys2)
+		hrt.label = pretty.( hrt.label )
 		hrt
 	else
 		"Rates and Bands Havn't Changed: Not Bothering."
@@ -434,21 +442,21 @@ html"""
 
 
 # ╔═╡ Cell order:
-# ╠═3a2a55d5-8cf8-4d5c-80a7-84a03923bba8
+# ╟─3a2a55d5-8cf8-4d5c-80a7-84a03923bba8
 # ╟─72c7843c-3698-4045-9c83-2ad391097ad8
 # ╟─c093e22f-8ec2-4211-b8a0-2391101fbcd2
 # ╟─1f2de37a-948e-4651-9276-eb39743ef812
 # ╠═35e3f85f-581b-45f2-b078-fef31b917f8d
 # ╟─2c605323-6b28-4819-9955-1276e4dac14f
 # ╠═1a1c900a-b65c-4a17-b181-da41883be44f
+# ╟─dc102136-d6ee-4407-8d41-203a81603db1
+# ╠═8618f4e9-8b12-4929-98f2-9713f3814c67
 # ╟─696c6862-1c2b-4d40-a941-44bcbc94e9e2
 # ╠═627959cf-6a7c-4f87-82f7-406f5c7eb76a
 # ╟─da8d10ef-0ccf-40b9-901c-7214327e0203
 # ╟─6a57627d-e592-4845-af8a-60d1db327fab
-# ╠═1516e738-7adb-4cb5-9fac-e983ce5d17bd
-# ╠═d2188dd8-1240-4fdd-870b-dcd15e91f4f2
-# ╠═874efc51-ca66-4dd5-b7a1-05693f51536d
-# ╠═988d83bc-8ea8-4247-99b3-70370418430e
+# ╟─1516e738-7adb-4cb5-9fac-e983ce5d17bd
+# ╟─d2188dd8-1240-4fdd-870b-dcd15e91f4f2
 # ╟─d069cd4d-7afc-429f-a8fd-3f1c0a640117
 # ╟─0d8df3e0-eeb9-4e61-9298-b735e9dcc284
 # ╟─2fe134f3-6d6d-4109-a2f9-faa583be1189
@@ -471,13 +479,13 @@ html"""
 # ╟─f1ed5325-1d96-4693-8a2a-64951a04c0ef
 # ╟─4ed19478-f0bd-4579-87ff-dce95737d60d
 # ╟─c123f000-bcd6-4a37-b715-759473365b60
-# ╠═1f7d6f70-0bc3-48ee-ba87-e25f6ba4b907
-# ╠═477c0dc2-9141-49a2-a4c8-fdab84ea586c
-# ╠═8c2c6e7c-53fa-4604-b5dd-85782443ffca
-# ╠═4718dd2b-9c0f-4c15-b249-52deffee46b6
-# ╟─6691e0c2-a440-4f24-855a-6c0c3d746b2e
-# ╠═6c308ebe-ca45-4774-81cc-bfafc46ba2a4
+# ╟─1f7d6f70-0bc3-48ee-ba87-e25f6ba4b907
+# ╟─477c0dc2-9141-49a2-a4c8-fdab84ea586c
+# ╟─8c2c6e7c-53fa-4604-b5dd-85782443ffca
+# ╟─4718dd2b-9c0f-4c15-b249-52deffee46b6
+# ╠═6691e0c2-a440-4f24-855a-6c0c3d746b2e
+# ╟─6c308ebe-ca45-4774-81cc-bfafc46ba2a4
 # ╠═758496fe-edae-4a3a-9d04-5c09362ec037
 # ╟─34c7ebc0-d137-4572-b68d-3c79d62592d4
-# ╠═1e27cffe-c86c-4b3e-91f4-22e1b429a9cd
+# ╟─1e27cffe-c86c-4b3e-91f4-22e1b429a9cd
 # ╠═65162b5e-23d0-4072-b159-6d0f4ce01a2a

@@ -65,7 +65,7 @@ function format_gainlose(title::String, gl::DataFrame)
     return String(take!(io))
 end
 
-function fes_run( settings :: Settings, systems::Vector )::Tuple
+function fes_run( settings :: Settings, systems::Vector; supress_dumps=false )::Tuple
     # delete higher rates
     global running_total
     tot = 0
@@ -75,7 +75,9 @@ function fes_run( settings :: Settings, systems::Vector )::Tuple
     summaries = summarise_frames!( results, settings )
     dump_summaries( settings, summaries )
     short_summary = make_short_summary( summaries )
-    dump_summaries( settings, summaries )
+    if ! supress_dumps
+        dump_summaries( settings, summaries )
+    end
     rname = basiccensor( settings.run_name )
     dirname = joinpath( settings.output_dir, rname ) 
     save_hbai_graph( settings, results, summaries ) 
@@ -109,7 +111,7 @@ function do_higher_rates_run( settings::Settings, base_sys :: TaxBenefitSystem, 
     end
     weeklyise!.( systems )
     # run the whole set
-    summaries, results, short_summary, dirname = fes_run( settings, systems )
+    summaries, results, short_summary, dirname = fes_run( settings, systems, supress_dumps=true )
     # extract just the little bit we want from the incomes summary
     s=summaries.short_income_summary
     @show names(s)
