@@ -143,7 +143,7 @@ The next line runs the model every time one of the blocks above changes.
 
 # ╔═╡ 627959cf-6a7c-4f87-82f7-406f5c7eb76a
 # ╠═╡ show_logs = false
-summary, data, short_summary, zipname, timing  = fes_run( settings, [sys1, sys2] );
+summary, data, short_summary, zipname  = fes_run( settings, [sys1, sys2] );
 
 # ╔═╡ da8d10ef-0ccf-40b9-901c-7214327e0203
 md"""
@@ -185,7 +185,7 @@ md"""
 
 # ╔═╡ d2188dd8-1240-4fdd-870b-dcd15e91f4f2
 begin
-	draw_summary_graphs( settings, summary, data )
+	MicrosimTraining.fes_draw_summary_graphs( settings, summary, data )
 end
 
 # ╔═╡ d069cd4d-7afc-429f-a8fd-3f1c0a640117
