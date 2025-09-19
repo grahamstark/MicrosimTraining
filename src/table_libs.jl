@@ -4,6 +4,7 @@ const COST_ITEMS = [
     :employers_ni,
     :scottish_income_tax,
 
+    :local_taxes,
     :total_benefits,
     
     :means_tested_bens,
@@ -19,8 +20,9 @@ const COST_LABELS = [
     "Employer's National Insurance",
     "Scottish Income Tax",
 
+    "Domestic Local Taxes",
     "Total Benefit Spending",
-
+    
     "All Means Tested Benefits",
     "Legacy Means-Tested Benefits",
     "Universal Credit",

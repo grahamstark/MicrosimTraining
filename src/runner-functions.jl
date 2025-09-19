@@ -1,4 +1,4 @@
-export fb, fp, fc, fm, fmz
+export fb, fp, fc, fm, fmz, fpa, fz
 export make_short_summary
 export make_pov_transitions, draw_summary_graphs
 export make_artifact
@@ -44,11 +44,14 @@ const DEFAULT_PLUTO_INPUTS = make_pluto_inputs(ANNUAL_BASE_SYS)
 
 # some formatting
 function fmz(v::Number)
-    vm = v/1_000_000
-    return if vm ≈ 0.0
+    vm = fz(v/1_000_000)*"mn"
+end
+
+function fz( v::Number )
+    return if v ≈ 0.0
         "No Change"
     else
-        "£"*format( vm, commas=true, precision=0 )*"mn"
+        "£"*format( v, commas=true, precision=0 )
     end
 end
 
@@ -114,13 +117,17 @@ end
 function make_short_summary( summary :: NamedTuple )::NamedTuple
     r1 = summary.income_summary[1][1,:]
     r2 = summary.income_summary[2][1,:]
+    net1 = r1.net_inc_indirect
+    net2 = r2.net_inc_indirect
+     
     ben1 = r1.total_benefits
     ben2 = r2.total_benefits
     tax1 = r1.income_tax+r1.national_insurance+r1.employers_ni	
     tax2 = r2.income_tax+r2.national_insurance+r2.employers_ni	
     dtax = tax2 - tax1
     dben = ben2 - ben1 
-    netcost = dben - dtax
+    netcost = net2 - net1
+    netdirect = dtax - dben 
     palma1 = summary.inequality[1].palma
     palma2 = summary.inequality[2].palma
     dpalma = palma2 - palma1
@@ -177,6 +184,7 @@ function make_short_summary( summary :: NamedTuple )::NamedTuple
     (; 
     response = response,
     netcost = fmz( netcost ),
+    netdirect = fmz( netdirect ),
     povrate1 = fp(pr1),
     povrate2 = fp(pr2),
     dpovrate = fp( prch ),
@@ -197,36 +205,6 @@ function make_short_summary( summary :: NamedTuple )::NamedTuple
     nc = fc( summary.gain_lose[2].nc) )
 end
 
-function pstate(m, povs )::Int
-    i = 0
-    for p in povs
-        i += 1
-        if m <= p
-            return i
-        end
-    end
-    return i+1
-end
-
-function make_povtrans_mat( results :: NamedTuple )::Matrix
-    trans = zeros(6,6)
-    med1 = median(results.indiv[1].eq_bhc_net_income, Weights(results.indiv[1].weight ))
-    @show med1
-    povs = med1 .* [ 0.3, 0.4, 0.6, 0.8 ]
-    @show povs
-    nrows, ncols = size( results.indiv[1] )
-    for r in 1:nrows
-        i1 = results.indiv[1][r,:]
-        i2 = results.indiv[2][r,:]
-        p1 = pstate(i1.eq_bhc_net_income, povs)
-        p2 = pstate(i2.eq_bhc_net_income, povs)
-        trans[p1,p2] += i1.weight
-        trans[p1,6]+= i1.weight
-        trans[6,p2]+= i1.weight
-        trans[6,6]+= i1.weight
-    end
-    trans
-end
 
 function draw_mr_hists( systems :: Vector, results :: NamedTuple )
     f = Figure()
@@ -321,14 +299,13 @@ function one_row( label::String, v :: Vector, r::Int )::String
     s
 end
 
-function make_pov_transitions( results::NamedTuple )::String
+function make_pov_transitions( trans::Matrix )::String
     labels = ["V.Deep (<=30%)",
               "Deep (<=40%)",
               "In Poverty (<=60%)",
               "Near Poverty (<=80%)",
               "Not in Poverty",
              "Total"]
-    trans = make_povtrans_mat( results )
     vs = fb.(trans)
     cells = ""
     for r in 1:6

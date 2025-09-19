@@ -25,31 +25,12 @@ PlutoUI.TableOfContents(aside=true)
 
 end
 
-# ╔═╡ c093e22f-8ec2-4211-b8a0-2391101fbcd2
-md"""
-
-This a static HTML dump of a [Pluto interactive Notebook](https://plutojl.org/) I've constructed for running ScotBen for this project. here are also dumps of data as spreadsheets. 
-"""
-
-# ╔═╡ 1f2de37a-948e-4651-9276-eb39743ef812
-md"""
-
-The next block sets up changes we're making. 
-The line:
-
-```julia
-settings = Settings() 
-```
-sets default run settings (number of households to run over, uprating targets, etc.)
-
-
-"""
-
-
 # ╔═╡ 35e3f85f-581b-45f2-b078-fef31b917f8d
 # ╠═╡ show_logs = false
 begin
 	settings = Settings() 
+	settings.run_name = "ScotGov's proposed progressive bands"
+	settings.do_marginal_rates = true
 	wage = 30
 	examples = get_example_hhs(settings)
 	sys1 = deepcopy( DEFAULT_SYS)
@@ -63,96 +44,22 @@ md"""
 ## $(settings.run_name)
 """
 
-# ╔═╡ 2c605323-6b28-4819-9955-1276e4dac14f
-md"""In the next block, the line:
-
-```julia
-sys2 = deepcopy( DEFAULT_SYS)
-```
-
-Constructs a parameter system (tax rates, benefit amounts, etc.) which is a copy of the base 25/6 fiscal system `DEFAULT_SYS`). Then the lines :
-
-```julia
-it_eq_change = 2.46
-sys2.it.non_savings_rates .+= it_eq_change
-```
-
-Adds **2.46%** to each IT band. Everyting else is unchanged. This produces a net revenue gain (after mt benefits) of £2bn. It you don't care about the extra benefits paid, the change would be **£2.42%**.
-
-Only one of the following parameter blocks should be enabled at a time. Disable button is top right in the cell.
-
-"""
-
-# ╔═╡ 1a1c900a-b65c-4a17-b181-da41883be44f
-begin
-	sys2 = deepcopy( DEFAULT_SYS)	
-	progrates = [20,21,23,44,48,53]
-    it_eq_change = 2.46
-	it_top3_change = 9.2
-	newrates = progrates .*1.024
-	
-	#=
-	settings.run_name = "Net £2bn raised with equal increases in all IT rates ($(it_eq_change)pct)."
-	sys2.it.non_savings_rates .+= it_eq_change
-	=#
-	# Likewise the next block adds 9.2% to the higher rates.
-	 
-	
-    settings.run_name = "Net £2bn raised with higher IT rates ($(it_top3_change)pct)."
-	sys2.it.non_savings_rates[4:end] .+= it_top3_change
-	
-	#= !!! NOTE IMPORTANT
-
-		if you alter the number of rates and bands, consider changing the field
-		`sys.it.non_savings_basic_rate` which designates the tax rate
-		considered the basic rate for e.g. pension relief. It's an 
-		integer range 1.. numbands.
-	
-	=#
-
-	# messing with benefits - not used
-	#=
-	
-	sys2.it.non_savings_rates = sys2.it.non_savings_rates[1:3]
-	sys2.it.non_savings_thresholds = sys2.it.non_savings_thresholds[1:2]
-	sys2.scottish_child_payment.amount = 0.0
-	sys2.uc.taper = 0
-	sys2.it.personal_allowance = 7_500
-	sys2.nmt_bens.child_benefit.abolished = true
-	
-	=#
-
-	# Juanpe's email of 02/Sep:
-	#=
-	settings.run_name = "Rates: 20,21,23,44,48,53"
-	sys2.it.non_savings_rates = progrates
-	sys2.name = settings.run_name
-	=#
-
-	# Juanpe's rates scaled up to raise £2bn
-	
-	#=
-	rates_str = join(format.(newrates, precision=1),", ")
-	settings.run_name = "Rates: $rates_str"
-	sys2.it.non_savings_rates = newrates
-	sys2.name = settings.run_name
-	=#
-	sys2.name = settings.run_name
-	weeklyise!(sys2)
-end;
-
-# ╔═╡ dc102136-d6ee-4407-8d41-203a81603db1
-md"""
-
-### (Commented Out) Examples of Local Tax Changes.
-
-Delete the `#=` `=#` comments to activate.
-
-"""
-
 # ╔═╡ 8618f4e9-8b12-4929-98f2-9713f3814c67
 begin
+	sys2 = deepcopy( DEFAULT_SYS)	
+	# scotgov proposed progressive CT relativities
+	SG_RELATIVITIES = deepcopy( sys2.loctax.ct.relativities ) 
+	# 7.5%, 12.5%, 17.5% and 22.5% 
+	SG_RELATIVITIES[Band_E] *= 1.075
+	SG_RELATIVITIES[Band_F] *= 1.125
+	SG_RELATIVITIES[Band_G] *= 1.175
+	SG_RELATIVITIES[Band_H] *= 1.225
+	sys2.loctax.ct.relativities = SG_RELATIVITIES
+	sys2.name = settings.run_name
+	weeklyise!(sys2)
+end
 
+# ╔═╡ b9af7395-2d50-4001-87cb-57d32af2a8dc
 #= 
 	excerpt from STBParameters.jl
 	
@@ -178,9 +85,6 @@ end
     # other possible local taxes go here
 end
 
-=#
-	
-#= 
 	local authorities are indexed in the parameters by the symbols on the left 
 i.e. :S12000033 (don't use "s)
 	
@@ -217,11 +121,7 @@ const LA_NAMES = Dict(
     :S12000030 => "Stirling",
     :S12000039 => "West Dunbartonshire",
     :S12000040 => "West Lothian")
-=#
-
-#=
-# example of progressive CT relativities (borrowed from Wales)
-PROGRESSIVE_RELATIVITIES = Dict{CT_Band,Float64}(
+	PROGRESSIVE_RELATIVITIES = Dict{CT_Band,Float64}(
     # halved below D, doubled above
     Band_A=>120/360,
     Band_B=>140/360,
@@ -241,9 +141,6 @@ PROGRESSIVE_RELATIVITIES = Dict{CT_Band,Float64}(
     sys2.loctax.ppt.rate = 2/(100.0*WEEKS_PER_YEAR)
 
 
-=#
-
-#=
 	# revalued house prices
 	
     sys2.loctax.ct.revalue = true
@@ -263,7 +160,13 @@ PROGRESSIVE_RELATIVITIES = Dict{CT_Band,Float64}(
 	
 =#
 
-end
+
+
+# ╔═╡ 8473236d-b207-4494-b4e8-a527106bff56
+sort(sys1.loctax.ct.relativities)
+
+# ╔═╡ 90db21bc-bff3-4e9d-956e-fd4d7707840d
+sort(sys2.loctax.ct.relativities)
 
 # ╔═╡ 696c6862-1c2b-4d40-a941-44bcbc94e9e2
 md"""
@@ -327,9 +230,20 @@ md"""
 Net Cost of your changes: **$(short_summary.netcost)**
 
 
-#### Tax revenue 
+#### Direct Tax revenue 
 
 before: **$(short_summary.tax1)** after: **$(short_summary.tax2)** change: **$(short_summary.dtax)** £mn pa
+
+#### Net Revenue Raised inc. Local Taxes
+
+**$(short_summary.netcost)** £mn pa
+
+#### Net Revenue raised - Benefits & Direct Taxes only
+
+**$(short_summary.netdirect)** £mn pa
+
+**$(short_summary.netcost)** £mn pa
+
 
 #### Benefit Spending
 before: **$(short_summary.ben1)** after: **$(short_summary.ben2)** change: **$(short_summary.dben)** £m pa
@@ -400,16 +314,24 @@ Show(MIME"text/html"(), MicrosimTraining.costs_table( summary.income_summary[1],
         summary.income_summary[2]))
 
 # ╔═╡ e3188a8c-e21d-488f-aa4c-d8885646b5ca
+begin
+if settings.do_marginal_rates
 md"""
 ### Marginal Effective Tax Rates (METRs)
 
 Working age individuals with Marginal Effective Tax Rates (METRs) in the given range. METR is the percentage of the next £1 you earn that is taken away in taxes or reduced means-tested benefits.
 """
+end
+end
 
 # ╔═╡ 9db85469-8ded-444c-b8d5-6989d96c3d52
 # ╠═╡ show_logs = false
+begin
+if settings.do_marginal_rates
 Show(MIME"text/html"(), MicrosimTraining.mr_table( summary.metrs[1],
         summary.metrs[2]))
+end
+end
 
 # ╔═╡ 7b3f061d-4d6b-46db-aef2-4d3611824f73
 md"""
@@ -446,7 +368,7 @@ md"### Poverty Transitions"
 # ╔═╡ aa9d43a0-a45c-48bd-ae28-7b525be605ce
 # ╠═╡ show_logs = false
 begin
-	t = make_pov_transitions( data )
+	t = make_pov_transitions( summary.povtrans_matrix[2] )
 	Show(MIME"text/html"(), t )
 end
 
@@ -464,7 +386,7 @@ begin
 		hrt.label = pretty.( hrt.label )
 		hrt
 	else
-		"Rates and Bands Havn't Changed: Not Bothering."
+		"Rates and Bands Haven't Changed: Not Bothering."
 	end
 	inc_compare
 end
@@ -500,28 +422,6 @@ Show( MIME"text/html"(), format_gainlose("By Numbers of Children",summary.gain_l
 # ╔═╡ 1f054554-f7c4-478e-906b-ce57f451ce6d
 Show( MIME"text/html"(), format_gainlose("By Household Size",summary.gain_lose[2].hhtype_gl ))
 
-# ╔═╡ 1f7d6f70-0bc3-48ee-ba87-e25f6ba4b907
-begin
-	hh = examples[3]
-	bc1, bc2 = getbc( settings, hh.hh, sys1, sys2, wage )
-end;
-
-# ╔═╡ c123f000-bcd6-4a37-b715-759473365b60
-md""" ## Budget Constraints 
-
-This shows the relationship between gross earnings (x-axis) and net income (y-axis)
-for a $(hh.label) (we can change the family easily). Before change in red and after in blue.
-"""
-
-# ╔═╡ 477c0dc2-9141-49a2-a4c8-fdab84ea586c
-draw_bc( settings, "Budget Constraint for $(hh.label)", bc1, bc2 )
-
-# ╔═╡ 8c2c6e7c-53fa-4604-b5dd-85782443ffca
-Show(MIME"text/html"(), format_bc_df( "Pre Budget Constraint $(hh.label)", bc1 ))
-
-# ╔═╡ 4718dd2b-9c0f-4c15-b249-52deffee46b6
-Show(MIME"text/html"(), format_bc_df( "Post Budget Constraint  $(hh.label)", bc2 ))
-
 # ╔═╡ 6691e0c2-a440-4f24-855a-6c0c3d746b2e
 md"""## Examples of Gaining Households
 
@@ -534,6 +434,9 @@ get_change_target_hhs( settings, sys1, sys2, summary.gain_lose[2].ex_gainers )
 
 # ╔═╡ 758496fe-edae-4a3a-9d04-5c09362ec037
 md"## Examples of Losing Households"
+
+# ╔═╡ 85b5715b-aa6b-409b-b2bc-46b2ad3e4343
+
 
 # ╔═╡ 34c7ebc0-d137-4572-b68d-3c79d62592d4
 # ╠═╡ show_logs = false
@@ -563,13 +466,11 @@ html"""
 # ╔═╡ Cell order:
 # ╟─3a2a55d5-8cf8-4d5c-80a7-84a03923bba8
 # ╟─72c7843c-3698-4045-9c83-2ad391097ad8
-# ╟─c093e22f-8ec2-4211-b8a0-2391101fbcd2
-# ╟─1f2de37a-948e-4651-9276-eb39743ef812
 # ╠═35e3f85f-581b-45f2-b078-fef31b917f8d
-# ╟─2c605323-6b28-4819-9955-1276e4dac14f
-# ╠═1a1c900a-b65c-4a17-b181-da41883be44f
-# ╟─dc102136-d6ee-4407-8d41-203a81603db1
 # ╠═8618f4e9-8b12-4929-98f2-9713f3814c67
+# ╟─b9af7395-2d50-4001-87cb-57d32af2a8dc
+# ╠═8473236d-b207-4494-b4e8-a527106bff56
+# ╠═90db21bc-bff3-4e9d-956e-fd4d7707840d
 # ╟─696c6862-1c2b-4d40-a941-44bcbc94e9e2
 # ╠═627959cf-6a7c-4f87-82f7-406f5c7eb76a
 # ╟─da8d10ef-0ccf-40b9-901c-7214327e0203
@@ -589,8 +490,8 @@ html"""
 # ╟─db1a4510-9190-4556-806b-2a6dc8fd3e1b
 # ╟─a1318fc7-9d20-4c00-8a89-b5ae90b5cc0c
 # ╟─aa9d43a0-a45c-48bd-ae28-7b525be605ce
-# ╟─ff5c2f9a-9616-4791-8da6-79327e9592ce
-# ╠═fa12ec1f-4969-43d9-b5b4-b1c83f92ce9a
+# ╠═ff5c2f9a-9616-4791-8da6-79327e9592ce
+# ╟─fa12ec1f-4969-43d9-b5b4-b1c83f92ce9a
 # ╟─a1bbc2ae-68a2-40de-93a4-2c9a68c9ee91
 # ╠═feed5169-225f-4e95-b279-403dff21539d
 # ╟─1bad315e-d9ff-4c7b-9282-b5627deea6df
@@ -598,14 +499,10 @@ html"""
 # ╟─f1ed5325-1d96-4693-8a2a-64951a04c0ef
 # ╠═4ed19478-f0bd-4579-87ff-dce95737d60d
 # ╠═1f054554-f7c4-478e-906b-ce57f451ce6d
-# ╟─c123f000-bcd6-4a37-b715-759473365b60
-# ╟─1f7d6f70-0bc3-48ee-ba87-e25f6ba4b907
-# ╟─477c0dc2-9141-49a2-a4c8-fdab84ea586c
-# ╟─8c2c6e7c-53fa-4604-b5dd-85782443ffca
-# ╟─4718dd2b-9c0f-4c15-b249-52deffee46b6
 # ╠═6691e0c2-a440-4f24-855a-6c0c3d746b2e
 # ╟─6c308ebe-ca45-4774-81cc-bfafc46ba2a4
 # ╠═758496fe-edae-4a3a-9d04-5c09362ec037
-# ╟─34c7ebc0-d137-4572-b68d-3c79d62592d4
+# ╠═85b5715b-aa6b-409b-b2bc-46b2ad3e4343
+# ╠═34c7ebc0-d137-4572-b68d-3c79d62592d4
 # ╟─1e27cffe-c86c-4b3e-91f4-22e1b429a9cd
 # ╠═65162b5e-23d0-4072-b159-6d0f4ce01a2a

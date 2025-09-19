@@ -94,11 +94,14 @@ local-artifact_server_url_windows = "file:///c:/data/"
 means_tested_routing = "uc_full"
 requested_threads = 6
 target_bc_income = "bhc_hh"
-to_q = 4
-to_y = 2024
+to_q = 3
+to_y = 2025
 output_dir = "output"
 weighting_strategy = "use_runtime_computed_weights"
-weighting_relative_to_ons_weights = false
+# NB if false ->  0.62, 5.8
+weighting_relative_to_ons_weights = true
+lower_multiple = 0.65
+upper_multiple = 3.7
 
 [targets]
 test = ["Test"]
