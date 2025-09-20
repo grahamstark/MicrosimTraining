@@ -126,7 +126,7 @@ function make_short_summary( summary :: NamedTuple )::NamedTuple
     tax2 = r2.income_tax+r2.national_insurance+r2.employers_ni	
     dtax = tax2 - tax1
     dben = ben2 - ben1 
-    netcost = net2 - net1
+    netcost = net1 - net2 # note: other way around
     netdirect = dtax - dben 
     palma1 = summary.inequality[1].palma
     palma2 = summary.inequality[2].palma
