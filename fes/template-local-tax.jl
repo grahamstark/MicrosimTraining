@@ -219,7 +219,7 @@ md"""
 
 # ╔═╡ d2188dd8-1240-4fdd-870b-dcd15e91f4f2
 begin
-	MicrosimTraining.fes_draw_summary_graphs( settings, summary, data )
+	MicrosimTraining.fes_draw_summary_graphs( settings, data, summary )
 end
 
 # ╔═╡ d069cd4d-7afc-429f-a8fd-3f1c0a640117

@@ -24,6 +24,7 @@ using UUIDs
 using ZipFile
 
 @reexport using Agents
+@reexport using ArgCheck
 @reexport using Pkg.Artifacts
 @reexport using Chairmarks
 @reexport using CSV

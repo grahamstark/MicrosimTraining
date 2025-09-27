@@ -10,7 +10,7 @@ gf2(v) = Format.format(v, precision=2, commas=true)
 
 gf0(v) = Format.format(v, precision=0, commas=true)
 
-export colourbins, 
+export make_colourbins, 
        draw_hbai_clone!, 
        draw_hbai_thumbnail!, 
        gf0, 
@@ -19,9 +19,12 @@ export colourbins,
        PRE_COLOURS
 """
 List of colours for barcharts that change from col1->col2 and back
-when the bars step over a decile.
+when the bars step over a decile. Approximate.
+* `bins`: breaks e.g every £10
+* `deciles` 10x4 matrix from PovertyInequality - we want :,3 - decile breaks
 """
-function colourbins( input_colours, bins::Vector, deciles::Matrix )
+function make_colourbins( input_colours, bins::Vector, deciles::Matrix )
+@argcheck length( input_colours ) >= 2
     nbins = length(bins)-1
     colours = fill(input_colours[1],nbins)
     decile = 1
@@ -40,9 +43,15 @@ function colourbins( input_colours, bins::Vector, deciles::Matrix )
     colours
 end
 
+"""
+kinda sorta copy of fig 5 from: https://www.gov.uk/government/statistics/households-below-average-income-for-financial-years-ending-1995-to-2024/households-below-average-income-an-analysis-of-the-uk-income-distribution-fye-1995-to-fye-2024
+
+* `results` STBOutput main results dump (incomes individual)
+* `summary` STBOutput results summary dump (means, medians)
+"""
 function draw_hbai_clone!( 
     f :: Figure, 
-    res :: NamedTuple, 
+    results :: NamedTuple, 
     summary :: NamedTuple; 
     title :: AbstractString,
     subtitle :: AbstractString,
@@ -59,13 +68,13 @@ function draw_hbai_clone!(
         ylabel="Counts",
         ytickformat = gft)
     deciles = summary.deciles[sysno]
-    deccols = colourbins( colours, edges, deciles ) #ih.hist.edges[1], summary.deciles[1])
-    incs = deepcopy(res.hh[sysno][!,measure])
+    deccols = make_colourbins( colours, edges, deciles ) #ih.hist.edges[1], summary.deciles[1])
+    incs = deepcopy(results.hh[sysno][!,measure])
     incs = max.( 0.0, incs )
     incs = min.(2200, incs )
     h = hist!( ax, 
         incs;
-        weights=res.hh[sysno].weighted_people,
+        weights=results.hh[sysno].weighted_people,
         bins=edges, 
         color = deccols )
     mheight=10_000*bandwidth # arbitrary height for mean/med lines
@@ -77,10 +86,13 @@ function draw_hbai_clone!(
     return ax
 end
 
-
+"""
+* `results` STBOutput main results dump (incomes individual)
+* `summary` STBOutput results summary dump (means, medians)
+"""
 function draw_hbai_thumbnail!( 
     f :: Figure, 
-    res :: NamedTuple, 
+    results :: NamedTuple, 
     summary :: NamedTuple;
     title :: AbstractString,
     col = 1,
@@ -93,8 +105,8 @@ function draw_hbai_thumbnail!(
     ih = summary.income_hists[sysno]
     ax = Axis( f[row,col], title=title, yticklabelsvisible=false)
     deciles = summary.deciles[sysno]
-    deccols = colourbins( colours, edges, deciles ) #ih.hist.edges[1], summary.deciles[1])
-    incs = deepcopy(res.hh[sysno][!,measure])
+    deccols = make_colourbins( colours, edges, deciles ) #ih.hist.edges[1], summary.deciles[1])
+    incs = deepcopy(results.hh[sysno][!,measure])
     incs = max.( 0.0, incs )
     incs = min.(2200, incs )
     h = hist!( ax, 
@@ -110,12 +122,16 @@ function draw_hbai_thumbnail!(
     return ax
 end
 
+"""
+* `results` STBOutput main results dump (incomes individual)
+* `summary` STBOutput results summary dump (means, medians)
+"""
 function fes_draw_summary_graphs( 
-    settings::Settings, 
-    summary :: NamedTuple, 
-    data::NamedTuple )::Figure
+    settings::Settings,  
+    results :: NamedTuple, 
+    summary :: NamedTuple )::Figure
     f = Figure(fontsize = 10, fonts = (; regular = "Gill Sans"))
-    ax1 = draw_hbai_thumbnail!( f, data, summary;
+    ax1 = draw_hbai_thumbnail!( f, results, summary;
         title="Income Distribution - Before",
         col = 1,
         row = 1,
@@ -123,7 +139,7 @@ function fes_draw_summary_graphs(
         bandwidth=20,
         measure=Symbol(string(settings.ineq_income_measure )),
         colours=PRE_COLOURS)
-    ax2 = draw_hbai_thumbnail!( f, data, summary;
+    ax2 = draw_hbai_thumbnail!( f, results, summary;
         title="Income Distribution - After",
         col = 1,
         row = 2,
@@ -140,7 +156,7 @@ function fes_draw_summary_graphs(
     if settings.do_marginal_rates 
         ax4 = Axis(f[2,2]; title="METRs", xlabel="%", ylabel="")
         for i in 1:2
-            ind = data.indiv[i]
+            ind = results.indiv[i]
             m1=ind[.! ismissing.(ind.metr),:]
             m1.metr = Float64.( m1.metr ) # Coerce away from missing type.
             m1.metr = min.( 200.0, m1.metr )
@@ -157,18 +173,22 @@ function fes_draw_summary_graphs(
     f
 end
 
+"""
+* `results` STBOutput main results dump (incomes individual)
+* `summary` STBOutput results summary dump (means, medians)
+"""
 function save_hbai_graph( settings::Settings, 
-    res::NamedTuple, 
-    summ :: NamedTuple )
+    results :: NamedTuple, 
+    summary :: NamedTuple )
     hbaif2 = Figure(size=(2100,2970), fontsize = 25, fonts = (; regular = "Gill Sans"))
-    ax1 = draw_hbai_clone!( hbaif2, res, summ;
+    ax1 = draw_hbai_clone!( hbaif2, results, summary;
         title="Incomes: Pre",
         subtitle=INEQ_INCOME_MEASURE_STRS[settings.ineq_income_measure ],
         sysno = 1,
         bandwidth=10, # £10 steps - £20 looks prettier but the deciles don't line up so well
         measure=Symbol(string(settings.ineq_income_measure )),
         colours=PRE_COLOURS)
-    ax2 = draw_hbai_clone!( hbaif2, res, summ;
+    ax2 = draw_hbai_clone!( hbaif2, results, summary;
         title="Incomes: Post",
         subtitle=INEQ_INCOME_MEASURE_STRS[settings.ineq_income_measure ],
         sysno = 2,

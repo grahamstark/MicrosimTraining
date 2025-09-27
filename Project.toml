@@ -5,6 +5,7 @@ version = "1.0.0-DEV"
 
 [deps]
 Agents = "46ada45e-f475-11e8-01d0-f70cc89e6671"
+ArgCheck = "dce04be8-c92d-5529-be00-80e4d2c0e197"
 ArtifactUtils = "8b73e784-e7d8-4ea5-973d-377fed4e3bce"
 Bonito = "824d6782-a2ef-11e9-3a09-e5662e0c26f8"
 BudgetConstraints = "51aacf4b-43e8-45f9-b960-ce5126c2a956"
@@ -43,6 +44,7 @@ ScottishTaxBenefitModel = {url = "https://github.com/grahamstark/ScottishTaxBene
 
 [compat]
 Agents = "6,7,8"
+ArgCheck = "2,3"
 ArtifactUtils = "0,1"
 Bonito = "4,5"
 BudgetConstraints = "1"
@@ -91,17 +93,16 @@ dump_frames = false
 included_data_years = [2019, 2021, 2022, 2023]
 local-artifact_server_url_unix = "file:///mnt/data/ScotBen/local_artifacts/"
 local-artifact_server_url_windows = "file:///c:/data/"
+lower_multiple = 0.65
 means_tested_routing = "uc_full"
+output_dir = "output"
 requested_threads = 6
 target_bc_income = "bhc_hh"
 to_q = 3
 to_y = 2025
-output_dir = "output"
-weighting_strategy = "use_runtime_computed_weights"
-# NB if false ->  0.62, 5.8
-weighting_relative_to_ons_weights = true
-lower_multiple = 0.65
 upper_multiple = 3.7
+weighting_relative_to_ons_weights = true
+weighting_strategy = "use_runtime_computed_weights"
 
 [targets]
 test = ["Test"]
