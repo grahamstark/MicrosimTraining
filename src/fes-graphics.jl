@@ -111,7 +111,7 @@ function draw_hbai_thumbnail!(
     incs = min.(2200, incs )
     h = hist!( ax, 
         incs;
-        weights=res.hh[sysno].weighted_people,
+        weights=results.hh[sysno].weighted_people,
         bins=edges, 
         color = deccols )
     mheight=10_000*bandwidth # arbitrary height for mean/med lines
