@@ -1,5 +1,5 @@
 ### A Pluto.jl notebook ###
-# v0.20.18
+# v0.20.19
 
 #> [frontmatter]
 #> language = "en-GB"
@@ -140,130 +140,6 @@ begin
 	sys2.name = settings.run_name
 	weeklyise!(sys2)
 end;
-
-# ╔═╡ dc102136-d6ee-4407-8d41-203a81603db1
-md"""
-
-### (Commented Out) Examples of Local Tax Changes.
-
-Delete the `#=` `=#` comments to activate.
-
-"""
-
-# ╔═╡ 8618f4e9-8b12-4929-98f2-9713f3814c67
-begin
-
-#= 
-	excerpt from STBParameters.jl
-	
-@with_kw mutable struct CouncilTax{RT<:Real}
-    abolished :: Bool = false
-    revalue :: Bool = false
-    house_values :: Dict{CT_Band,RT} = default_ct_house_values(RT)
-    band_d :: Dict{Symbol,RT} = default_band_ds(RT)
-    relativities :: Dict{CT_Band,RT} = default_ct_ratios(RT)
-    single_person_discount :: RT = 25.0
-    # TODO see CT note on disabled discounts
-end
-
-@with_kw mutable struct ProportionalPropertyTax{RT<:Real}
-    abolished :: Bool = true
-    rate :: RT = 0.0
-end
-
-@with_kw mutable struct LocalTaxes{RT<:Real}
-    ct = CouncilTax{RT}()
-    ppt = ProportionalPropertyTax{RT}()
-    local_income_tax_rates :: RateBands{RT} = zeros(RT,1) # [19.0,20.0,21.0,41.0,46.0]
-    # other possible local taxes go here
-end
-
-=#
-	
-#= 
-	local authorities are indexed in the parameters by the symbols on the left 
-i.e. :S12000033 (don't use "s)
-	
-const LA_NAMES = Dict(
-    :S12000033 => "Aberdeen City",
-    :S12000034 => "Aberdeenshire",
-    :S12000041 => "Angus",
-    :S12000035 => "Argyll and Bute",
-    :S12000036 => "City of Edinburgh",
-    :S12000005 => "Clackmannanshire",
-    :S12000006 => "Dumfries and Galloway",
-    :S12000042 => "Dundee City",
-    :S12000008 => "East Ayrshire",
-    :S12000045 => "East Dunbartonshire",
-    :S12000010 => "East Lothian",
-    :S12000011 => "East Renfrewshire",
-    :S12000014 => "Falkirk",
-    :S12000047 => "Fife",
-    :S12000049 => "Glasgow City",
-    :S12000017 => "Highland",
-    :S12000018 => "Inverclyde",
-    :S12000019 => "Midlothian",
-    :S12000020 => "Moray",
-    :S12000013 => "Na h-Eileanan Siar",
-    :S12000021 => "North Ayrshire",
-    :S12000050 => "North Lanarkshire",
-    :S12000023 => "Orkney Islands",
-    :S12000048 => "Perth and Kinross",
-    :S12000038 => "Renfrewshire",
-    :S12000026 => "Scottish Borders",
-    :S12000027 => "Shetland Islands",
-    :S12000028 => "South Ayrshire",
-    :S12000029 => "South Lanarkshire",
-    :S12000030 => "Stirling",
-    :S12000039 => "West Dunbartonshire",
-    :S12000040 => "West Lothian")
-=#
-
-#=
-# example of progressive CT relativities (borrowed from Wales)
-PROGRESSIVE_RELATIVITIES = Dict{CT_Band,Float64}(
-    # halved below D, doubled above
-    Band_A=>120/360,
-    Band_B=>140/360,
-    Band_C=>160/360,
-    Band_D=>360/360,
-    Band_E=>473/180,
-    Band_F=>585/180,                                                                      
-    Band_G=>705/180,
-    Band_H=>882/180,
-    Band_I=>-1,
-    Household_not_valued_separately => 0.0 ) 
-
-	# proportional property tax of 2% of property value
-	sys2 = deepcopy(sys1)
-    sys2.loctax.ct.abolished = true        
-    sys2.loctax.ppt.abolished = false
-    sys2.loctax.ppt.rate = 2/(100.0*WEEKS_PER_YEAR)
-
-
-=#
-
-#=
-	# revalued house prices
-	
-    sys2.loctax.ct.revalue = true
-    sys2.loctax.ct.house_values = Dict{CT_Band,Float64}(
-        Band_A=>44_000.0,
-        Band_B=>65_000.0,
-        Band_C=>91_000.0,
-        Band_D=>123_000.0,
-        Band_E=>162_000.0,
-        Band_F=>223_000.0,                                                                      
-        Band_G=>324_000.0,
-        Band_H=>99999999999999999999999.999, # 424_000.00,
-        Band_I=>-1, # wales only
-        Household_not_valued_separately => 0.0 )
-	# set the revised CT of Angus to 2,000pa
-    sys2.loctax.ct.band_d[:S12000041] = 2000
-	
-=#
-
-end
 
 # ╔═╡ 696c6862-1c2b-4d40-a941-44bcbc94e9e2
 md"""
@@ -446,7 +322,7 @@ md"### Poverty Transitions"
 # ╔═╡ aa9d43a0-a45c-48bd-ae28-7b525be605ce
 # ╠═╡ show_logs = false
 begin
-	t = make_pov_transitions( data )
+	t = make_pov_transitions( summary.povtrans_matrix[2] )
 	Show(MIME"text/html"(), t )
 end
 
@@ -568,8 +444,6 @@ html"""
 # ╠═35e3f85f-581b-45f2-b078-fef31b917f8d
 # ╟─2c605323-6b28-4819-9955-1276e4dac14f
 # ╠═1a1c900a-b65c-4a17-b181-da41883be44f
-# ╟─dc102136-d6ee-4407-8d41-203a81603db1
-# ╠═8618f4e9-8b12-4929-98f2-9713f3814c67
 # ╟─696c6862-1c2b-4d40-a941-44bcbc94e9e2
 # ╠═627959cf-6a7c-4f87-82f7-406f5c7eb76a
 # ╟─da8d10ef-0ccf-40b9-901c-7214327e0203
@@ -588,7 +462,7 @@ html"""
 # ╟─d48b7079-1b1e-464c-8775-c90460b5783c
 # ╟─db1a4510-9190-4556-806b-2a6dc8fd3e1b
 # ╟─a1318fc7-9d20-4c00-8a89-b5ae90b5cc0c
-# ╟─aa9d43a0-a45c-48bd-ae28-7b525be605ce
+# ╠═aa9d43a0-a45c-48bd-ae28-7b525be605ce
 # ╟─ff5c2f9a-9616-4791-8da6-79327e9592ce
 # ╠═fa12ec1f-4969-43d9-b5b4-b1c83f92ce9a
 # ╟─a1bbc2ae-68a2-40de-93a4-2c9a68c9ee91
