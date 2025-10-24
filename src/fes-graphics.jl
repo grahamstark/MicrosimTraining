@@ -318,16 +318,22 @@ function draw_incomes_vs_bands!(
 	v1 = lines!( ax, [mean,mean], [0, mheight]; color=:chocolate4, label="Mean £$(gf2(mean))", linestyle=:dash )
 	v2 = lines!( ax, [median,median], [0, mheight]; color=:grey16, label="Median £$(gf2(median))", linestyle=:dash )
 	axislegend(ax)
-	# Colorbar(f[sysno,2];colormap=colmap,ticks=rates.*100, limits = (0, 100), size = 25)
 	ytext = mheight-8000
 	i = 1
+    # 
 	for r in rates 
 		rs = r*100
-		text!( 2800, ytext; 
-			   text = "\u2588 $(rs)%", 
+		text!( 2600, ytext; 
+			   text = "\u2588", 
 			   color=colourmap[i], 
+			   fontsize=40, 
+			   font = "Gill Sans" ) 
+		text!( 2800, ytext; 
+			   text = "$(rs)%", 
+			   color=:black, 
 			   fontsize=30, 
 			   font = "Gill Sans" ) 
+                
 		ytext -= 5000
 		i += 1
 	end
