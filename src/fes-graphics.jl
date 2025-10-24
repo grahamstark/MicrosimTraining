@@ -323,7 +323,7 @@ function draw_incomes_vs_bands!(
     # 
 	for r in rates 
 		rs = r*100
-		text!( 2600, ytext; 
+		text!( 2700, ytext; 
 			   text = "\u2588", 
 			   color=colourmap[i], 
 			   fontsize=40, 
