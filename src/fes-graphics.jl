@@ -13,6 +13,7 @@ gf0(v) = Format.format(v, precision=0, commas=true)
 export make_colourbins, 
        draw_hbai_clone!, 
        draw_hbai_thumbnail!, 
+       save_taxable_graph,
        gf0, 
        gf2, 
        POST_COLOURS, 
@@ -200,3 +201,171 @@ function save_hbai_graph( settings::Settings,
     fname = joinpath( settings.output_dir, basiccensor( settings.run_name ), "hbai-clone.svg" ) 
     save( fname, hbaif2 )
 end 
+
+function make_rate_bins( colour::String, 
+    edges::AbstractVector, 
+    bands::AbstractVector )::Vector
+    nbins = length(edges)-1
+    bl = length( bands )
+    colmap = colormap( colour, bl )
+    wbands = bands ./ WEEKS_PER_YEAR
+    colours = fill( colmap[1], nbins )
+    rb = 1
+    for i in 1:nbins
+        colours[i] = colmap[rb]
+        if edges[i] >= wbands[i]
+            rb += 1
+        end
+    end
+    return colours
+end
+
+function draw_incomes_vs_bands!( 
+    f :: Figure;
+    results :: NamedTuple, 
+    summary :: NamedTuple,
+    title :: AbstractString,
+    subtitle :: AbstractString,
+    bandwidth=10.0,
+    sysno::Int, 
+    measure::Symbol, 
+    colour :: String ) 
+    edges = collect(0:bandwidth:2200)
+    ih = summary.taxable_income_hists[sysno][measure]
+    incs = deepcopy(results.incomes[sysno][!,measure])
+    ax = Axis( f[sysno,1], 
+        title=title, 
+        subtitle=subtitle,
+        xlabel="£s pw, in £$(gf0(bandwidth)) bands; shaded bands represent Scottish Income Tax bands.", 
+        ylabel="Counts",
+        ytickformat = gft)
+    ratecols = make_rate_bins( colour, edges, bands )
+    incs = max.( 0.0, incs )
+    incs = min.(2200, incs )
+    h = hist!( ax, 
+        incs;
+        weights=results.incomes[sysno].weight,
+        bins=edges, 
+        color = ratecols )
+    mheight=10_000*bandwidth # arbitrary height for mean/med lines
+    v1 = lines!( ax, [income_hist.mean,ih.mean], [0, mheight]; color=:chocolate4, label="Mean £$(gf2(ih.mean))", linestyle=:dash )
+    v2 = lines!( ax, [income_hist.median,ih.median], [0, mheight]; color=:grey16, label="Median £$(gf2(ih.median))", linestyle=:dash )
+    axislegend(ax)
+    return ax
+end
+
+
+function make_rate_bins( colour::String, 
+    edges::AbstractVector,
+	rates::AbstractVector,
+    bands::AbstractVector )
+    nbins = length(edges)-1
+    band_length = length( rates ) # use rates since we won't always have a top band
+    colmap = colormap( colour, band_length+2 )[2:end] # 1st colour is too light
+	colours = fill( colmap[1], nbins )
+    rb = 1
+	colno = 1
+	for i in 1:nbins
+        colours[i] = colmap[colno]
+        if (rb < band_length) && (edges[i] >= bands[rb]) # next shade
+	        rb += 1
+			colno = rb
+			# println( "on band $(bands[rb-1]) rb = $rb colno $colno")
+		elseif(rb == band_length) && (colno == rb)
+			colno += 1 # handle top
+			# println( "on band $(bands[rb-1]) rb = $rb colno $colno start=$(edges[i])")
+        end
+    end
+    return colours, colmap
+end
+
+function draw_incomes_vs_bands!( 
+	f :: Figure;
+	rates :: AbstractArray,
+	bands :: AbstractArray,
+	results :: NamedTuple, 
+	summary :: NamedTuple,
+	title :: AbstractString,
+	subtitle :: AbstractString,
+	bandwidth=10.0,
+	sysno::Int, 
+	measure::Symbol, 
+	colour :: String ) 
+	edges = collect(0:bandwidth:3000)
+	ih = summary.taxable_income_hists[sysno][measure]
+	incs = deepcopy(results.income[sysno][!,measure])
+	positive_incs = incs.>0.0
+	incs = incs[ positive_incs ]
+	weight = results.income[sysno].weight[positive_incs]
+	ax = Axis( 
+		f[sysno,1], 
+		title=title, 
+		subtitle=subtitle,
+		xlabel="£s pw, in £$(MicrosimTraining.gf0(bandwidth)) bands; shaded bands represent Scottish Income Tax bands.", 
+		ylabel="Counts",
+		ytickformat = MicrosimTraining.gft)
+	ratecols, colourmap = make_rate_bins( colour, edges, rates, bands )
+	incs = max.( 0.0, incs )
+	incs = min.(3000, incs )
+	h = hist!( ax, 
+		incs;
+		weights=weight,
+		bins=edges, 
+		color = ratecols )
+	mheight=10_000*bandwidth # arbitrary height for mean/med lines
+	mean = StatsBase.mean( incs, StatsBase.Weights( weight ))
+	median = StatsBase.median( incs, StatsBase.Weights( weight ))
+	v1 = lines!( ax, [mean,mean], [0, mheight]; color=:chocolate4, label="Mean £$(gf2(mean))", linestyle=:dash )
+	v2 = lines!( ax, [median,median], [0, mheight]; color=:grey16, label="Median £$(gf2(median))", linestyle=:dash )
+	axislegend(ax)
+	# Colorbar(f[sysno,2];colormap=colmap,ticks=rates.*100, limits = (0, 100), size = 25)
+	ytext = mheight-8000
+	i = 1
+	for r in rates 
+		rs = r*100
+		text!( 2800, ytext; 
+			   text = "\u2588 $(rs)%", 
+			   color=colourmap[i], 
+			   fontsize=30, 
+			   font = "Gill Sans" ) 
+		ytext -= 5000
+		i += 1
+	end
+	return ax
+end
+
+function save_taxable_graph( 
+    settings::Settings, 
+	results :: NamedTuple, 
+    summary :: NamedTuple, 
+    systems :: Vector )
+	f = Figure(size=(2100,2970), fontsize = 25, fonts = (; regular = "Gill Sans"))	
+	ax1 = draw_incomes_vs_bands!(
+		f;
+		rates = systems[1].it.non_savings_rates,
+		bands = systems[1].it.non_savings_thresholds,
+		results=results, 
+		summary=summary, 
+		title="Distribution of Scottish Non-Savings Taxable Income", 
+		subtitle="Pre System", 
+		sysno=1, 
+		measure=:it_non_savings_taxable, 
+		colour="Blues" )
+		
+	ax2 = draw_incomes_vs_bands!(
+		f;
+		rates = systems[2].it.non_savings_rates,
+		bands = systems[2].it.non_savings_thresholds,
+		results=results, 
+		summary=summary, 
+		title="", 
+		subtitle="Post System", 
+		sysno=2, 
+		measure=:it_non_savings_taxable, 
+		colour="Reds" )
+	linkxaxes!( ax1, ax2 )
+	linkyaxes!( ax1, ax2 )
+    fname = joinpath( settings.output_dir, basiccensor( settings.run_name ), "taxable-incomes-graph.svg" ) 
+    save(fname, f)	
+	return f
+end

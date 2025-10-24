@@ -1,5 +1,5 @@
 ### A Pluto.jl notebook ###
-# v0.20.19
+# v0.20.20
 
 #> [frontmatter]
 #> language = "en-GB"
@@ -158,6 +158,17 @@ md"""
 Everything below this is automatically generated output. It changes every time the parameters change.
 
 """
+
+# ╔═╡ c9922f26-4fac-40f6-8e73-8d831457026e
+data
+
+# ╔═╡ 887eda30-285b-4ce1-ab0c-4b1fefb676e5
+begin
+	save_taxable_graph( settings, data, summary, [sys1,sys2] )
+end
+
+# ╔═╡ 01657105-7b93-4d52-8eb2-56b6f1b95118
+sys1.it.non_savings_rates
 
 # ╔═╡ 6a57627d-e592-4845-af8a-60d1db327fab
 begin
@@ -438,7 +449,7 @@ html"""
 
 # ╔═╡ Cell order:
 # ╟─3a2a55d5-8cf8-4d5c-80a7-84a03923bba8
-# ╟─72c7843c-3698-4045-9c83-2ad391097ad8
+# ╠═72c7843c-3698-4045-9c83-2ad391097ad8
 # ╟─c093e22f-8ec2-4211-b8a0-2391101fbcd2
 # ╟─1f2de37a-948e-4651-9276-eb39743ef812
 # ╠═35e3f85f-581b-45f2-b078-fef31b917f8d
@@ -447,6 +458,9 @@ html"""
 # ╟─696c6862-1c2b-4d40-a941-44bcbc94e9e2
 # ╠═627959cf-6a7c-4f87-82f7-406f5c7eb76a
 # ╟─da8d10ef-0ccf-40b9-901c-7214327e0203
+# ╠═c9922f26-4fac-40f6-8e73-8d831457026e
+# ╠═887eda30-285b-4ce1-ab0c-4b1fefb676e5
+# ╠═01657105-7b93-4d52-8eb2-56b6f1b95118
 # ╟─6a57627d-e592-4845-af8a-60d1db327fab
 # ╟─1516e738-7adb-4cb5-9fac-e983ce5d17bd
 # ╟─d2188dd8-1240-4fdd-870b-dcd15e91f4f2

@@ -1,5 +1,12 @@
 
-export DEFAULT_SYS, format_gainlose, fes_run, get_change_target_hhs, getbc, format_bc_df, draw_bc
+export DEFAULT_SYS, 
+    do_higher_rates_run,
+    draw_bc,
+    fes_run, 
+    format_bc_df, 
+    format_gainlose, 
+    get_change_target_hhs, 
+    getbc
 
 const DEFAULT_SYS = get_default_system_for_fin_year(2025; scotland=true, autoweekly=false )
     
@@ -86,11 +93,9 @@ function fes_run( settings :: Settings, systems::Vector; supress_dumps=false )::
     rname = basiccensor( settings.run_name )
     dirname = joinpath( settings.output_dir, rname ) 
     save_hbai_graph( settings, results, summaries ) 
-    # zipname = zip_dump( settings )
+    save_taxable_graph( settings, results, summaries, systems )
     summaries, results, short_summary, dirname
 end
-
-export do_higher_rates_run
 
 """
 Progressively delete all the Scottish 2025/6 Higher rates and return the cumulative revenue

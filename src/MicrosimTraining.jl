@@ -27,6 +27,7 @@ using ZipFile
 @reexport using ArgCheck
 @reexport using Pkg.Artifacts
 @reexport using Chairmarks
+@reexport using Colors
 @reexport using CSV
 @reexport using DataFrames
 @reexport using Format
