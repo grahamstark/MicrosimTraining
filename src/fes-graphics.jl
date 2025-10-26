@@ -202,79 +202,36 @@ function save_hbai_graph( settings::Settings,
     save( fname, hbaif2 )
 end 
 
-function make_rate_bins( colour::String, 
-    edges::AbstractVector, 
-    bands::AbstractVector )::Vector
-    nbins = length(edges)-1
-    bl = length( bands )
-    colmap = colormap( colour, bl )
-    wbands = bands ./ WEEKS_PER_YEAR
-    colours = fill( colmap[1], nbins )
-    rb = 1
-    for i in 1:nbins
-        colours[i] = colmap[rb]
-        if edges[i] >= wbands[i]
-            rb += 1
-        end
-    end
-    return colours
-end
-
-function draw_incomes_vs_bands!( 
-    f :: Figure;
-    results :: NamedTuple, 
-    summary :: NamedTuple,
-    title :: AbstractString,
-    subtitle :: AbstractString,
-    bandwidth=10.0,
-    sysno::Int, 
-    measure::Symbol, 
-    colour :: String ) 
-    edges = collect(0:bandwidth:2200)
-    ih = summary.taxable_income_hists[sysno][measure]
-    incs = deepcopy(results.incomes[sysno][!,measure])
-    ax = Axis( f[sysno,1], 
-        title=title, 
-        subtitle=subtitle,
-        xlabel="£s pw, in £$(gf0(bandwidth)) bands; shaded bands represent Scottish Income Tax bands.", 
-        ylabel="Counts",
-        ytickformat = gft)
-    ratecols = make_rate_bins( colour, edges, bands )
-    incs = max.( 0.0, incs )
-    incs = min.(2200, incs )
-    h = hist!( ax, 
-        incs;
-        weights=results.incomes[sysno].weight,
-        bins=edges, 
-        color = ratecols )
-    mheight=10_000*bandwidth # arbitrary height for mean/med lines
-    v1 = lines!( ax, [income_hist.mean,ih.mean], [0, mheight]; color=:chocolate4, label="Mean £$(gf2(ih.mean))", linestyle=:dash )
-    v2 = lines!( ax, [income_hist.median,ih.median], [0, mheight]; color=:grey16, label="Median £$(gf2(ih.median))", linestyle=:dash )
-    axislegend(ax)
-    return ax
-end
-
-
-function make_rate_bins( colour::String, 
+function make_rate_bins( 
+    colourstr::String, 
     edges::AbstractVector,
 	rates::AbstractVector,
     bands::AbstractVector )
+    @assert all(rates .<= 1.0)
+    lr = length(rates) 
+    lb = length(bands)
+    @assert (lr - lb) in 0:1
+    cbands = deepcopy(bands)
+    if lr > lb
+        push!( cbands, typemax( eltype( bands )))
+        lb = length(cbands)
+    end
     nbins = length(edges)-1
-    band_length = length( rates ) # use rates since we won't always have a top band
-    colmap = colormap( colour, band_length+2 )[2:end] # 1st colour is too light
-	colours = fill( colmap[1], nbins )
+    # map of colors based on the tax rate levels and some base colo[u]r
+    # NO - rates are often too close together
+    # see: https://juliagraphics.github.io/Colors.jl/stable/constructionandconversion/
+    # basecolor = parse( Colorant, colourstr )
+    # colmap = alphacolor.((basecolor,), rates)
+    colmap = colormap(colourstr, lr+2)[2:end] # 1st one is usually too light
+    colours = fill( colmap[1], nbins )
     rb = 1
-	colno = 1
-	for i in 1:nbins
-        colours[i] = colmap[colno]
-        if (rb < band_length) && (edges[i] >= bands[rb]) # next shade
+	colno = 2
+    for i in 1:nbins
+        if (edges[i] >= cbands[rb]) # next shade
 	        rb += 1
-			colno = rb
-			# println( "on band $(bands[rb-1]) rb = $rb colno $colno")
-		elseif(rb == band_length) && (colno == rb)
-			colno += 1 # handle top
-			# println( "on band $(bands[rb-1]) rb = $rb colno $colno start=$(edges[i])")
+			colno += 1
         end
+        colours[i] = colmap[colno]
     end
     return colours, colmap
 end
@@ -284,7 +241,6 @@ function draw_incomes_vs_bands!(
 	rates :: AbstractArray,
 	bands :: AbstractArray,
 	results :: NamedTuple, 
-	summary :: NamedTuple,
 	title :: AbstractString,
 	subtitle :: AbstractString,
 	bandwidth=10.0,
@@ -292,7 +248,6 @@ function draw_incomes_vs_bands!(
 	measure::Symbol, 
 	colour :: String ) 
 	edges = collect(0:bandwidth:3000)
-	ih = summary.taxable_income_hists[sysno][measure]
 	incs = deepcopy(results.income[sysno][!,measure])
 	positive_incs = incs.>0.0
 	incs = incs[ positive_incs ]
@@ -318,8 +273,9 @@ function draw_incomes_vs_bands!(
 	v1 = lines!( ax, [mean,mean], [0, mheight]; color=:chocolate4, label="Mean £$(gf2(mean))", linestyle=:dash )
 	v2 = lines!( ax, [median,median], [0, mheight]; color=:grey16, label="Median £$(gf2(median))", linestyle=:dash )
 	axislegend(ax)
-	ytext = mheight-8000
-	i = 1
+	# draw the pseudo key top right
+	i = 2 # start at color 2 as in the graph since col1 is too light
+    ytext = mheight-8000 # draw downwards - 8000 turns out to be roughly right for height
     # 
 	for r in rates 
 		rs = r*100
@@ -351,7 +307,6 @@ function save_taxable_graph(
 		rates = systems[1].it.non_savings_rates,
 		bands = systems[1].it.non_savings_thresholds,
 		results=results, 
-		summary=summary, 
 		title="Distribution of Scottish Non-Savings Taxable Income", 
 		subtitle="Pre System", 
 		sysno=1, 
@@ -363,12 +318,11 @@ function save_taxable_graph(
 		rates = systems[2].it.non_savings_rates,
 		bands = systems[2].it.non_savings_thresholds,
 		results=results, 
-		summary=summary, 
 		title="", 
 		subtitle="Post System", 
 		sysno=2, 
 		measure=:it_non_savings_taxable, 
-		colour="Reds" )
+		colour="Oranges" )
 	linkxaxes!( ax1, ax2 )
 	linkyaxes!( ax1, ax2 )
     fname = joinpath( settings.output_dir, basiccensor( settings.run_name ), "taxable-incomes-graph.svg" ) 

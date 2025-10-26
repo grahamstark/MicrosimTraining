@@ -97,10 +97,11 @@ begin
 	=#
 	# Likewise the next block adds 9.2% to the higher rates.
 	 
-	
+	# sys2.it.personal_allowance *= 2
     settings.run_name = "Net £2bn raised with higher IT rates ($(it_top3_change)pct)."
-	sys2.it.non_savings_rates[4:end] .+= it_top3_change
-	
+	# sys2.it.non_savings_rates[4:end] .= 0 #.+= it_top3_change
+	sys2.it.non_savings_rates = sys2.it.non_savings_rates[1:3]
+	sys2.it.non_savings_thresholds = sys2.it.non_savings_thresholds[1:2]
 	#= !!! NOTE IMPORTANT
 
 		if you alter the number of rates and bands, consider changing the field
@@ -158,14 +159,6 @@ md"""
 Everything below this is automatically generated output. It changes every time the parameters change.
 
 """
-
-# ╔═╡ c9922f26-4fac-40f6-8e73-8d831457026e
-data
-
-# ╔═╡ 887eda30-285b-4ce1-ab0c-4b1fefb676e5
-begin
-	save_taxable_graph( settings, data, summary, [sys1,sys2] )
-end
 
 # ╔═╡ 01657105-7b93-4d52-8eb2-56b6f1b95118
 sys1.it.non_savings_rates
@@ -285,6 +278,11 @@ md"""
 # ╔═╡ e6816e6d-660c-46ee-b90b-d07b29dac1ad
 Show(MIME"text/html"(), MicrosimTraining.costs_table( summary.income_summary[1],
         summary.income_summary[2]))
+
+# ╔═╡ 887eda30-285b-4ce1-ab0c-4b1fefb676e5
+begin
+	save_taxable_graph( settings, data, summary, [sys1,sys2] )
+end
 
 # ╔═╡ e3188a8c-e21d-488f-aa4c-d8885646b5ca
 md"""
@@ -458,8 +456,6 @@ html"""
 # ╟─696c6862-1c2b-4d40-a941-44bcbc94e9e2
 # ╠═627959cf-6a7c-4f87-82f7-406f5c7eb76a
 # ╟─da8d10ef-0ccf-40b9-901c-7214327e0203
-# ╠═c9922f26-4fac-40f6-8e73-8d831457026e
-# ╠═887eda30-285b-4ce1-ab0c-4b1fefb676e5
 # ╠═01657105-7b93-4d52-8eb2-56b6f1b95118
 # ╟─6a57627d-e592-4845-af8a-60d1db327fab
 # ╟─1516e738-7adb-4cb5-9fac-e983ce5d17bd
@@ -469,6 +465,7 @@ html"""
 # ╟─2fe134f3-6d6d-4109-a2f9-faa583be1189
 # ╟─f750ca33-d975-4f05-b878-ad0b23f968a9
 # ╟─e6816e6d-660c-46ee-b90b-d07b29dac1ad
+# ╠═887eda30-285b-4ce1-ab0c-4b1fefb676e5
 # ╟─e3188a8c-e21d-488f-aa4c-d8885646b5ca
 # ╟─9db85469-8ded-444c-b8d5-6989d96c3d52
 # ╟─7b3f061d-4d6b-46db-aef2-4d3611824f73
@@ -494,6 +491,6 @@ html"""
 # ╠═6691e0c2-a440-4f24-855a-6c0c3d746b2e
 # ╟─6c308ebe-ca45-4774-81cc-bfafc46ba2a4
 # ╠═758496fe-edae-4a3a-9d04-5c09362ec037
-# ╟─34c7ebc0-d137-4572-b68d-3c79d62592d4
+# ╠═34c7ebc0-d137-4572-b68d-3c79d62592d4
 # ╟─1e27cffe-c86c-4b3e-91f4-22e1b429a9cd
 # ╠═65162b5e-23d0-4072-b159-6d0f4ce01a2a
