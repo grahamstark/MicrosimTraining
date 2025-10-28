@@ -47,7 +47,7 @@ function f_gainlose( h, data, r, c )
             "black"
         end
     end
-    return ["color" => color ]
+    return ["color" => colour ]
     # HtmlDecoration( color=colour )
 end
 
@@ -69,7 +69,7 @@ function format_gainlose(title::String, gl::DataFrame)
         formatters=[fm], 
         alignment=[:l,fill(:r,7)...],
         highlighters = [h1,h7],
-        # title = title,
+        title = title,
         column_labels=["",
             "Lose £10.01+",
             "Lose £1.01-£10",
@@ -206,10 +206,10 @@ function format_bc_df( title::String, bc::DataFrame)
         backend = :html,
         formatters=[fmbc],
         allow_html_in_cells=true,
+        title = title,
         table_class="table table-sm table-striped table-responsive",
-        header = ["ID", "Earnings &pound;pw","Net Income BHC &pound;pw", "METR"], #"Benefit Cap", "Benefits Reduced By","Breakdown"], 	
-        alignment=[fill(:r,4)...,:l],
-        title = title )
+        column_labels = ["ID", "Earnings &pound;pw","Net Income BHC &pound;pw", "METR"], #"Benefit Cap", "Benefits Reduced By","Breakdown"], 	
+        alignment=[fill(:r,3)...,:l] )
     return String(take!(io))   
 end
 
