@@ -69,8 +69,8 @@ function format_gainlose(title::String, gl::DataFrame)
         formatters=[fm], 
         alignment=[:l,fill(:r,7)...],
         highlighters = [h1,h7],
-        title = title,
-        header=["",
+        # title = title,
+        column_labels=["",
             "Lose £10.01+",
             "Lose £1.01-£10",
             "No Change",
@@ -208,7 +208,7 @@ function format_bc_df( title::String, bc::DataFrame)
         allow_html_in_cells=true,
         table_class="table table-sm table-striped table-responsive",
         header = ["ID", "Earnings &pound;pw","Net Income BHC &pound;pw", "METR"], #"Benefit Cap", "Benefits Reduced By","Breakdown"], 	
-        alignment=[fill(:r,6)...,:l],
+        alignment=[fill(:r,4)...,:l],
         title = title )
     return String(take!(io))   
 end
