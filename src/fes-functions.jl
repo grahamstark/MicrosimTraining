@@ -33,7 +33,9 @@ function zip_dump( settings :: Settings )
 end
 
 
-h1 = HtmlHighlighter( ( data, r, c ) -> (c == 1), HtmlDecoration( font_weight="bold", color="slategrey"))
+h1 = HtmlHighlighter( ( data, r, c ) -> (c == 1), ["font_weight"=>"bold", "color"=>"slategrey"])
+# HtmlDecoration( font_weight="bold", color="slategrey"))
+
 function f_gainlose( h, data, r, c ) 
     colour = "black"
     if c == 7
@@ -45,7 +47,8 @@ function f_gainlose( h, data, r, c )
             "black"
         end
     end
-    HtmlDecoration( color=colour )
+    return ["color" => color ]
+    # HtmlDecoration( color=colour )
 end
 
 """
@@ -62,9 +65,10 @@ function format_gainlose(title::String, gl::DataFrame)
     pretty_table( 
         io, 
         gl[!,1:end-1]; 
-        backend = Val(:html),
-        formatters=fm, alignment=[:l,fill(:r,7)...],
-        highlighters = (h1,h7),
+        backend = :html,
+        formatters=[fm], 
+        alignment=[:l,fill(:r,7)...],
+        highlighters = [h1,h7],
         title = title,
         header=["",
             "Lose £10.01+",
@@ -199,8 +203,8 @@ function format_bc_df( title::String, bc::DataFrame)
     pretty_table( 
         io,
         bc[!,[:char_labels,:gross,:net,:mr]], #,:cap,:reduction,:html_label]]; 
-        backend = Val(:html),
-        formatters=fmbc,
+        backend = :html,
+        formatters=[fmbc],
         allow_html_in_cells=true,
         table_class="table table-sm table-striped table-responsive",
         header = ["ID", "Earnings &pound;pw","Net Income BHC &pound;pw", "METR"], #"Benefit Cap", "Benefits Reduced By","Breakdown"], 	
