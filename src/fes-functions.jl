@@ -38,7 +38,7 @@ h1 = HtmlHighlighter( ( data, r, c ) -> (c == 1), ["font_weight"=>"bold", "color
 
 function f_gainlose( h, data, r, c ) 
     colour = "black"
-    if c == 7
+    if c >= 7 # av, pct cols at end
         colour = if data[r,c] < -0.1
             "darkred"
         elseif data[r,c] > 0.1
