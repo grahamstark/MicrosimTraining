@@ -12,7 +12,8 @@ const COST_ITEMS = [
     :universal_credit,
     :non_means_tested_bens,
     :sickness_illness,
-    :scottish_benefits] 
+    :scottish_benefits,
+    :other_tax] 
 
 const COST_LABELS = [
     "Total Income Tax",
@@ -28,7 +29,8 @@ const COST_LABELS = [
     "Universal Credit",
     "Non Means Tested Benefits",
     "Disability, Sickness-Related Benefits",
-    "Scottish Benefits" ]
+    "Scottish Benefits",
+    "Wealth Taxes" ]
 
 const MR_LABELS = 
     ["Negative or Zero",
@@ -66,7 +68,9 @@ function costs_dataframe(  incs1 :: DataFrame, incs2 :: DataFrame ) :: DataFrame
     pre = extract_incs( incs1, COST_ITEMS ) ./ 1_000_000
     post = extract_incs( incs2, COST_ITEMS ) ./ 1_000_000
     diff = post-pre
-    return DataFrame( Item=COST_LABELS, Before=pre, After=post, Change=diff )
+    d = DataFrame( Item=COST_LABELS, Before=pre, After=post, Change=diff )
+    d = d[ (d.Before .!= 0) .| (d.After .!= 0),:]
+    return d
 end
 
 function mr_dataframe( mr1::Histogram, mr2::Histogram, mean1::Real, mean2 :: Real ) :: DataFrame

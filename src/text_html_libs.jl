@@ -138,7 +138,10 @@ export costs_table, overall_cost, mr_table
 
 function costs_table( incs1 :: DataFrame, incs2 :: DataFrame )
     df = costs_dataframe( incs1, incs2 )
-    return frame_to_table( df, prec=0, up_is_good=COST_UP_GOOD, 
+    nrows, ncols = size(df)
+    # HACK - extra Wealth col at the end which may or may not appear, so...
+    up_is_good=COST_UP_GOOD[1:nrows]
+    return frame_to_table( df, prec=0, up_is_good=up_is_good, 
         caption="Tax Liabilities and Benefit Entitlements, £m pa, 2025/26" )
 end
 
@@ -289,7 +292,7 @@ function pers_inc_table( res :: NamedTuple ) :: String
     df.Change = df.After - df.Before
     df.Item = iname.(df.Inc)
     for i in 1:n
-       up_is_good[i] =  (df[i,:Inc] in DIRECT_TAXES_AND_DEDUCTIONS) ? -1 : 1
+       up_is_good[i] = (df[i,:Inc] in DIRECT_TAXES_AND_DEDUCTIONS) ? -1 : 1
     end
     return frame_to_table( df, prec=2, up_is_good=up_is_good, 
         caption="Household incomes £pw" )    
