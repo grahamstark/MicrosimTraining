@@ -1,5 +1,5 @@
 ### A Pluto.jl notebook ###
-# v0.20.20
+# v0.20.21
 
 #> [frontmatter]
 #> language = "en-GB"
@@ -76,20 +76,38 @@ begin
 end
 
 # ╔═╡ a429d732-f12b-46ed-94c6-e4ae1268e66a
-md""" 
-## Example Proportional Property Tax (PPT)
+md"""
 
-This example is set at **0.25%** on 1st £50,000 of house values, and **0.67%** above.
+# Proportional Property Tax Notes
 
-This is roughly revenue-neutral since rebate payments fall from £670m to 510mn (rebate system is the same as for CT).
+Added Single Person's Discount.
 
-**NOTE** #To turn off local tax rebates completely, use this obscure setting:
+Tim Leunig: [A Fairer Property
+Tax](https://www.ukonward.com/wp-content/uploads/2024/08/Onward-A-Fairer-Property-Tax.pdf)
 
-	sys2.lmt.ctr.abolished = true
+> the stamp duty land tax should be replaced with a national proportional property tax, levied on house values above £500,000. This rate would be set by
+central government. An annual rate of 0.54%, with a 0.278% supplement on
+values over £1m would raise the same amount as stamp duty. The new tax
+would be payable on owner-occupied property only after a sale - the
+replacement for stamp duty would not be retrospective on properties on which
+stamp duty has already been paid. The payment would rise annually by inflatio
 
-i.e `system / legacy means-tested benefits / council tax rebate`. (CTR is not really a legacy means-tested benefit, but it has the same structure as Housing Benefit. I should move it).
-	
+> £500,000 with a minimum annual payment of £800. The rate would be set by local authorities. A rate of 0.44% would raise the same amount of revenue as council tax. This would be introduced immediately, on all properties, and would be payable by the owner not the resident.
 
+> The (National) tax is a replacement for stamp duty. It will only be applied to houses once they have been sold - with a few exceptions outlined below. This means that there are no losers. Someone who bought their house last year, and paid a
+substantial sum in stamp duty, will not be asked to pay this tax in addition. But,
+someone who plans to buy a house next year will pay this tax - but will avoid
+paying stamp duty. The tax base will largely replicate the tax base for stamp
+duty
+
+I don't understand this and ignore the stamp duty bit.
+
+https://www.gov.scot/publications/government-expenditure-revenue-scotland-2024-25/
+Stamp duty Scotland 240mn
+
+raises `+273`
+
+Chart 1.1 Total Public Sector revenue: Scotland 2024-25
 """
 
 # ╔═╡ 40626eb7-ee13-4d28-8394-0df789888c6e
@@ -101,8 +119,14 @@ begin
 	# .. and turn off CT
 	sys2.loctax.ct.abolished = true
 	# applied across all Scotland: 0.25% on 1st 50,000, 0.67% above
-    sys2.loctax.ppt.rates = [0.25,0.67]
-    sys2.loctax.ppt.bands = [50_000]
+    sys2.loctax.ppt.local_bands = [500_000-1]
+	sys2.loctax.ppt.local_rates = [0.653,0]
+	
+	sys2.loctax.ppt.national_rates = [0,0.62,(0.54+0.278)]
+    sys2.loctax.ppt.national_bands = [500_000,1_000_000]
+	sys2.loctax.ppt.single_person_discount = 25.0 # 25 # pct
+	sys2.loctax.ppt.local_minimum_payment = 800.0
+	sys2.loctax.ppt.national_minimum_payment = 0.0
 	# NOTE: to turn of local tax rebates completely, use this obscure setting:
 	# system / legacy means-tested benefits / council tax rebate 	
 	# sys2.lmt.ctr.abolished = true
@@ -417,7 +441,7 @@ html"""
 # ╟─6a57627d-e592-4845-af8a-60d1db327fab
 # ╟─1516e738-7adb-4cb5-9fac-e983ce5d17bd
 # ╠═d2188dd8-1240-4fdd-870b-dcd15e91f4f2
-# ╠═d069cd4d-7afc-429f-a8fd-3f1c0a640117
+# ╟─d069cd4d-7afc-429f-a8fd-3f1c0a640117
 # ╟─0d8df3e0-eeb9-4e61-9298-b735e9dcc284
 # ╟─2fe134f3-6d6d-4109-a2f9-faa583be1189
 # ╟─f750ca33-d975-4f05-b878-ad0b23f968a9

@@ -1,5 +1,5 @@
 ### A Pluto.jl notebook ###
-# v0.20.19
+# v0.20.20
 
 #> [frontmatter]
 #> language = "en-GB"
@@ -149,7 +149,10 @@ PROGRESSIVE_RELATIVITIES = Dict{CT_Band,Float64}(
 	sys2 = deepcopy(sys1)
     sys2.loctax.ct.abolished = true        
     sys2.loctax.ppt.abolished = false
-    sys2.loctax.ppt.rate = 2/(100.0*WEEKS_PER_YEAR)
+	sys2.loctax.ppt.bands = [500_000]
+	# state tax
+    sys2.loctax.ppt.rates = [0.657/(100.0*WEEKS_PER_YEAR),0.58/(100.0*WEEKS_PER_YEAR)]
+	# 0.05/(100.0*WEEKS_PER_YEAR)
 
 
 #=
