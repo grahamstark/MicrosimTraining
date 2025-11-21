@@ -1,5 +1,5 @@
 ### A Pluto.jl notebook ###
-# v0.20.20
+# v0.20.21
 
 #> [frontmatter]
 #> language = "en-GB"
@@ -94,14 +94,17 @@ begin
 	# Include physical wealth, financial wealth, and net housing wealth ..
 	sys2.wealth.included_wealth = Set([net_physical_wealth,
 		net_financial_wealth,
+        net_pension_wealth,
 		net_housing_wealth])
-	# but exclude net_pension_wealth .. 
-	# Set it to 1% above 300k
+	# Set it to 1% above 1,000k
 	sys2.wealth.rates = [0,1.0]
-	sys2.wealth.thresholds = [300_000]
+	sys2.wealth.thresholds = [1_000_000]
 	# 
 	weeklyise!(sys2)	
 end
+
+# ╔═╡ ebb741af-7a8d-487e-be18-a7a63aed5db9
+sys2.wealth
 
 # ╔═╡ 696c6862-1c2b-4d40-a941-44bcbc94e9e2
 md"""
@@ -115,6 +118,9 @@ The next line runs the model every time one of the blocks above changes.
 begin
 	summary, data, short_summary, zipname  = fes_run( settings, [sys1, sys2] );
 end;
+
+# ╔═╡ 0b969669-1098-4bf4-af74-3b699954de85
+CSV.write("/home/graham_s/tmp/wealth-1000.tab",data.income[2];delim='\t')
 
 # ╔═╡ 6a57627d-e592-4845-af8a-60d1db327fab
 begin
@@ -406,8 +412,10 @@ html"""
 # ╠═422f362d-9e1c-4b5f-99b1-344d046490ae
 # ╟─a429d732-f12b-46ed-94c6-e4ae1268e66a
 # ╠═40626eb7-ee13-4d28-8394-0df789888c6e
+# ╠═ebb741af-7a8d-487e-be18-a7a63aed5db9
 # ╟─696c6862-1c2b-4d40-a941-44bcbc94e9e2
 # ╠═627959cf-6a7c-4f87-82f7-406f5c7eb76a
+# ╠═0b969669-1098-4bf4-af74-3b699954de85
 # ╟─6a57627d-e592-4845-af8a-60d1db327fab
 # ╟─1516e738-7adb-4cb5-9fac-e983ce5d17bd
 # ╠═d2188dd8-1240-4fdd-870b-dcd15e91f4f2
@@ -416,7 +424,7 @@ html"""
 # ╟─2fe134f3-6d6d-4109-a2f9-faa583be1189
 # ╟─f750ca33-d975-4f05-b878-ad0b23f968a9
 # ╟─e6816e6d-660c-46ee-b90b-d07b29dac1ad
-# ╟─887eda30-285b-4ce1-ab0c-4b1fefb676e5
+# ╠═887eda30-285b-4ce1-ab0c-4b1fefb676e5
 # ╟─e3188a8c-e21d-488f-aa4c-d8885646b5ca
 # ╟─9db85469-8ded-444c-b8d5-6989d96c3d52
 # ╟─7b3f061d-4d6b-46db-aef2-4d3611824f73

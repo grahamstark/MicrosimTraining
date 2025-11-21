@@ -275,16 +275,16 @@ function draw_incomes_vs_bands!(
 	axislegend(ax)
 	# draw the pseudo key top right
 	i = 2 # start at color 2 as in the graph since col1 is too light
-    ytext = mheight-8000 # draw downwards - 8000 turns out to be roughly right for height
+    ytext = mheight-12_000 # draw downwards - 8000 turns out to be roughly right for height
     # 
 	for r in rates 
 		rs = r*100
-		text!( 2700, ytext; 
+		text!( 2800, ytext; 
 			   text = "\u2588", 
 			   color=colourmap[i], 
 			   fontsize=40, 
 			   font = "Gill Sans" ) 
-		text!( 2800, ytext; 
+		text!( 2900, ytext; 
 			   text = "$(rs)%", 
 			   color=:black, 
 			   fontsize=30, 
@@ -293,7 +293,49 @@ function draw_incomes_vs_bands!(
 		ytext -= 5000
 		i += 1
 	end
-	return ax
+    ylims!(ax, 0, 100_000) 
+    xlims!(ax, 0, edges[end])   
+	return ax, edges[end]
+end
+
+function draw_tax_rates(
+    f :: Figure;
+    rates :: AbstractArray,
+	bands :: AbstractArray,
+    sysno :: Int,
+    endx  :: Number,
+    colour  )
+    ax = Axis( f[sysno,1], 
+        yaxisposition = :right, 
+        xticksvisible=false, 
+        xlabelvisible=false,
+        xticklabelsvisible = false,
+        ylabel="Marginal Rate (%)" )
+    T = eltype(rates)
+    b = T[] #copy(bands) 
+    r = T[] # copy(rates) .* 100
+    nr = length(rates)
+    nb = length(bands)
+    band = 0.0
+    for i in 1:nr
+        push!(b,band)
+        if i <= nb
+            band = bands[i]
+            push!(b,band)
+        else
+            push!(b,endx)
+        end
+        push!(r,rates[i])
+        push!(r,rates[i])
+    end
+    # @show r
+    # @show b
+    r .*= 100
+    @assert length(b) == length(r)
+    ylims!(ax, 0, 100)
+    lines!(ax, b, r; color=colour, linewidth=3 )
+    hidespines!(ax)
+    return ax
 end
 
 function save_taxable_graph( 
@@ -302,7 +344,7 @@ function save_taxable_graph(
     summary :: NamedTuple, 
     systems :: Vector )
 	f = Figure(size=(2100,2970), fontsize = 25, fonts = (; regular = "Gill Sans"))	
-	ax1 = draw_incomes_vs_bands!(
+	ax1,endb1 = draw_incomes_vs_bands!(
 		f;
 		rates = systems[1].it.non_savings_rates,
 		bands = systems[1].it.non_savings_thresholds,
@@ -312,8 +354,14 @@ function save_taxable_graph(
 		sysno=1, 
 		measure=:it_non_savings_taxable, 
 		colour="Blues" )
-		
-	ax2 = draw_incomes_vs_bands!(
+	ax1a = draw_tax_rates(
+        f;
+        rates = systems[1].it.non_savings_rates,
+		bands = systems[1].it.non_savings_thresholds,
+        sysno = 1,
+        endx  = endb1,
+        colour = :darkblue )	
+	ax2, endb2 = draw_incomes_vs_bands!(
 		f;
 		rates = systems[2].it.non_savings_rates,
 		bands = systems[2].it.non_savings_thresholds,
@@ -323,8 +371,19 @@ function save_taxable_graph(
 		sysno=2, 
 		measure=:it_non_savings_taxable, 
 		colour="Oranges" )
+	ax2a = draw_tax_rates(
+        f;
+        rates = systems[2].it.non_savings_rates,
+		bands = systems[2].it.non_savings_thresholds,
+        sysno = 2,
+        endx  = endb2,
+        colour = :orange4 )	
 	linkxaxes!( ax1, ax2 )
+	linkxaxes!( ax1, ax1a )
+	linkxaxes!( ax2, ax2a )
 	linkyaxes!( ax1, ax2 )
+    # linkyaxes!( ax1, ax1a )
+    # linkyaxes!( ax2, ax2a )
     fname = joinpath( settings.output_dir, basiccensor( settings.run_name ), "taxable-incomes-graph.svg" ) 
     save(fname, f)	
 	return f
