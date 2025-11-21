@@ -122,6 +122,12 @@ end;
 # ╔═╡ 0b969669-1098-4bf4-af74-3b699954de85
 CSV.write("/home/graham_s/tmp/wealth-1000.tab",data.income[2];delim='\t')
 
+# ╔═╡ 30ae2c84-6445-46d5-ad88-f81aa33ecf18
+summary.gain_lose[2].dec_examples
+
+# ╔═╡ 97bef16c-63b0-4bd2-8842-4b0bdb78a8f5
+FRSHouseholdGetter.get_household(BigInt(5311), 2021)
+
 # ╔═╡ 6a57627d-e592-4845-af8a-60d1db327fab
 begin
 
@@ -416,6 +422,8 @@ html"""
 # ╟─696c6862-1c2b-4d40-a941-44bcbc94e9e2
 # ╠═627959cf-6a7c-4f87-82f7-406f5c7eb76a
 # ╠═0b969669-1098-4bf4-af74-3b699954de85
+# ╠═30ae2c84-6445-46d5-ad88-f81aa33ecf18
+# ╠═97bef16c-63b0-4bd2-8842-4b0bdb78a8f5
 # ╟─6a57627d-e592-4845-af8a-60d1db327fab
 # ╟─1516e738-7adb-4cb5-9fac-e983ce5d17bd
 # ╠═d2188dd8-1240-4fdd-870b-dcd15e91f4f2
