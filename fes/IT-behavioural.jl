@@ -1,5 +1,5 @@
 ### A Pluto.jl notebook ###
-# v0.20.20
+# v0.20.21
 
 #> [frontmatter]
 #> language = "en-GB"
@@ -91,6 +91,9 @@ md"""
 The next line runs the model every time one of the blocks above changes. 
 
 """
+
+# ╔═╡ e08cc570-0d5e-4be7-9038-2e02e3293bc1
+DEFAULT_SYS.it
 
 # ╔═╡ 627959cf-6a7c-4f87-82f7-406f5c7eb76a
 # ╠═╡ show_logs = false
@@ -192,10 +195,10 @@ const PERSONAL_ALLOWANCE = 12_570.0
 
 # taxable (post-allowance) thresholds, 2025/26 equivalents
 const TIE_EDGES = [
-    0.0,
+    0.0, # gks this treats all the 0.15 group as on (groups 1-4 in spreadsheet)
     50_270.0 - PERSONAL_ALLOWANCE,
     80_000.0 - PERSONAL_ALLOWANCE,
-    150_000.0,
+    150_000.0, # because PA withdrawn by now
     300_000.0,
     500_000.0,
     Inf
@@ -205,6 +208,7 @@ const TIE_EDGES = [
 const AETR_RATES = [0.00, 0.06, 0.06, 0.25, 0.25, 0.25]
 const AETR_EDGES = copy(TIE_EDGES)
 
+	
 const NIC_BREAK_ANNUAL = 37_700.0   # 50_270 - 12_570; check against current system
 const NIC_RATE_LOW     = 0.08
 const NIC_RATE_HIGH    = 0.02
@@ -325,6 +329,7 @@ function behavioural_it_loss(data ;
     # NIC marginal rate as a function of annual taxable (approximation. ignores Self-Employment difference, and NI specific rules)
     nic_rate = ifelse.(taxable_b .< NIC_BREAK_ANNUAL, NIC_RATE_LOW, NIC_RATE_HIGH)
 
+	#!! same as sys_b = sys1; sys_r = sys2
     # Marginal IT rates under baseline and reform
     sys_b = eval(Meta.parse("sys$(sys_baseline)"))
     sys_r = eval(Meta.parse("sys$(sys_reform)"))
@@ -413,6 +418,11 @@ DataFrame(
     :Metric => collect(keys(behavioural_it_loss(data))),
     Symbol("Value £ Million") => round.(collect(values(behavioural_it_loss(data))) ./ 1e6, digits=1)
 )
+
+# ╔═╡ 4b8f4734-f980-4b4e-bae0-e379eb20b0a0
+    mtr_b = marginal_it_rate_vec(data.income[1].it_non_savings_taxable,
+                                 sys2.it.non_savings_thresholds,
+                                 sys2.it.non_savings_rates)
 
 # ╔═╡ a1bbc2ae-68a2-40de-93a4-2c9a68c9ee91
 md"""
@@ -513,6 +523,7 @@ html"""
 # ╠═35e3f85f-581b-45f2-b078-fef31b917f8d
 # ╠═1a1c900a-b65c-4a17-b181-da41883be44f
 # ╟─696c6862-1c2b-4d40-a941-44bcbc94e9e2
+# ╠═e08cc570-0d5e-4be7-9038-2e02e3293bc1
 # ╠═627959cf-6a7c-4f87-82f7-406f5c7eb76a
 # ╟─da8d10ef-0ccf-40b9-901c-7214327e0203
 # ╟─6a57627d-e592-4845-af8a-60d1db327fab
@@ -525,6 +536,7 @@ html"""
 # ╠═86053509-1446-41a8-9169-23d5a802f6ca
 # ╠═fcf1642f-39d7-41d1-8816-a5f737477d2f
 # ╠═3c2298d5-07d4-482e-ba37-c4003999e1cb
+# ╠═4b8f4734-f980-4b4e-bae0-e379eb20b0a0
 # ╠═a1bbc2ae-68a2-40de-93a4-2c9a68c9ee91
 # ╟─feed5169-225f-4e95-b279-403dff21539d
 # ╟─1bad315e-d9ff-4c7b-9282-b5627deea6df

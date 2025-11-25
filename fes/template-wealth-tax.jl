@@ -116,6 +116,9 @@ The next line runs the model every time one of the blocks above changes.
 # ╔═╡ 627959cf-6a7c-4f87-82f7-406f5c7eb76a
 # ╠═╡ show_logs = false
 begin
+	settings.weighting_relative_to_ons_weights=false
+	settings.lower_multiple = 0.62
+	settings.upper_multiple = 5.8
 	summary, data, short_summary, zipname  = fes_run( settings, [sys1, sys2] );
 end;
 
@@ -154,15 +157,13 @@ md"""
 """
 end
 
+# ╔═╡ c6e4eab6-ce6f-4f58-93bb-6ada43c5cd4d
+
+
 # ╔═╡ 1516e738-7adb-4cb5-9fac-e983ce5d17bd
 md"""
 ## Summary Results : $(settings.run_name)
 """
-
-# ╔═╡ d2188dd8-1240-4fdd-870b-dcd15e91f4f2
-begin
-	MicrosimTraining.fes_draw_summary_graphs( settings, data, summary )
-end
 
 # ╔═╡ d069cd4d-7afc-429f-a8fd-3f1c0a640117
 begin
@@ -425,13 +426,13 @@ html"""
 # ╠═30ae2c84-6445-46d5-ad88-f81aa33ecf18
 # ╠═97bef16c-63b0-4bd2-8842-4b0bdb78a8f5
 # ╟─6a57627d-e592-4845-af8a-60d1db327fab
+# ╠═c6e4eab6-ce6f-4f58-93bb-6ada43c5cd4d
 # ╟─1516e738-7adb-4cb5-9fac-e983ce5d17bd
-# ╠═d2188dd8-1240-4fdd-870b-dcd15e91f4f2
 # ╠═d069cd4d-7afc-429f-a8fd-3f1c0a640117
 # ╟─0d8df3e0-eeb9-4e61-9298-b735e9dcc284
 # ╟─2fe134f3-6d6d-4109-a2f9-faa583be1189
 # ╟─f750ca33-d975-4f05-b878-ad0b23f968a9
-# ╟─e6816e6d-660c-46ee-b90b-d07b29dac1ad
+# ╠═e6816e6d-660c-46ee-b90b-d07b29dac1ad
 # ╠═887eda30-285b-4ce1-ab0c-4b1fefb676e5
 # ╟─e3188a8c-e21d-488f-aa4c-d8885646b5ca
 # ╟─9db85469-8ded-444c-b8d5-6989d96c3d52

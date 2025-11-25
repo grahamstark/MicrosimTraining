@@ -119,14 +119,20 @@ begin
 	# .. and turn off CT
 	sys2.loctax.ct.abolished = true
 	# applied across all Scotland: 0.25% on 1st 50,000, 0.67% above
-    sys2.loctax.ppt.local_bands = [500_000-1]
+    #=
+	sys2.loctax.ppt.local_bands = [500_000-1]
 	sys2.loctax.ppt.local_rates = [0.653,0]
 	
 	sys2.loctax.ppt.national_rates = [0,0.62,(0.54+0.278)]
     sys2.loctax.ppt.national_bands = [500_000,1_000_000]
 	sys2.loctax.ppt.single_person_discount = 25.0 # 25 # pct
+	
 	sys2.loctax.ppt.local_minimum_payment = 800.0
 	sys2.loctax.ppt.national_minimum_payment = 0.0
+	=#
+	sys2.loctax.ppt.local_bands = []
+	sys2.loctax.ppt.local_rates = [0.7]
+	
 	# NOTE: to turn of local tax rebates completely, use this obscure setting:
 	# system / legacy means-tested benefits / council tax rebate 	
 	# sys2.lmt.ctr.abolished = true
@@ -429,7 +435,7 @@ html"""
 
 
 # ╔═╡ Cell order:
-# ╟─3a2a55d5-8cf8-4d5c-80a7-84a03923bba8
+# ╠═3a2a55d5-8cf8-4d5c-80a7-84a03923bba8
 # ╠═72c7843c-3698-4045-9c83-2ad391097ad8
 # ╠═35e3f85f-581b-45f2-b078-fef31b917f8d
 # ╟─bf273956-910b-49ce-bcf2-0973d15caaca
