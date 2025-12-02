@@ -77,6 +77,7 @@ using ZipFile
 
 using ArtifactUtils
 using Preferences
+using Markdown
 
 export MAINDIR 
 const MAINDIR=artifact"main_data"

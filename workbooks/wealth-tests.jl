@@ -25,11 +25,47 @@ PlutoUI.TableOfContents(aside=true)
 
 end
 
+# ╔═╡ d7990f57-a84d-4c9c-ad6e-e15663cef485
+begin
+	using Dates
+	
+	function make_date( y, q )
+		m = 3*(q-1)+1
+		return Date( y,m,1)
+	end
+
+	rebase!(x) = 100.0 .* x ./ x[begin]
+	
+	inf = Uprating.BASE_UPRATING_DATA
+	inf.date = make_date.(inf.year,inf.q)
+	inf = inf[(inf.year .>= 2019) .& (inf.year .<= 2025),:]
+	f = Figure()
+	ax = Axis(f[1,1]; title="Scotben Price Indexes 2019-2025", subtitle="2019 q1=100")
+ 	lines!( ax, inf.date, rebase!(inf.nom_gdp_uk_index); label="Nom GDP")
+	lines!( ax, inf.date, rebase!(inf.equity_prices); label="Equity Prices" )
+	lines!( ax, inf.date, rebase!(inf.cpi); label="CPI" )
+	lines!( ax, inf.date, rebase!(inf.seasonally_adjusted_house_price_index); label="House Prices" )
+	lines!( ax, inf.date, rebase!(inf.average_earnings); label="Average Earnings (Scotland)" )
+	endd = Date(2025,7,1)
+	# lines!(ax, [endd,endd],[0.7,1.6]; color=:black)
+	axislegend(ax; position=:rb)
+	f
+end
+
+# ╔═╡ 3a9ad657-b81e-4bad-b52f-b2200c49c1b9
+
+
+# ╔═╡ 5b05ab3e-e58e-47e2-8d4f-fdabc888f8b9
+
+
+# ╔═╡ 7d234950-0f07-4a21-8328-1d5b69846e22
+Uprating.BASE_UPRATING_DATA
+
 # ╔═╡ 35e3f85f-581b-45f2-b078-fef31b917f8d
 # ╠═╡ show_logs = false
 begin
 	settings = Settings() 
-	settings.run_name = "Mansion Tax"
+	settings.run_name = "Wealth Experiments"
 	settings.do_marginal_rates = true
 	wage = 30
 	examples = get_example_hhs(settings)
@@ -47,7 +83,6 @@ md"""
 # ╔═╡ 8618f4e9-8b12-4929-98f2-9713f3814c67
 begin
 	sys2 = deepcopy( DEFAULT_SYS)	
-	#=
 	# scotgov proposed progressive CT relativities
 	SG_RELATIVITIES = deepcopy( sys2.loctax.ct.relativities ) 
 	# 7.5%, 12.5%, 17.5% and 22.5% 
@@ -56,15 +91,12 @@ begin
 	SG_RELATIVITIES[Band_G] *= 1.175
 	SG_RELATIVITIES[Band_H] *= 1.225
 	sys2.loctax.ct.relativities = SG_RELATIVITIES
-	=#
 	sys2.name = settings.run_name
-	sys2.loctax.ppt.local_rates = [0, 2_500.0, 7_500.0] # annual
-    sys2.loctax.ppt.local_bands = [500_000, 1_000_000] 
-    sys2.loctax.ppt.fixed_sum = true
-	sys2.loctax.ppt.abolished = false
-
 	weeklyise!(sys2)
 end
+
+# ╔═╡ a99139ce-5714-474c-aa38-c06db23e6186
+
 
 # ╔═╡ b9af7395-2d50-4001-87cb-57d32af2a8dc
 #= 
@@ -320,16 +352,6 @@ md"""
 Show(MIME"text/html"(), MicrosimTraining.costs_table( summary.income_summary[1],
         summary.income_summary[2]))
 
-# ╔═╡ 8ce36be3-2573-415e-a245-eb049d0f3884
-begin
-	d = data.income[1][!,[:weight,:scottish_income_tax]]
-	sit = d.scottish_income_tax'*d.weight*WEEKS_PER_YEAR/1_000_000
-	"£"*format(sit; commas=true, precision=0)*"mn pa"
-end
-
-# ╔═╡ b177c014-79cf-40eb-a489-cf5309ebd89f
-WEEKS_PER_YEAR
-
 # ╔═╡ e3188a8c-e21d-488f-aa4c-d8885646b5ca
 begin
 if settings.do_marginal_rates
@@ -430,24 +452,8 @@ md"""
 # ╔═╡ 6bf8bfc0-1221-4055-9c65-ea9b04802321
 Show( MIME"text/html"(), format_gainlose("By Decile",summary.gain_lose[2].dec_gl ))
 
-# ╔═╡ 569d1ac6-c33c-4b64-9bea-d45431925232
-# ╠═╡ show_logs = false
-get_examples( settings, 
-			  summary.gain_lose[2].dec_examples, 
-			  systems=[sys1,sys2]; 
-			  colval="Lose £10.01+", 
-			  rowval="1" )
-
 # ╔═╡ f1ed5325-1d96-4693-8a2a-64951a04c0ef
 Show( MIME"text/html"(), format_gainlose("By Tenure",summary.gain_lose[2].ten_gl ))
-
-# ╔═╡ 77711184-d05a-4129-ab36-5816c0d53bdd
-# ╠═╡ show_logs = false
-get_examples( settings, 
-			  summary.gain_lose[2].ten_examples, 
-			  systems=[sys1,sys2]; 
-			  colval="Lose £10.01+", 
-			  rowval="Mortgaged_Or_Shared" )
 
 # ╔═╡ 4ed19478-f0bd-4579-87ff-dce95737d60d
 Show( MIME"text/html"(), format_gainlose("By Numbers of Children",summary.gain_lose[2].children_gl ))
@@ -497,10 +503,15 @@ html"""
 
 
 # ╔═╡ Cell order:
-# ╟─3a2a55d5-8cf8-4d5c-80a7-84a03923bba8
-# ╟─72c7843c-3698-4045-9c83-2ad391097ad8
+# ╠═3a9ad657-b81e-4bad-b52f-b2200c49c1b9
+# ╠═5b05ab3e-e58e-47e2-8d4f-fdabc888f8b9
+# ╠═3a2a55d5-8cf8-4d5c-80a7-84a03923bba8
+# ╠═72c7843c-3698-4045-9c83-2ad391097ad8
+# ╠═d7990f57-a84d-4c9c-ad6e-e15663cef485
+# ╠═7d234950-0f07-4a21-8328-1d5b69846e22
 # ╠═35e3f85f-581b-45f2-b078-fef31b917f8d
 # ╠═8618f4e9-8b12-4929-98f2-9713f3814c67
+# ╠═a99139ce-5714-474c-aa38-c06db23e6186
 # ╟─b9af7395-2d50-4001-87cb-57d32af2a8dc
 # ╠═8473236d-b207-4494-b4e8-a527106bff56
 # ╠═90db21bc-bff3-4e9d-956e-fd4d7707840d
@@ -515,8 +526,6 @@ html"""
 # ╟─2fe134f3-6d6d-4109-a2f9-faa583be1189
 # ╟─f750ca33-d975-4f05-b878-ad0b23f968a9
 # ╟─e6816e6d-660c-46ee-b90b-d07b29dac1ad
-# ╠═8ce36be3-2573-415e-a245-eb049d0f3884
-# ╠═b177c014-79cf-40eb-a489-cf5309ebd89f
 # ╟─e3188a8c-e21d-488f-aa4c-d8885646b5ca
 # ╟─9db85469-8ded-444c-b8d5-6989d96c3d52
 # ╟─7b3f061d-4d6b-46db-aef2-4d3611824f73
@@ -531,9 +540,7 @@ html"""
 # ╠═feed5169-225f-4e95-b279-403dff21539d
 # ╟─1bad315e-d9ff-4c7b-9282-b5627deea6df
 # ╠═6bf8bfc0-1221-4055-9c65-ea9b04802321
-# ╠═569d1ac6-c33c-4b64-9bea-d45431925232
-# ╠═f1ed5325-1d96-4693-8a2a-64951a04c0ef
-# ╠═77711184-d05a-4129-ab36-5816c0d53bdd
+# ╟─f1ed5325-1d96-4693-8a2a-64951a04c0ef
 # ╠═4ed19478-f0bd-4579-87ff-dce95737d60d
 # ╠═1f054554-f7c4-478e-906b-ce57f451ce6d
 # ╠═6691e0c2-a440-4f24-855a-6c0c3d746b2e

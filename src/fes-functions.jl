@@ -5,8 +5,9 @@ export DEFAULT_SYS,
     fes_run, 
     format_bc_df, 
     format_gainlose, 
+    getbc,
     get_change_target_hhs, 
-    getbc
+    get_examples
 
 const DEFAULT_SYS = get_default_system_for_fin_year(2025; scotland=true, autoweekly=false )
     
@@ -99,6 +100,28 @@ function fes_run( settings :: Settings, systems::Vector; supress_dumps=false )::
     save_hbai_graph( settings, results, summaries ) 
     save_taxable_graph( settings, results, summaries, systems )
     summaries, results, short_summary, dirname
+end
+
+function get_examples( 
+    settings :: Settings, 
+    examples :: AbstractDataFrame;
+    systems  :: Vector{TaxBenefitSystem{T}}, 
+    rowval::AbstractString, 
+    colval::AbstractString) where T <: AbstractFloat
+    out = []
+    ex = examples[(examples.rowval.==rowval).&(examples.colval.==colval),:]
+    for e in eachrow(ex)
+        hh = FRSHouseholdGetter.get_household( e.hid, e.data_year )
+        results = []
+        for sys in systems
+            # r1 = to_md_table(do_one_calc( hh, sys, settings ))
+            # push!(results, md"$(r1)")
+            push!(results, do_one_calc( hh, sys, settings ))
+        end
+        # push!(out, (; hh=md"$(to_md_table(hh))", results ))
+        push!(out, (; hh, results ))
+    end
+    return out
 end
 
 """
