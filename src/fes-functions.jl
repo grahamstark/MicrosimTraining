@@ -5,6 +5,7 @@ export DEFAULT_SYS,
     fes_run, 
     format_bc_df, 
     format_gainlose, 
+    format_sfc,
     getbc,
     get_change_target_hhs, 
     get_examples
@@ -16,6 +17,19 @@ function fm(v, r,c)
         v
     elseif c < 7
         Format.format(v, precision=0, commas=true)
+    else
+        Format.format(v, precision=2, commas=true)
+    end
+    s
+end
+
+function fm3(v, r,c) 
+    return if c <= 3
+        v
+    elseif c == 4
+        Format.format(v, precision=0, commas=true)    
+    elseif c <= 11
+        Format.format(v/1_000_000, precision=0, commas=true)
     else
         Format.format(v, precision=2, commas=true)
     end
@@ -56,6 +70,34 @@ end
 format cols at end green for good, red for bad.
 """
 h7 = HtmlHighlighter( (data, r, c)->(c >= 7), f_gainlose )
+ht = HtmlHighlighter( (data, r, c)->(r >= 7), ["font_weight"=>"bold", "color"=>"black"] )
+
+function format_sfc( title::String, sf :: DataFrame )
+    sf[!,1] = pretty.(sf[!,1]) # labels on RHS
+    io = IOBuffer()
+    pretty_table( 
+        io, 
+        sf[!,1:end]; 
+        backend = :html,
+        formatters=[fm3], 
+        alignment=[:l,fill(:r,11)...],
+        highlighters = [ht],
+        title = title,
+        column_labels=[
+            "",
+            "Tie Rate",
+            "AETR Rate",
+            "Num People",
+            "Static Baseline £m pa",
+            "Static Reform £m pa",
+            "Static Change",
+            "Intensive Change",
+            "Extensive Change",
+            "Total Behavioural Change",
+            "SFC Change(?)",
+            "Behavioural Offset (%"] )
+    return String(take!(io))
+end
 
 """
 

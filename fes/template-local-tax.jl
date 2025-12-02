@@ -58,11 +58,13 @@ begin
 	sys2.loctax.ct.relativities = SG_RELATIVITIES
 	=#
 	sys2.name = settings.run_name
+	sys2.it.non_savings_rates[3:end] .+= 5
+	#=
 	sys2.loctax.ppt.local_rates = [0, 2_500.0, 7_500.0] # annual
     sys2.loctax.ppt.local_bands = [500_000, 1_000_000] 
     sys2.loctax.ppt.fixed_sum = true
 	sys2.loctax.ppt.abolished = false
-
+	=#
 	weeklyise!(sys2)
 end
 
@@ -229,6 +231,15 @@ begin
 	MicrosimTraining.fes_draw_summary_graphs( settings, data, summary )
 end
 
+# ╔═╡ 53646b2c-315a-4f8d-af53-fb7a099a3f49
+Show( MIME"text/html"(), format_sfc("SFC Behavioral Corrections", data.behavioural_results[2]))
+
+# ╔═╡ 9f9297a4-a684-46a8-a6b4-f9d2471ec83a
+data.behavioural_results[2]
+
+# ╔═╡ 0d8c26b6-a0ef-453c-b190-a25f1150a7a5
+4.96414e8+7.55747e7
+
 # ╔═╡ d069cd4d-7afc-429f-a8fd-3f1c0a640117
 begin
 	
@@ -326,9 +337,6 @@ begin
 	sit = d.scottish_income_tax'*d.weight*WEEKS_PER_YEAR/1_000_000
 	"£"*format(sit; commas=true, precision=0)*"mn pa"
 end
-
-# ╔═╡ b177c014-79cf-40eb-a489-cf5309ebd89f
-WEEKS_PER_YEAR
 
 # ╔═╡ e3188a8c-e21d-488f-aa4c-d8885646b5ca
 begin
@@ -510,13 +518,15 @@ html"""
 # ╟─6a57627d-e592-4845-af8a-60d1db327fab
 # ╟─1516e738-7adb-4cb5-9fac-e983ce5d17bd
 # ╟─d2188dd8-1240-4fdd-870b-dcd15e91f4f2
+# ╠═53646b2c-315a-4f8d-af53-fb7a099a3f49
+# ╠═9f9297a4-a684-46a8-a6b4-f9d2471ec83a
+# ╠═0d8c26b6-a0ef-453c-b190-a25f1150a7a5
 # ╟─d069cd4d-7afc-429f-a8fd-3f1c0a640117
 # ╟─0d8df3e0-eeb9-4e61-9298-b735e9dcc284
 # ╟─2fe134f3-6d6d-4109-a2f9-faa583be1189
 # ╟─f750ca33-d975-4f05-b878-ad0b23f968a9
 # ╟─e6816e6d-660c-46ee-b90b-d07b29dac1ad
 # ╠═8ce36be3-2573-415e-a245-eb049d0f3884
-# ╠═b177c014-79cf-40eb-a489-cf5309ebd89f
 # ╟─e3188a8c-e21d-488f-aa4c-d8885646b5ca
 # ╟─9db85469-8ded-444c-b8d5-6989d96c3d52
 # ╟─7b3f061d-4d6b-46db-aef2-4d3611824f73
