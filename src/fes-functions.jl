@@ -70,7 +70,7 @@ end
 format cols at end green for good, red for bad.
 """
 h7 = HtmlHighlighter( (data, r, c)->(c >= 7), f_gainlose )
-ht = HtmlHighlighter( (data, r, c)->(r >= 7), ["font_weight"=>"bold", "color"=>"black"] )
+ht = HtmlHighlighter( (data, r, c)->(r >= 7), ["font_weight"=>"bold", "color"=>"black", "background"=>"#ddddff"] )
 
 function format_sfc( title::String, sf :: DataFrame )
     sf[!,1] = pretty.(sf[!,1]) # labels on RHS
@@ -83,19 +83,20 @@ function format_sfc( title::String, sf :: DataFrame )
         alignment=[:l,fill(:r,11)...],
         highlighters = [ht],
         title = title,
-        column_labels=[
-            "",
+        column_labels=[[
+            "Taxable Income",
             "Tie Rate",
             "AETR Rate",
             "Num People",
-            "Static Baseline £m pa",
-            "Static Reform £m pa",
+            "Static Baseline",
+            "Static Reform",
             "Static Change",
             "Intensive Change",
             "Extensive Change",
             "Total Behavioural Change",
-            "SFC Change(?)",
-            "Behavioural Offset (%"] )
+            "SFC Change",
+            "Behavioural Offset"],
+            ["£pa","","", "",MultiColumn(7,"£m pa"),"%"]] )
     return String(take!(io))
 end
 

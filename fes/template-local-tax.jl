@@ -57,8 +57,9 @@ begin
 	SG_RELATIVITIES[Band_H] *= 1.225
 	sys2.loctax.ct.relativities = SG_RELATIVITIES
 	=#
-	sys2.name = settings.run_name
-	sys2.it.non_savings_rates[3:end] .+= 5
+	# sys2.name = settings.run_name
+	sys2.it.non_savings_rates[5:end] .+= 5
+	# sys2.ni.primary_class_1_rates .+= 5
 	#=
 	sys2.loctax.ppt.local_rates = [0, 2_500.0, 7_500.0] # annual
     sys2.loctax.ppt.local_bands = [500_000, 1_000_000] 
@@ -232,7 +233,7 @@ begin
 end
 
 # ╔═╡ 53646b2c-315a-4f8d-af53-fb7a099a3f49
-Show( MIME"text/html"(), format_sfc("SFC Behavioral Corrections", data.behavioural_results[2]))
+
 
 # ╔═╡ 9f9297a4-a684-46a8-a6b4-f9d2471ec83a
 data.behavioural_results[2]
@@ -333,9 +334,7 @@ Show(MIME"text/html"(), MicrosimTraining.costs_table( summary.income_summary[1],
 
 # ╔═╡ 8ce36be3-2573-415e-a245-eb049d0f3884
 begin
-	d = data.income[1][!,[:weight,:scottish_income_tax]]
-	sit = d.scottish_income_tax'*d.weight*WEEKS_PER_YEAR/1_000_000
-	"£"*format(sit; commas=true, precision=0)*"mn pa"
+	Show( MIME"text/html"(), format_sfc("SFC Behavioral Corrections", data.behavioural_results[2]))
 end
 
 # ╔═╡ e3188a8c-e21d-488f-aa4c-d8885646b5ca
@@ -524,7 +523,7 @@ html"""
 # ╟─d069cd4d-7afc-429f-a8fd-3f1c0a640117
 # ╟─0d8df3e0-eeb9-4e61-9298-b735e9dcc284
 # ╟─2fe134f3-6d6d-4109-a2f9-faa583be1189
-# ╟─f750ca33-d975-4f05-b878-ad0b23f968a9
+# ╠═f750ca33-d975-4f05-b878-ad0b23f968a9
 # ╟─e6816e6d-660c-46ee-b90b-d07b29dac1ad
 # ╠═8ce36be3-2573-415e-a245-eb049d0f3884
 # ╟─e3188a8c-e21d-488f-aa4c-d8885646b5ca
