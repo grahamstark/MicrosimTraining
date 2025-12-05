@@ -47,25 +47,16 @@ md"""
 # ╔═╡ 8618f4e9-8b12-4929-98f2-9713f3814c67
 begin
 	sys2 = deepcopy( DEFAULT_SYS)	
-	#=
-	# scotgov proposed progressive CT relativities
-	SG_RELATIVITIES = deepcopy( sys2.loctax.ct.relativities ) 
-	# 7.5%, 12.5%, 17.5% and 22.5% 
-	SG_RELATIVITIES[Band_E] *= 1.075
-	SG_RELATIVITIES[Band_F] *= 1.125
-	SG_RELATIVITIES[Band_G] *= 1.175
-	SG_RELATIVITIES[Band_H] *= 1.225
-	sys2.loctax.ct.relativities = SG_RELATIVITIES
-	=#
-	# sys2.name = settings.run_name
-	sys2.it.non_savings_rates[5:end] .+= 5
-	# sys2.ni.primary_class_1_rates .+= 5
-	#=
-	sys2.loctax.ppt.local_rates = [0, 2_500.0, 7_500.0] # annual
-    sys2.loctax.ppt.local_bands = [500_000, 1_000_000] 
-    sys2.loctax.ppt.fixed_sum = true
-	sys2.loctax.ppt.abolished = false
-	=#
+	# Child limit abolished 
+	sys2.child_limits.max_children = 999
+	# poss turn off benefit cap an DHPs
+	# sys2.bencap.abolished = true
+	# sys2.scottish_adjustments.mitigate_bedroom_tax = false
+	# savings taxes, except the property income thing ATM
+	# https://www.gov.uk/government/publications/changes-to-tax-rates-for-property-savings-dividend-income/changes-to-tax-rates-for-property-savings-dividend-income
+	sys2.it.dividend_rates[2:3] .+= 2
+	sys2.it.savings_rates[2:end] .+= 2
+	
 	weeklyise!(sys2)
 end
 
@@ -462,6 +453,13 @@ Show( MIME"text/html"(), format_gainlose("By Numbers of Children",summary.gain_l
 # ╔═╡ 1f054554-f7c4-478e-906b-ce57f451ce6d
 Show( MIME"text/html"(), format_gainlose("By Household Size",summary.gain_lose[2].hhtype_gl ))
 
+# ╔═╡ ef390757-e8a4-4b21-b9d8-aa58d8473c48
+get_examples( settings, 
+			  summary.gain_lose[2].hhtype_examples, 
+			  systems=[sys1,sys2]; 
+			  colval="Gain £10.01+", 
+			  rowval="4" )
+
 # ╔═╡ 6691e0c2-a440-4f24-855a-6c0c3d746b2e
 md"""## Examples of Gaining Households
 
@@ -545,6 +543,7 @@ html"""
 # ╠═77711184-d05a-4129-ab36-5816c0d53bdd
 # ╠═4ed19478-f0bd-4579-87ff-dce95737d60d
 # ╠═1f054554-f7c4-478e-906b-ce57f451ce6d
+# ╠═ef390757-e8a4-4b21-b9d8-aa58d8473c48
 # ╠═6691e0c2-a440-4f24-855a-6c0c3d746b2e
 # ╟─6c308ebe-ca45-4774-81cc-bfafc46ba2a4
 # ╠═758496fe-edae-4a3a-9d04-5c09362ec037
