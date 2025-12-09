@@ -63,6 +63,8 @@ using ZipFile
 @reexport using ScottishTaxBenefitModel.ExampleHouseholdGetter
 @reexport using ScottishTaxBenefitModel.GeneralTaxComponents
 @reexport using ScottishTaxBenefitModel.ModelHousehold
+@reexport using ScottishTaxBenefitModel.HTMLLibs
+	
 @reexport using ScottishTaxBenefitModel.Monitor
 @reexport using ScottishTaxBenefitModel.Results
 @reexport using ScottishTaxBenefitModel.Runner
