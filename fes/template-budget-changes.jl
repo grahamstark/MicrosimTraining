@@ -29,7 +29,7 @@ end
 # ╠═╡ show_logs = false
 begin
 	settings = Settings() 
-	settings.run_name = "Mansion Tax"
+	settings.run_name = "UK Budget Changes"
 	settings.do_marginal_rates = true
 	wage = 30
 	examples = get_example_hhs(settings)
@@ -54,11 +54,26 @@ begin
 	# sys2.scottish_adjustments.mitigate_bedroom_tax = false
 	# savings taxes, except the property income thing ATM
 	# https://www.gov.uk/government/publications/changes-to-tax-rates-for-property-savings-dividend-income/changes-to-tax-rates-for-property-savings-dividend-income
-	sys2.it.dividend_rates[2:3] .+= 2
-	sys2.it.savings_rates[2:end] .+= 2
+	# sys2.it.dividend_rates[2:3] .+= 2
+	# sys2.it.savings_rates[2:end] .+= 2
 	
+	sys2.it.property_rates = [22,42,47.0]
+    sys2.it.property_thresholds = copy(sys2.it.savings_thresholds) 
+    sys2.it.property_basic_rate = 1
+	sys2.it.personal_property_allowance = 0.0
+	push!(sys2.it.property_income,PROPERTY)
+	setdiff!(sys2.it.non_savings_income, [PROPERTY] )
 	weeklyise!(sys2)
 end
+
+# ╔═╡ 80186237-6746-44fd-8055-7d5ead1a2654
+sys2.it.property_income
+
+# ╔═╡ c1436a44-0f5f-485e-b40b-7b38856d8894
+setdiff( sys1.it.non_savings_income, sys2.it.non_savings_income, )
+
+# ╔═╡ f3d8a644-b04f-40b3-91d6-d8b3e522ec04
+sys1.it.savings_rates
 
 # ╔═╡ b9af7395-2d50-4001-87cb-57d32af2a8dc
 #= 
@@ -506,6 +521,9 @@ html"""
 # ╟─72c7843c-3698-4045-9c83-2ad391097ad8
 # ╠═35e3f85f-581b-45f2-b078-fef31b917f8d
 # ╠═8618f4e9-8b12-4929-98f2-9713f3814c67
+# ╠═80186237-6746-44fd-8055-7d5ead1a2654
+# ╠═c1436a44-0f5f-485e-b40b-7b38856d8894
+# ╠═f3d8a644-b04f-40b3-91d6-d8b3e522ec04
 # ╟─b9af7395-2d50-4001-87cb-57d32af2a8dc
 # ╠═8473236d-b207-4494-b4e8-a527106bff56
 # ╠═90db21bc-bff3-4e9d-956e-fd4d7707840d

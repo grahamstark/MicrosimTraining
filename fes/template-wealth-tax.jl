@@ -122,6 +122,18 @@ begin
 	summary, data, short_summary, zipname  = fes_run( settings, [sys1, sys2] );
 end;
 
+# ╔═╡ ac45e984-b944-4e4b-8846-7d77dfa5d94a
+begin
+	using .STBIncomes
+	using .HTMLLibs
+	
+exs = get_examples( settings, 
+			  summary.gain_lose[2].dec_examples, 
+			  systems=[sys1,sys2]; 
+			  colval="Lose £10.01+", 
+			  rowval="1" )
+end
+
 # ╔═╡ 0b969669-1098-4bf4-af74-3b699954de85
 CSV.write("/home/graham_s/tmp/wealth-1000.tab",data.income[2];delim='\t')
 
@@ -342,6 +354,18 @@ md"""
 # ╔═╡ 6bf8bfc0-1221-4055-9c65-ea9b04802321
 Show( MIME"text/html"(), format_gainlose("By Decile",summary.gain_lose[2].dec_gl ))
 
+# ╔═╡ eb6781e2-5a66-44d0-b7fe-be7477c1756b
+begin
+Show(MIME"text/html"(), 
+	HTMLLibs.format_household(
+	exs[1].hh )*
+	HTMLLibs.format(
+	exs[1].results[1].bus[1].income,
+	exs[1].results[2].bus[1].income )
+	)
+	
+end
+
 # ╔═╡ f1ed5325-1d96-4693-8a2a-64951a04c0ef
 Show( MIME"text/html"(), format_gainlose("By Tenure",summary.gain_lose[2].ten_gl ))
 
@@ -448,6 +472,8 @@ html"""
 # ╟─feed5169-225f-4e95-b279-403dff21539d
 # ╠═1bad315e-d9ff-4c7b-9282-b5627deea6df
 # ╠═6bf8bfc0-1221-4055-9c65-ea9b04802321
+# ╠═ac45e984-b944-4e4b-8846-7d77dfa5d94a
+# ╠═eb6781e2-5a66-44d0-b7fe-be7477c1756b
 # ╠═f1ed5325-1d96-4693-8a2a-64951a04c0ef
 # ╟─4ed19478-f0bd-4579-87ff-dce95737d60d
 # ╟─1f054554-f7c4-478e-906b-ce57f451ce6d
