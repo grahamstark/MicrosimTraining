@@ -50,139 +50,22 @@ begin
 	# Child limit abolished 
 	sys2.child_limits.max_children = 999
 	# poss turn off benefit cap an DHPs
-	# sys2.bencap.abolished = true
-	# sys2.scottish_adjustments.mitigate_bedroom_tax = false
 	# savings taxes, except the property income thing ATM
 	# https://www.gov.uk/government/publications/changes-to-tax-rates-for-property-savings-dividend-income/changes-to-tax-rates-for-property-savings-dividend-income
 	# sys2.it.dividend_rates[2:3] .+= 2
 	# sys2.it.savings_rates[2:end] .+= 2
-	
-	sys2.it.property_rates = [22,42,47.0]
-    sys2.it.property_thresholds = copy(sys2.it.savings_thresholds) 
-    sys2.it.property_basic_rate = 1
+	# property tax follows Scottish Income Tax, plus 2 points.
+	sys2.it.property_rates = copy(sys2.it.non_savings_rates ) .+ 2
+    sys2.it.property_thresholds = copy(sys2.it.non_savings_thresholds) 
+    sys2.it.property_basic_rate = 2
+	# no equivalent of the savings allowance.
 	sys2.it.personal_property_allowance = 0.0
+	# just property income in the property definition
 	push!(sys2.it.property_income,PROPERTY)
+	# ... and remove property from standard Scottish Income Tax
 	setdiff!(sys2.it.non_savings_income, [PROPERTY] )
 	weeklyise!(sys2)
 end
-
-# ╔═╡ 80186237-6746-44fd-8055-7d5ead1a2654
-sys2.it.property_income
-
-# ╔═╡ c1436a44-0f5f-485e-b40b-7b38856d8894
-setdiff( sys1.it.non_savings_income, sys2.it.non_savings_income, )
-
-# ╔═╡ f3d8a644-b04f-40b3-91d6-d8b3e522ec04
-sys1.it.savings_rates
-
-# ╔═╡ b9af7395-2d50-4001-87cb-57d32af2a8dc
-#= 
-	excerpt from STBParameters.jl
-	
-@with_kw mutable struct CouncilTax{RT<:Real}
-    abolished :: Bool = false
-    revalue :: Bool = false
-    house_values :: Dict{CT_Band,RT} = default_ct_house_values(RT)
-    band_d :: Dict{Symbol,RT} = default_band_ds(RT)
-    relativities :: Dict{CT_Band,RT} = default_ct_ratios(RT)
-    single_person_discount :: RT = 25.0
-    # TODO see CT note on disabled discounts
-end
-
-@with_kw mutable struct ProportionalPropertyTax{RT<:Real}
-    abolished :: Bool = true
-    rate :: RT = 0.0
-end
-
-@with_kw mutable struct LocalTaxes{RT<:Real}
-    ct = CouncilTax{RT}()
-    ppt = ProportionalPropertyTax{RT}()
-    local_income_tax_rates :: RateBands{RT} = zeros(RT,1) # [19.0,20.0,21.0,41.0,46.0]
-    # other possible local taxes go here
-end
-
-	local authorities are indexed in the parameters by the symbols on the left 
-i.e. :S12000033 (don't use "s)
-	
-const LA_NAMES = Dict(
-    :S12000033 => "Aberdeen City",
-    :S12000034 => "Aberdeenshire",
-    :S12000041 => "Angus",
-    :S12000035 => "Argyll and Bute",
-    :S12000036 => "City of Edinburgh",
-    :S12000005 => "Clackmannanshire",
-    :S12000006 => "Dumfries and Galloway",
-    :S12000042 => "Dundee City",
-    :S12000008 => "East Ayrshire",
-    :S12000045 => "East Dunbartonshire",
-    :S12000010 => "East Lothian",
-    :S12000011 => "East Renfrewshire",
-    :S12000014 => "Falkirk",
-    :S12000047 => "Fife",
-    :S12000049 => "Glasgow City",
-    :S12000017 => "Highland",
-    :S12000018 => "Inverclyde",
-    :S12000019 => "Midlothian",
-    :S12000020 => "Moray",
-    :S12000013 => "Na h-Eileanan Siar",
-    :S12000021 => "North Ayrshire",
-    :S12000050 => "North Lanarkshire",
-    :S12000023 => "Orkney Islands",
-    :S12000048 => "Perth and Kinross",
-    :S12000038 => "Renfrewshire",
-    :S12000026 => "Scottish Borders",
-    :S12000027 => "Shetland Islands",
-    :S12000028 => "South Ayrshire",
-    :S12000029 => "South Lanarkshire",
-    :S12000030 => "Stirling",
-    :S12000039 => "West Dunbartonshire",
-    :S12000040 => "West Lothian")
-	PROGRESSIVE_RELATIVITIES = Dict{CT_Band,Float64}(
-    # halved below D, doubled above
-    Band_A=>120/360,
-    Band_B=>140/360,
-    Band_C=>160/360,
-    Band_D=>360/360,
-    Band_E=>473/180,
-    Band_F=>585/180,                                                                      
-    Band_G=>705/180,
-    Band_H=>882/180,
-    Band_I=>-1,
-    Household_not_valued_separately => 0.0 ) 
-
-	# proportional property tax of 2% of property value
-	sys2 = deepcopy(sys1)
-    sys2.loctax.ct.abolished = true        
-    sys2.loctax.ppt.abolished = false
-    sys2.loctax.ppt.rate = 2/(100.0*WEEKS_PER_YEAR)
-
-
-	# revalued house prices
-	
-    sys2.loctax.ct.revalue = true
-    sys2.loctax.ct.house_values = Dict{CT_Band,Float64}(
-        Band_A=>44_000.0,
-        Band_B=>65_000.0,
-        Band_C=>91_000.0,
-        Band_D=>123_000.0,
-        Band_E=>162_000.0,
-        Band_F=>223_000.0,                                                                      
-        Band_G=>324_000.0,
-        Band_H=>99999999999999999999999.999, # 424_000.00,
-        Band_I=>-1, # wales only
-        Household_not_valued_separately => 0.0 )
-	# set the revised CT of Angus to 2,000pa
-    sys2.loctax.ct.band_d[:S12000041] = 2000
-	
-=#
-
-
-
-# ╔═╡ 8473236d-b207-4494-b4e8-a527106bff56
-sort(sys1.loctax.ct.relativities)
-
-# ╔═╡ 90db21bc-bff3-4e9d-956e-fd4d7707840d
-sort(sys2.loctax.ct.relativities)
 
 # ╔═╡ 696c6862-1c2b-4d40-a941-44bcbc94e9e2
 md"""
@@ -521,12 +404,6 @@ html"""
 # ╟─72c7843c-3698-4045-9c83-2ad391097ad8
 # ╠═35e3f85f-581b-45f2-b078-fef31b917f8d
 # ╠═8618f4e9-8b12-4929-98f2-9713f3814c67
-# ╠═80186237-6746-44fd-8055-7d5ead1a2654
-# ╠═c1436a44-0f5f-485e-b40b-7b38856d8894
-# ╠═f3d8a644-b04f-40b3-91d6-d8b3e522ec04
-# ╟─b9af7395-2d50-4001-87cb-57d32af2a8dc
-# ╠═8473236d-b207-4494-b4e8-a527106bff56
-# ╠═90db21bc-bff3-4e9d-956e-fd4d7707840d
 # ╟─696c6862-1c2b-4d40-a941-44bcbc94e9e2
 # ╠═627959cf-6a7c-4f87-82f7-406f5c7eb76a
 # ╟─da8d10ef-0ccf-40b9-901c-7214327e0203
