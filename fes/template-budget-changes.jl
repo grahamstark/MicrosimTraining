@@ -44,26 +44,42 @@ md"""
 ## $(settings.run_name)
 """
 
+# ╔═╡ 243da852-da2d-4f50-94b1-363e015d76c8
+
+
+function turn_on_property!( ; sys::TaxBenefitSystem{T}, 
+							rates::Vector{T}, 
+							thresholds::Vector{T}, 
+							basic_rate=2 ) where T <: AbstractFloat
+	sys.it.property_rates = copy(rates)
+    sys.it.property_thresholds = copy(thresholds) 
+    sys.it.property_basic_rate = basic_rate
+    # no equivalent of the savings allowance.
+	sys.it.personal_property_allowance = 0.0
+	# just property income in the property definition
+	push!(sys.it.property_income,PROPERTY)
+	# ... and remove property from standard Scottish Income Tax
+	setdiff!(sys.it.non_savings_income, [PROPERTY] )
+end
+
+
+
 # ╔═╡ 8618f4e9-8b12-4929-98f2-9713f3814c67
 begin
 	sys2 = deepcopy( DEFAULT_SYS)	
 	# Child limit abolished 
-	sys2.child_limits.max_children = 999
+	# sys2.child_limits.max_children = 999
 	# poss turn off benefit cap an DHPs
 	# savings taxes, except the property income thing ATM
 	# https://www.gov.uk/government/publications/changes-to-tax-rates-for-property-savings-dividend-income/changes-to-tax-rates-for-property-savings-dividend-income
 	# sys2.it.dividend_rates[2:3] .+= 2
 	# sys2.it.savings_rates[2:end] .+= 2
 	# property tax follows Scottish Income Tax, plus 2 points.
-	sys2.it.property_rates = copy(sys2.it.non_savings_rates ) .+ 2
-    sys2.it.property_thresholds = copy(sys2.it.non_savings_thresholds) 
-    sys2.it.property_basic_rate = 2
-	# no equivalent of the savings allowance.
-	sys2.it.personal_property_allowance = 0.0
-	# just property income in the property definition
-	push!(sys2.it.property_income,PROPERTY)
-	# ... and remove property from standard Scottish Income Tax
-	setdiff!(sys2.it.non_savings_income, [PROPERTY] )
+	turn_on_property!( ;
+					   sys = sys2, 
+					   rates=sys2.it.non_savings_rates .+ 2,
+					   thresholds=sys2.it.non_savings_thresholds,
+					   basic_rate=2)
 	weeklyise!(sys2)
 end
 
@@ -328,11 +344,14 @@ Show( MIME"text/html"(), format_gainlose("By Decile",summary.gain_lose[2].dec_gl
 
 # ╔═╡ 569d1ac6-c33c-4b64-9bea-d45431925232
 # ╠═╡ show_logs = false
-get_examples( settings, 
+# ╠═╡ disabled = true
+#=╠═╡
+exadec = get_examples( settings, 
 			  summary.gain_lose[2].dec_examples, 
 			  systems=[sys1,sys2]; 
 			  colval="Lose £10.01+", 
-			  rowval="1" )
+			  rowval="6" )
+  ╠═╡ =#
 
 # ╔═╡ f1ed5325-1d96-4693-8a2a-64951a04c0ef
 Show( MIME"text/html"(), format_gainlose("By Tenure",summary.gain_lose[2].ten_gl ))
@@ -352,11 +371,22 @@ Show( MIME"text/html"(), format_gainlose("By Numbers of Children",summary.gain_l
 Show( MIME"text/html"(), format_gainlose("By Household Size",summary.gain_lose[2].hhtype_gl ))
 
 # ╔═╡ ef390757-e8a4-4b21-b9d8-aa58d8473c48
-get_examples( settings, 
+# ╠═╡ show_logs = false
+exasize = get_examples( settings, 
 			  summary.gain_lose[2].hhtype_examples, 
 			  systems=[sys1,sys2]; 
 			  colval="Gain £10.01+", 
 			  rowval="4" )
+
+# ╔═╡ 7947a8a6-f451-48f8-afef-e45460c5b9c0
+#=╠═╡
+exadec[1].results[1].bus[1].pers[120191130901].it
+  ╠═╡ =#
+
+# ╔═╡ 7058949f-8d9f-4ec9-ab30-7f9996cc988e
+#=╠═╡
+exadec[1].results[2].bus[1].pers[120191130901].it
+  ╠═╡ =#
 
 # ╔═╡ 6691e0c2-a440-4f24-855a-6c0c3d746b2e
 md"""## Examples of Gaining Households
@@ -403,6 +433,7 @@ html"""
 # ╟─3a2a55d5-8cf8-4d5c-80a7-84a03923bba8
 # ╟─72c7843c-3698-4045-9c83-2ad391097ad8
 # ╠═35e3f85f-581b-45f2-b078-fef31b917f8d
+# ╠═243da852-da2d-4f50-94b1-363e015d76c8
 # ╠═8618f4e9-8b12-4929-98f2-9713f3814c67
 # ╟─696c6862-1c2b-4d40-a941-44bcbc94e9e2
 # ╠═627959cf-6a7c-4f87-82f7-406f5c7eb76a
@@ -439,6 +470,8 @@ html"""
 # ╠═4ed19478-f0bd-4579-87ff-dce95737d60d
 # ╠═1f054554-f7c4-478e-906b-ce57f451ce6d
 # ╠═ef390757-e8a4-4b21-b9d8-aa58d8473c48
+# ╠═7947a8a6-f451-48f8-afef-e45460c5b9c0
+# ╠═7058949f-8d9f-4ec9-ab30-7f9996cc988e
 # ╠═6691e0c2-a440-4f24-855a-6c0c3d746b2e
 # ╟─6c308ebe-ca45-4774-81cc-bfafc46ba2a4
 # ╠═758496fe-edae-4a3a-9d04-5c09362ec037

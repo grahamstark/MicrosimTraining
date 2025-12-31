@@ -152,7 +152,11 @@ function fes_draw_summary_graphs(
     linkyaxes!( ax1, ax2 )
     ax3 = Axis(f[1,2]; title="Income Changes By Decile", 
         ylabel="% Change", xlabel="Decile" )
+    ax3
     dch = 100.0 .* (summary.deciles[2][:, 4] .- summary.deciles[1][:, 4]) ./ summary.deciles[1][:, 4]
+    maxy = max( 1.0, maximum(dch))
+    miny = min( -1.0, minimum(dch))
+    ylims!( ax3, miny, maxy )
     barplot!( ax3, dch)
     if settings.do_marginal_rates 
         ax4 = Axis(f[2,2]; title="METRs", xlabel="%", ylabel="")
