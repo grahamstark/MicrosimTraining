@@ -100,9 +100,10 @@ means_tested_routing = "uc_full"
 output_dir = "output"
 requested_threads = 6
 target_bc_income = "bhc_hh"
-to_q = 3
-to_y = 2025
+to_q = 1
+to_y = 2026
 upper_multiple = 3.7
+weighting_target_year = 2026
 weighting_relative_to_ons_weights = true
 weighting_strategy = "use_runtime_computed_weights"
 
