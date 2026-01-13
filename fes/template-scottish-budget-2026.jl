@@ -29,12 +29,13 @@ end
 # ╠═╡ show_logs = false
 begin
 	settings = Settings() 
-	settings.run_name = "UK Budget Changes"
+	settings.run_name = "Scottish Budget 2026"
 	settings.do_marginal_rates = true
 	wage = 30
 	examples = get_example_hhs(settings)
-	sys1 = deepcopy( DEFAULT_SYS)
-	weeklyise!(sys1)
+	
+	const DEFAULT_SYS_2026 = get_default_system_for_fin_year(2026; scotland=true, autoweekly=false )
+ 
 end;
 
 # ╔═╡ 3a2a55d5-8cf8-4d5c-80a7-84a03923bba8
@@ -66,7 +67,9 @@ end
 
 # ╔═╡ 8618f4e9-8b12-4929-98f2-9713f3814c67
 begin
-	sys2 = deepcopy( DEFAULT_SYS)	
+	sys1 = deepcopy( DEFAULT_SYS_2026 )
+	
+	sys2 = deepcopy( DEFAULT_SYS_2026)	
 	# Child limit abolished 
 	# sys2.child_limits.max_children = 999
 	# poss turn off benefit cap an DHPs
@@ -75,11 +78,33 @@ begin
 	# sys2.it.dividend_rates[2:3] .+= 2
 	# sys2.it.savings_rates[2:end] .+= 2
 	# property tax follows Scottish Income Tax, plus 2 points.
+	#=
 	turn_on_property!( ;
 					   sys = sys2, 
 					   rates=sys2.it.non_savings_rates .+ 2,
 					   thresholds=sys2.it.non_savings_thresholds,
 					   basic_rate=2)
+	=#
+	#= 
+	Rooker-wised 2025/6 thresholds 
+	gaps between bands increased by 3.8% rounded up to next £100
+	=#
+	sys1.it.non_savings_thresholds = [
+		 3000.0,
+	    15600.0,
+  		32400.0,
+  		65000.0,
+ 		130100.0]
+	#=
+	or just do:
+	sys1.it.non_savings_thresholds = [
+		2934.426,
+  		15487.998000000001,
+  		32273.496000000003,
+  		64802.340000000004,
+ 		129895.32]
+	=#
+	weeklyise!(sys1)
 	weeklyise!(sys2)
 end
 
@@ -137,14 +162,18 @@ begin
 	MicrosimTraining.fes_draw_summary_graphs( settings, data, summary )
 end
 
+# ╔═╡ d18b50f2-cbc8-44f4-ba5f-9c69c9b95f7f
+begin
+        hh = examples[3]
+        bc1, bc2 = getbc( settings, hh.hh, sys1, sys2, wage )
+end;
+
+
 # ╔═╡ 53646b2c-315a-4f8d-af53-fb7a099a3f49
+begin
+        save_taxable_graph( settings, data, summary, [sys1,sys2] )
+end
 
-
-# ╔═╡ 9f9297a4-a684-46a8-a6b4-f9d2471ec83a
-data.behavioural_results[2]
-
-# ╔═╡ 0d8c26b6-a0ef-453c-b190-a25f1150a7a5
-4.96414e8+7.55747e7
 
 # ╔═╡ d069cd4d-7afc-429f-a8fd-3f1c0a640117
 begin
@@ -401,9 +430,6 @@ get_change_target_hhs( settings, sys1, sys2, summary.gain_lose[2].ex_gainers )
 # ╔═╡ 758496fe-edae-4a3a-9d04-5c09362ec037
 md"## Examples of Losing Households"
 
-# ╔═╡ 85b5715b-aa6b-409b-b2bc-46b2ad3e4343
-
-
 # ╔═╡ 34c7ebc0-d137-4572-b68d-3c79d62592d4
 # ╠═╡ show_logs = false
 get_change_target_hhs( settings, sys1, sys2, summary.gain_lose[2].ex_losers )
@@ -426,11 +452,18 @@ html"""
 </style>
 """
 
-# ╔═╡ 65162b5e-23d0-4072-b159-6d0f4ce01a2a
+# ╔═╡ 573030ef-e5fc-48f3-b41e-4ab925f79e11
+draw_bc( settings, "Budget Constraint for $(hh.label)", bc1, bc2 )
 
+# ╔═╡ 65162b5e-23d0-4072-b159-6d0f4ce01a2a
+Show(MIME"text/html"(), format_bc_df( "Pre Budget Constraint $(hh.label)", bc1 ))
+
+
+# ╔═╡ 4cbba143-6130-4931-9d8f-6127e0e9d265
+Show(MIME"text/html"(), format_bc_df( "Post Budget Constraint  $(hh.label)", bc2 ))
 
 # ╔═╡ Cell order:
-# ╟─3a2a55d5-8cf8-4d5c-80a7-84a03923bba8
+# ╠═3a2a55d5-8cf8-4d5c-80a7-84a03923bba8
 # ╟─72c7843c-3698-4045-9c83-2ad391097ad8
 # ╠═35e3f85f-581b-45f2-b078-fef31b917f8d
 # ╠═243da852-da2d-4f50-94b1-363e015d76c8
@@ -441,30 +474,29 @@ html"""
 # ╟─6a57627d-e592-4845-af8a-60d1db327fab
 # ╟─1516e738-7adb-4cb5-9fac-e983ce5d17bd
 # ╟─d2188dd8-1240-4fdd-870b-dcd15e91f4f2
+# ╟─d18b50f2-cbc8-44f4-ba5f-9c69c9b95f7f
 # ╠═53646b2c-315a-4f8d-af53-fb7a099a3f49
-# ╠═9f9297a4-a684-46a8-a6b4-f9d2471ec83a
-# ╠═0d8c26b6-a0ef-453c-b190-a25f1150a7a5
 # ╟─d069cd4d-7afc-429f-a8fd-3f1c0a640117
 # ╟─0d8df3e0-eeb9-4e61-9298-b735e9dcc284
 # ╟─2fe134f3-6d6d-4109-a2f9-faa583be1189
-# ╠═f750ca33-d975-4f05-b878-ad0b23f968a9
+# ╟─f750ca33-d975-4f05-b878-ad0b23f968a9
 # ╟─e6816e6d-660c-46ee-b90b-d07b29dac1ad
-# ╠═8ce36be3-2573-415e-a245-eb049d0f3884
+# ╟─8ce36be3-2573-415e-a245-eb049d0f3884
 # ╟─e3188a8c-e21d-488f-aa4c-d8885646b5ca
 # ╟─9db85469-8ded-444c-b8d5-6989d96c3d52
 # ╟─7b3f061d-4d6b-46db-aef2-4d3611824f73
 # ╟─5d5ea47f-74fb-46aa-842b-b74b964ad9bb
 # ╟─d48b7079-1b1e-464c-8775-c90460b5783c
 # ╟─db1a4510-9190-4556-806b-2a6dc8fd3e1b
-# ╠═a1318fc7-9d20-4c00-8a89-b5ae90b5cc0c
-# ╠═aa9d43a0-a45c-48bd-ae28-7b525be605ce
+# ╟─a1318fc7-9d20-4c00-8a89-b5ae90b5cc0c
+# ╟─aa9d43a0-a45c-48bd-ae28-7b525be605ce
 # ╟─ff5c2f9a-9616-4791-8da6-79327e9592ce
 # ╟─fa12ec1f-4969-43d9-b5b4-b1c83f92ce9a
 # ╟─a1bbc2ae-68a2-40de-93a4-2c9a68c9ee91
 # ╠═feed5169-225f-4e95-b279-403dff21539d
 # ╟─1bad315e-d9ff-4c7b-9282-b5627deea6df
 # ╠═6bf8bfc0-1221-4055-9c65-ea9b04802321
-# ╠═569d1ac6-c33c-4b64-9bea-d45431925232
+# ╟─569d1ac6-c33c-4b64-9bea-d45431925232
 # ╠═f1ed5325-1d96-4693-8a2a-64951a04c0ef
 # ╠═77711184-d05a-4129-ab36-5816c0d53bdd
 # ╠═4ed19478-f0bd-4579-87ff-dce95737d60d
@@ -475,7 +507,8 @@ html"""
 # ╠═6691e0c2-a440-4f24-855a-6c0c3d746b2e
 # ╟─6c308ebe-ca45-4774-81cc-bfafc46ba2a4
 # ╠═758496fe-edae-4a3a-9d04-5c09362ec037
-# ╠═85b5715b-aa6b-409b-b2bc-46b2ad3e4343
 # ╠═34c7ebc0-d137-4572-b68d-3c79d62592d4
 # ╟─1e27cffe-c86c-4b3e-91f4-22e1b429a9cd
+# ╠═573030ef-e5fc-48f3-b41e-4ab925f79e11
 # ╠═65162b5e-23d0-4072-b159-6d0f4ce01a2a
+# ╠═4cbba143-6130-4931-9d8f-6127e0e9d265
