@@ -70,21 +70,6 @@ begin
 	sys1 = deepcopy( DEFAULT_SYS_2026 )
 	
 	sys2 = deepcopy( DEFAULT_SYS_2026)	
-	# Child limit abolished 
-	# sys2.child_limits.max_children = 999
-	# poss turn off benefit cap an DHPs
-	# savings taxes, except the property income thing ATM
-	# https://www.gov.uk/government/publications/changes-to-tax-rates-for-property-savings-dividend-income/changes-to-tax-rates-for-property-savings-dividend-income
-	# sys2.it.dividend_rates[2:3] .+= 2
-	# sys2.it.savings_rates[2:end] .+= 2
-	# property tax follows Scottish Income Tax, plus 2 points.
-	#=
-	turn_on_property!( ;
-					   sys = sys2, 
-					   rates=sys2.it.non_savings_rates .+ 2,
-					   thresholds=sys2.it.non_savings_thresholds,
-					   basic_rate=2)
-	=#
 	#= 
 	Rooker-wised 2025/6 thresholds 
 	gaps between bands increased by 3.8% rounded up to next £100
@@ -104,9 +89,26 @@ begin
   		64802.340000000004,
  		129895.32]
 	=#
+	# The next 2 add £40 for children under 1
+	sys2.scottish_child_payment.maximum_ages = [0,15,99]
+	sys2.scottish_child_payment.amounts = [40.0,28.2,0]
+	
+	# This adds extra CT for house values above 1m. All other CT is unchanged.
+	sys2.loctax.ct.house_values[Band_H] = 1_000_000
+    sys2.loctax.ct.house_values[Band_I] = 2_000_000
+    sys2.loctax.ct.house_values[Band_J] = 99999999999
+    
+    sys2.loctax.ct.keep_band = Band_H
+	# these relativities are made up.
+    sys2.loctax.ct.relativities[Band_I] = 840/360
+    sys2.loctax.ct.relativities[Band_J] = 960/360
+    sys2.loctax.ct.revalue = true # turn false/true for CT 1m 
 	weeklyise!(sys1)
 	weeklyise!(sys2)
 end
+
+# ╔═╡ 00a8de3a-f2d2-40bc-9f5b-18ef0f3138e4
+
 
 # ╔═╡ 696c6862-1c2b-4d40-a941-44bcbc94e9e2
 md"""
@@ -468,6 +470,7 @@ Show(MIME"text/html"(), format_bc_df( "Post Budget Constraint  $(hh.label)", bc2
 # ╠═35e3f85f-581b-45f2-b078-fef31b917f8d
 # ╠═243da852-da2d-4f50-94b1-363e015d76c8
 # ╠═8618f4e9-8b12-4929-98f2-9713f3814c67
+# ╠═00a8de3a-f2d2-40bc-9f5b-18ef0f3138e4
 # ╟─696c6862-1c2b-4d40-a941-44bcbc94e9e2
 # ╠═627959cf-6a7c-4f87-82f7-406f5c7eb76a
 # ╟─da8d10ef-0ccf-40b9-901c-7214327e0203
@@ -505,7 +508,7 @@ Show(MIME"text/html"(), format_bc_df( "Post Budget Constraint  $(hh.label)", bc2
 # ╠═7947a8a6-f451-48f8-afef-e45460c5b9c0
 # ╠═7058949f-8d9f-4ec9-ab30-7f9996cc988e
 # ╠═6691e0c2-a440-4f24-855a-6c0c3d746b2e
-# ╟─6c308ebe-ca45-4774-81cc-bfafc46ba2a4
+# ╠═6c308ebe-ca45-4774-81cc-bfafc46ba2a4
 # ╠═758496fe-edae-4a3a-9d04-5c09362ec037
 # ╠═34c7ebc0-d137-4572-b68d-3c79d62592d4
 # ╟─1e27cffe-c86c-4b3e-91f4-22e1b429a9cd
