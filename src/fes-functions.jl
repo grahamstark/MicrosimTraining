@@ -1,6 +1,7 @@
 
 export DEFAULT_SYS, 
     do_higher_rates_run,
+    do_higher_rates_run2,
     draw_bc,
     fes_run, 
     format_bc_df, 
@@ -199,6 +200,61 @@ function do_higher_rates_run( settings::Settings, base_sys :: TaxBenefitSystem, 
     grant_labels = ["Base", "Full_Reformed_Sys"]
     for i in nrates:-1:2
         label = "Reform_Rates[$nrates->$(i)]_Deleted"
+        rename!(s, ["Grant Total £p.a_$(nrates-i+2)"=>label])
+        push!( grant_labels, label )
+    end
+    grant_labels = Symbol.( grant_labels )
+    it = s[s.label .== "Scottish Income Tax",:]
+    # flip the ouput sideways
+    hrt = permutedims(it[:,[:label, grant_labels...]],1)
+    # add in cumulative change columns
+    nrows, ncols = size(hrt)
+    hrt.diff_prev = zeros(nrows)
+    hrt.diff_cum = zeros(nrows)
+    for i in 1:nrows
+        di = max(1,i-1)
+        hrt.diff_prev[i] = hrt[i,2]-hrt[di,2]
+        hrt.diff_cum[i] = hrt[i,2]-hrt[1,2]
+    end
+    # formatted version
+    t = hcat(pretty.(hrt.label), format.(hrt[:,2:end];precision=0,commas=true))
+    rename!( t, ["diff_prev"=>"Incremental Change", "diff_cum"=>"Total Change"] )
+    return hrt, t, systems, summaries.short_income_summary
+end
+
+"""
+Progressively sets to zero the Scottish 2025/6 Higher rates and return the cumulative revenue
+differences.
+"""
+function do_higher_rates_run2( settings::Settings, base_sys :: TaxBenefitSystem, changed_sys :: TaxBenefitSystem )::Tuple
+    # settings.run_name = "Higher Rates"
+    # create 4 systems with progressively deleted higher rates
+    base = deepcopy( base_sys )
+    systems = [base]
+    nrates = length( changed_sys.it.non_savings_rates)
+    # basic_rate = max(1,nrates - 3 )
+    for i in nrates:-1:0 # basic_rate
+        tsys = deepcopy( changed_sys )
+        if i + 1 <= length(tsys.it.non_savings_rates)
+            tsys.it.non_savings_rates[i+1:end] .= 0
+        end
+        # possibly reset the 'basic rate'
+        if length( tsys.it.non_savings_rates ) < (base.it.non_savings_basic_rate)
+            tsys.it.non_savings_basic_rate = max(1,i-1)
+        end
+        @show i tsys.it.non_savings_rates tsys.it.non_savings_thresholds
+        push!( systems, tsys ) 
+    end
+    # weeklyise!.( systems )
+    # run the whole set
+    summaries, results, short_summary, dirname = fes_run( settings, systems, supress_dumps=true )
+    # extract just the little bit we want from the incomes summary
+    s=summaries.short_income_summary
+    @show names(s)
+    rename!(s, ["Grant Total £p.a"=>"Base", "Grant Total £p.a_1"=>"Full_Reformed_Sys"])
+    grant_labels = ["Base", "Full_Reformed_Sys"]
+    for i in nrates:-1:1
+        label = "Reform_Rates[$nrates->$(i)]_to_Zero"
         rename!(s, ["Grant Total £p.a_$(nrates-i+2)"=>label])
         push!( grant_labels, label )
     end
