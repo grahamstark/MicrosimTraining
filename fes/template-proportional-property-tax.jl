@@ -42,6 +42,9 @@ md"""
 ## $(settings.run_name)
 """
 
+# ╔═╡ 72d4ba28-35ca-46fd-b751-c313519fbb0b
+settings
+
 # ╔═╡ bf273956-910b-49ce-bcf2-0973d15caaca
 md"""
 ### Changing the income measure
@@ -438,6 +441,7 @@ html"""
 # ╠═3a2a55d5-8cf8-4d5c-80a7-84a03923bba8
 # ╠═72c7843c-3698-4045-9c83-2ad391097ad8
 # ╠═35e3f85f-581b-45f2-b078-fef31b917f8d
+# ╠═72d4ba28-35ca-46fd-b751-c313519fbb0b
 # ╟─bf273956-910b-49ce-bcf2-0973d15caaca
 # ╠═422f362d-9e1c-4b5f-99b1-344d046490ae
 # ╟─a429d732-f12b-46ed-94c6-e4ae1268e66a
@@ -479,5 +483,5 @@ html"""
 # ╟─6c308ebe-ca45-4774-81cc-bfafc46ba2a4
 # ╠═758496fe-edae-4a3a-9d04-5c09362ec037
 # ╠═34c7ebc0-d137-4572-b68d-3c79d62592d4
-# ╟─1e27cffe-c86c-4b3e-91f4-22e1b429a9cd
+# ╠═1e27cffe-c86c-4b3e-91f4-22e1b429a9cd
 # ╠═65162b5e-23d0-4072-b159-6d0f4ce01a2a

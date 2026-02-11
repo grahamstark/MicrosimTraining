@@ -1,5 +1,5 @@
 ### A Pluto.jl notebook ###
-# v0.20.17
+# v0.20.21
 
 #> [frontmatter]
 #> language = "en-GB"
@@ -343,7 +343,7 @@ md"### Poverty Transitions"
 # ╔═╡ aa9d43a0-a45c-48bd-ae28-7b525be605ce
 # ╠═╡ show_logs = false
 begin
-	t = make_pov_transitions( data )
+	t = make_pov_transitions( data.indiv )
 	Show(MIME"text/html"(), t )
 end
 

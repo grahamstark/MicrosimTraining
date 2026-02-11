@@ -11,7 +11,7 @@ export DEFAULT_SYS,
     get_change_target_hhs, 
     get_examples
 
-const DEFAULT_SYS = get_default_system_for_fin_year(2025; scotland=true, autoweekly=false )
+const DEFAULT_SYS = get_default_system_for_fin_year(2026; scotland=true, autoweekly=false )
     
 function fm(v, r,c) 
     return if c == 1
@@ -169,7 +169,7 @@ function get_examples(
 end
 
 """
-Progressively delete all the Scottish 2025/6 Higher rates and return the cumulative revenue
+Progressively delete all the Scottish 2026/7 Higher rates and return the cumulative revenue
 differences.
 """
 function do_higher_rates_run( settings::Settings, base_sys :: TaxBenefitSystem, changed_sys :: TaxBenefitSystem )::Tuple
@@ -223,7 +223,7 @@ function do_higher_rates_run( settings::Settings, base_sys :: TaxBenefitSystem, 
 end
 
 """
-Progressively sets to zero the Scottish 2025/6 Higher rates and return the cumulative revenue
+Progressively sets to zero the Scottish 2026/7 Higher rates and return the cumulative revenue
 differences.
 """
 function do_higher_rates_run2( settings::Settings, base_sys :: TaxBenefitSystem, changed_sys :: TaxBenefitSystem )::Tuple
