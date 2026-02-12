@@ -372,6 +372,7 @@ Show( MIME"text/html"(), format_gainlose("By Numbers of Children",summary.gain_l
 Show( MIME"text/html"(), format_gainlose("By Household Size",summary.gain_lose[2].hhtype_gl ))
 
 # ╔═╡ 1f7d6f70-0bc3-48ee-ba87-e25f6ba4b907
+# ╠═╡ show_logs = false
 begin
 	hh = examples[3]
 	bc1, bc2 = getbc( settings, hh.hh, sys1, sys2, wage )
@@ -401,6 +402,7 @@ This is for checking purposes and you may want to ignore.
 """
 
 # ╔═╡ 6c308ebe-ca45-4774-81cc-bfafc46ba2a4
+# ╠═╡ show_logs = false
 get_change_target_hhs( settings, sys1, sys2, summary.gain_lose[2].ex_gainers )
 
 # ╔═╡ 758496fe-edae-4a3a-9d04-5c09362ec037
@@ -468,12 +470,12 @@ html"""
 # ╟─4ed19478-f0bd-4579-87ff-dce95737d60d
 # ╟─1f054554-f7c4-478e-906b-ce57f451ce6d
 # ╟─c123f000-bcd6-4a37-b715-759473365b60
-# ╟─1f7d6f70-0bc3-48ee-ba87-e25f6ba4b907
+# ╠═1f7d6f70-0bc3-48ee-ba87-e25f6ba4b907
 # ╟─477c0dc2-9141-49a2-a4c8-fdab84ea586c
 # ╟─8c2c6e7c-53fa-4604-b5dd-85782443ffca
 # ╟─4718dd2b-9c0f-4c15-b249-52deffee46b6
 # ╟─6691e0c2-a440-4f24-855a-6c0c3d746b2e
-# ╟─6c308ebe-ca45-4774-81cc-bfafc46ba2a4
+# ╠═6c308ebe-ca45-4774-81cc-bfafc46ba2a4
 # ╠═758496fe-edae-4a3a-9d04-5c09362ec037
 # ╠═34c7ebc0-d137-4572-b68d-3c79d62592d4
 # ╟─1e27cffe-c86c-4b3e-91f4-22e1b429a9cd
