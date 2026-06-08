@@ -115,14 +115,16 @@ function format_gainlose(title::String, gl::DataFrame)
         alignment=[:l,fill(:r,7)...],
         highlighters = [h1,h7],
         title = title,
-        column_labels=["",
-            "Lose £10.01+",
-            "Lose £1.01-£10",
-            "No Change",
-            "Gain £1.01-£10",
-            "Gain £10.01+",
-            "Av. Change",
-            "Pct. Change"])
+        column_labels = ["", 
+            "Lose £10.01+", 
+            "Lose £1.01-£10", 
+            "No Change", 
+            "Gain £1.01-£10", 
+            "Gain £10.01+", 
+            "Population", 
+            "Av. Change", 
+            "Pct. Change", 
+            "Total Transfer"])
     return String(take!(io))
 end
 
